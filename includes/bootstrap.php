@@ -46,8 +46,10 @@ require_once __DIR__ . '/database.php';
 try {
     Database::init($config['db']);
 } catch (RuntimeException $e) {
-    // Store error in session for display on login page or error handler
-    $_SESSION['db_error'] = $e->getMessage();
+    // Store generic error flag in session (detailed error logged server-side)
+    $_SESSION['db_error'] = true;
+    // Log the detailed error for debugging (don't expose to users)
+    error_log('Database connection failed: ' . $e->getMessage());
     // Don't crash the application - let pages handle missing database gracefully
 }
 

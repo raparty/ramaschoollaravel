@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/bootstrap.php';
 
+// Check if user is authenticated (exclude login and logout pages)
+$currentScript = basename($_SERVER['SCRIPT_NAME']);
+$publicPages = ['index.php', 'login_process.php', 'logout.php'];
+if (!in_array($currentScript, $publicPages, true)) {
+    if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
+        header('Location: index.php');
+        exit;
+    }
+}
+
 $appName = app_config('name', 'School ERP');
 $mysqlServerInfo = 'N/A';
 try {

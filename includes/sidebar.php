@@ -8,6 +8,7 @@
         <a class="nav-link" href="student_tc.php">Transfer Certificates</a>
         <div class="nav-section">Academics</div>
         <a class="nav-link" href="school_setting.php">School Settings</a>
+        <a class="nav-link" href="school_detail.php">School Details</a>
         <a class="nav-link" href="class.php">Classes</a>
         <a class="nav-link" href="section.php">Sections</a>
         <a class="nav-link" href="stream.php">Streams</a>

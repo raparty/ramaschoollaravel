@@ -4,11 +4,11 @@ declare(strict_types=1);
 include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 
-if($_POST['category_type']!="")
+if(isset($_POST['category_type']) && $_POST['category_type']!="")
 {
 	$_SESSION['category_type']=$_POST['category_type'];
-	$_SESSION['date_from']=$_POST['date_from'];
-	$_SESSION['date_to']=$_POST['date_to'];
+	$_SESSION['date_from']=$_POST['date_from'] ?? '';
+	$_SESSION['date_to']=$_POST['date_to'] ?? '';
 	
 	}
 ?>

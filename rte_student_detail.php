@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 include_once("includes/header.php");?>
+<?php include_once("includes/sidebar.php");?>
     <div class="page_title">
 	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
 		<h3>Dashboard</h3>-->
@@ -11,14 +12,12 @@ include_once("includes/header.php");?>
 					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
 					</li>
 					<li>
-					<input name="" type="submit" value="" class="search_btn">
+					<input name="" type="submit" value="Search" class="search_btn">
 					</li>
 				</ul>
 			</form>
 		</div>
 	</div>
-
-<?php include_once("includes/sidebar.php");?>
 
 <div id="container">
 	

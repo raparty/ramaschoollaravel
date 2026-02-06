@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
     <div class="page_title">
 	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
@@ -25,7 +28,7 @@ if(isset($_POST['submit']))
 { 
 	
 	$update="update admin set username='".$_POST['username']."' ,password='".$_POST['password']."' where id='".$_SESSION['user_id']."' ";
-	mysql_query($update);
+	db_query($update);
 	$msg = "<span style='color:#009900;'><h4>  Admin Detail UpdatedSuccessfully </h4></span>";
 	
 } 
@@ -34,7 +37,7 @@ if(isset($_POST['submit']))
 	
 	
 	$sql10="SELECT * FROM admin where  id='".$_SESSION['user_id']."' ";
-	$registration_no_res=mysql_fetch_array(mysql_query($sql10));
+	$registration_no_res=db_fetch_array(db_query($sql10));
 
 ?>
 <div id="container">

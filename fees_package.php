@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <div class="page_title">
 	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
@@ -67,9 +70,9 @@
                         <?php 
 						$i=1;
 					$sql="SELECT * FROM fees_package";
-					$res=mysql_query($sql);
+					$res=db_query($sql);
 				
-							while($row=mysql_fetch_array($res))
+							while($row=db_fetch_array($res))
 							{
 								
 								?>

@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <?php 
 if(isset($_POST['submit']))
@@ -6,12 +9,12 @@ if(isset($_POST['submit']))
 	$section_name = $_POST['section_name'];
 	//$stream_status=$_POST['stream_status'];
 		 $sql1="SELECT * FROM section where section_name='".$section_name."' and section_id!='".$_GET['sid']."'";
-	$res1=mysql_query($sql1) or die("Error : " . mysql_error());
-	$num=mysql_num_rows($res1);
+	$res1=db_query($sql1) or die("Error : " . db_error());
+	$num=db_num_rows($res1);
 	if($num==0)
 	{
 	  $sql3="UPDATE section SET `section_name` = '".$section_name."' where section_id='".$_GET['sid']."'";
-	$res3=mysql_query($sql3) or die("Error : " . mysql_error());
+	$res3=db_query($sql3) or die("Error : " . db_error());
 	header("Location:section.php?msg=3");
 	}else
 	{
@@ -27,8 +30,8 @@ if(isset($_POST['submit']))
 	}
 		
 	$sql2="SELECT * FROM section WHERE `section_id` = '" . $_GET['sid'] . "';";
-	$res2=mysql_query($sql2);	
-	$row2=mysql_fetch_array($res2);
+	$res2=db_query($sql2);	
+	$row2=db_fetch_array($res2);
 		
   ?>
 <div class="page_title">

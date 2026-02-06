@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <div class="page_title">
 	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
@@ -67,8 +70,8 @@
                 <?php $i=1;
 				
                $sql="select * from staff_position order by staff_position asc";
-				$res=mysql_query($sql);
-				while($row=mysql_fetch_array($res))
+				$res=db_query($sql);
+				while($row=db_fetch_array($res))
 				
 				{
 				?>

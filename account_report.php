@@ -1,11 +1,14 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 
-if($_POST['category_type']!="")
+if(isset($_POST['category_type']) && $_POST['category_type']!="")
 {
 	$_SESSION['category_type']=$_POST['category_type'];
-	$_SESSION['date_from']=$_POST['date_from'];
-	$_SESSION['date_to']=$_POST['date_to'];
+	$_SESSION['date_from']=$_POST['date_from'] ?? '';
+	$_SESSION['date_to']=$_POST['date_to'] ?? '';
 	
 	}
 ?>
@@ -66,8 +69,8 @@ if($_POST['category_type']!="")
 											<option value="" selected="selected"> - Select Category - </option>
 							<?php
 							 $sql="SELECT * FROM account_category where category_type='".$_SESSION['category_type']."' ";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{
 									
 									if($_POST['account_category_id']==$row[0])
@@ -156,7 +159,7 @@ if($_POST['category_type']!="")
 					   if(isset($_POST['account_category_id'])&&$_POST['account_category_id']!="")
 					   {
 						   $sql10="SELECT * FROM ".$mytablename." where account_category_id='".$_POST['account_category_id']."' and session='".$_SESSION['session']."' and  category_type='".$category_type."' ";
-						  // $result_res=mysql_query($sql10);
+						  // $result_res=db_query($sql10);
 						  // $total_pages=1;
 						  }
 						  
@@ -172,15 +175,15 @@ if($_POST['category_type']!="")
 						    $sql10.=" and date_of_txn between '".$_SESSION['date_from']."' and '".$_SESSION['date_to']."' ";
 						   
 						   }
-						 //$res=mysql_query($sql10);
-						  $result_res=mysql_query($sql10);
-						 $num=mysql_num_rows($result_res);
+						 //$res=db_query($sql10);
+						  $result_res=db_query($sql10);
+						 $num=db_num_rows($result_res);
 						if($num!=0)
 						{
-						while($row_value=mysql_fetch_array($result_res))
+						while($row_value=db_fetch_array($result_res))
 						{
 							$sql1="SELECT * FROM account_category where 	account_category_id='".$row_value['account_category_id']."'";
-					$account_category=mysql_fetch_array(mysql_query($sql1));
+					$account_category=db_fetch_array(db_query($sql1));
 						
 						?>
 						<tr>

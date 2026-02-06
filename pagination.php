@@ -1,5 +1,7 @@
 <?php
-	/*
+
+declare(strict_types=1);
+/*
 		Place code to connect to your DB here.
 	*/
 	include_once('admin/config/config.inc.php');	// include your code to connect to DB.
@@ -14,14 +16,14 @@
 	*/
 	 $sql="select * from category order by catid";
 
-							  $qry=mysql_query($sql);
+							  $qry=db_query($sql);
 							  $i=0;
-							  $res=mysql_fetch_array($qry);
+							  $res=db_fetch_array($qry);
 							  
 								  
 	$query = "SELECT COUNT(*) as num FROM $tbl_name  where status='1' and category='".$res['categoryname']."' order by date desc";
                                
-	$total_pages = mysql_fetch_array(mysql_query($query));
+	$total_pages = db_fetch_array(db_query($query));
 	$total_pages = $total_pages[num];
 	
 	/* Setup vars for query. */
@@ -37,7 +39,7 @@
 	
 	/* Get data. */
 	$sql = "SELECT * FROM $tbl_name  LIMIT $start, $limit";
-	$result = mysql_query($sql);
+	$result = db_query($sql);
 	
 	/* Setup page vars for display. */
 	if ($page == 0) $page = 1;					//if no page var is given, default to 1.

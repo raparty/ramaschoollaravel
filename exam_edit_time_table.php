@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <?php 
 $msgs='';
@@ -9,7 +12,7 @@ if(isset($_POST['submit']))
 		{
 			
 	 $sql3="update exam_time_table set class_id='".$_POST['class']."', stream_id='".$_POST['stream']."', subject_id='".$_POST['subject_id']."',date='".$_POST['date']."' where time_table_id='".$_GET['sid']."'";
-		$res3=mysql_query($sql3) or die("Error : " . mysql_error());
+		$res3=db_query($sql3) or die("Error : " . db_error());
 		//header("Location:exam_time_table_detail.php?msg=1");
 			
 			
@@ -19,7 +22,7 @@ if(isset($_POST['submit']))
 	}
 	
 	}
-	$sql_edit=mysql_fetch_array(mysql_query("select * from exam_time_table where time_table_id='".$_GET['sid']."'"));
+	$sql_edit=db_fetch_array(db_query("select * from exam_time_table where time_table_id='".$_GET['sid']."'"));
 
 ?>
 <div class="page_title">
@@ -88,8 +91,8 @@ xmlhttp.send();
 								<option value="" selected="selected"> - Select Class - </option>
 							<?php
 							 $sql="SELECT * FROM class ";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{   
 								if($row['class_id']==$sql_edit['class_id'])                    {
 									 $class='selected="selected"';
@@ -127,8 +130,8 @@ xmlhttp.send();
 								<option value="" selected="selected"> - Select stream - </option>
 							<?php
 							 $sql="SELECT * FROM stream  ";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{   
 								if($row['stream_id']==$sql_edit['stream_id'])                    {
 									 $stream='selected="selected"';
@@ -167,8 +170,8 @@ xmlhttp.send();
 								<option value="" selected="selected"> - Select Subject - </option>
 							<?php
 							 $sql="SELECT * FROM subject  ";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{   
 								if($row['subject_id']==$sql_edit['subject_id'])                    {
 									 $subject='selected="selected"';

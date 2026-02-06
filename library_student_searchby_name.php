@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
     <div class="page_title">
 	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
@@ -72,8 +75,8 @@
 											<option value="" selected="selected"> - Select Class - </option>
 							<?php
 							 $sql="SELECT * FROM class";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{
 									?>
 									<option value="<?php echo $row['class_id']; ?>"><?php echo $row['class_name']; ?></option>
@@ -92,8 +95,8 @@
 										<option value="">---select stream---</option>
                                         	<?php
 							 $sql="SELECT * FROM stream";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{
 									?>
 									<option value="<?php echo $row['stream_id']; ?>"><?php echo $row['stream_name']; ?></option>
@@ -203,14 +206,14 @@
 							     $sql10="SELECT * FROM student_info where name like '%".$_POST['name']."%' and  stream ='".$_POST['stream']."' and  class ='".$_POST['class']."' and session='".$_SESSION['session']."'";                                                                    
 						}
 						
-						$res=mysql_query($sql10);
-						$num=mysql_num_rows($res);
+						$res=db_query($sql10);
+						$num=db_num_rows($res);
 						if($num!=0)
 						{
-						while($row_value=mysql_fetch_array($res))
+						while($row_value=db_fetch_array($res))
 						{
 							$sql1="SELECT * FROM class where class_id='".$row_value['class']."'";
-					$class=mysql_fetch_array(mysql_query($sql1));
+					$class=db_fetch_array(db_query($sql1));
 						
 						?>
 						<tr>

@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
     <div class="page_title">
 	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
@@ -39,11 +42,11 @@
 					$staff=$_POST['staff_qualification'];
 			   
                 $sql="update staff_qualification set staff_qualification='".$staff."' where staff_qualification_id='".$get."'";
-				$res=mysql_query($sql);
+				$res=db_query($sql);
 				}
 			$select_sql="select * from staff_qualification where staff_qualification_id='".$get."'";	
-			$select_res=mysql_query($select_sql);
-		$row=mysql_fetch_array($select_res)
+			$select_res=db_query($select_sql);
+		$row=db_fetch_array($select_res)
 		
 			
 				

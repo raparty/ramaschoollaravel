@@ -1,4 +1,7 @@
-<?php include_once("config/config.inc.php");ob_start();?>
+<?php
+
+declare(strict_types=1);
+include_once("config/config.inc.php");ob_start();?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -77,17 +80,17 @@ color:#ffffff;
 				  $names.=" and stream='".$_SESSION['stream_id']."'";
 				  }
 				// echo $names;
-			   $values=mysql_query($names);
-			   $rows=mysql_fetch_array($values);
+			   $values=db_query($names);
+			   $rows=db_fetch_array($values);
 			   
 			   $sql="SELECT * FROM school_detail";
-					$res=mysql_query($sql);
+					$res=db_query($sql);
 				
-						$school_detail=mysql_fetch_array($res);
+						$school_detail=db_fetch_array($res);
 						$sql1="SELECT * FROM class where class_id='".$rows['class']."'";
-					$class=mysql_fetch_array(mysql_query($sql1));
+					$class=db_fetch_array(db_query($sql1));
 					$sql2="SELECT * FROM stream where stream_id='".$rows['stream']."'";
-					$stream=mysql_fetch_array(mysql_query($sql2));
+					$stream=db_fetch_array(db_query($sql2));
 			    ?>
 <table width="100%"id="student">
 
@@ -154,8 +157,8 @@ color:#ffffff;
 	   
 
                                $sql12="SELECT * FROM exam_nuber_of_term where term_id='".$_SESSION['term_id']."' ";
-	                           $res12=mysql_query($sql12);
-							   while($exam_terms=mysql_fetch_array($res12)){?><th ><?php echo $exam_terms['term_name'];?></th><?php }?>
+	                           $res12=db_query($sql12);
+							   while($exam_terms=db_fetch_array($res12)){?><th ><?php echo $exam_terms['term_name'];?></th><?php }?>
 
 </tr>
 <?php 
@@ -166,26 +169,26 @@ $sql="SELECT * FROM allocate_class_subject where class_id='".$rows['class']."' "
 									$sql.="and stream_id='".$rows['stream']."'";
 									
 									}
-					$res=mysql_query($sql);
+					$res=db_query($sql);
 				
-							while($row=mysql_fetch_array($res))
+							while($row=db_fetch_array($res))
 							{
 								
 								$sql1="SELECT * FROM class where class_id='".$row['class_id']."'";
-					$class=mysql_fetch_array(mysql_query($sql1));
+					$class=db_fetch_array(db_query($sql1));
 						$sql2="SELECT * FROM stream where stream_id='".$row['stream_id']."'";
-					$stream=mysql_fetch_array(mysql_query($sql2));
+					$stream=db_fetch_array(db_query($sql2));
 					$sql3="SELECT * FROM subject where subject_id='".$row['subject_id']."'";
-					$subject=mysql_fetch_array(mysql_query($sql3));
+					$subject=db_fetch_array(db_query($sql3));
 					
 					          $sql12="SELECT * FROM exam_nuber_of_term  where term_id='".$_SESSION['term_id']."'";
-	                           $res12=mysql_query($sql12);
+	                           $res12=db_query($sql12);
 							   
 							 		
 							  
 					?>		
 <tr>
-<td><strong><?php echo $subject['subject_name'];?></strong></td><?php  while($exam_terms=mysql_fetch_array($res12))
+<td><strong><?php echo $subject['subject_name'];?></strong></td><?php  while($exam_terms=db_fetch_array($res12))
 							   {
 								      $exam_add_maximum_marks_q="select * from exam_add_maximum_marks where  class_id='".$rows['class']."'  and subject_id='".$row['subject_id']."' and term_id='".$exam_terms['term_id']."'  and session='".$_SESSION['session']."' ";
 								
@@ -194,8 +197,8 @@ $sql="SELECT * FROM allocate_class_subject where class_id='".$rows['class']."' "
 									$exam_add_maximum_marks_q.="and stream_id='".$rows['stream']."'";
 									
 									}
-					              $exam_add_maximum_marks_res=mysql_query($exam_add_maximum_marks_q);	
-								  while( $row_exam_add_maximum_marks=mysql_fetch_array($exam_add_maximum_marks_res))
+					              $exam_add_maximum_marks_res=db_query($exam_add_maximum_marks_q);	
+								  while( $row_exam_add_maximum_marks=db_fetch_array($exam_add_maximum_marks_res))
 								  {
 									  $total_maximum_marks+=$row_exam_add_maximum_marks['max_marks'];
 									  
@@ -203,8 +206,8 @@ $sql="SELECT * FROM allocate_class_subject where class_id='".$rows['class']."' "
 									  }			
 							   
 							       $select_marks_sql="select * from exam_subject_marks where registration_no='".$id."' and class_id='".$rows['class']."' and stream_id='".$rows['stream']."' and subject_id='".$row['subject_id']."' and term_id='".$exam_terms['term_id']."' and session='".$_SESSION['session']."'";
-					               $res_subject=mysql_query($select_marks_sql);
-								  $st_marks=mysql_fetch_array($res_subject);   ?><td><?php  $total_obt_marks+=$st_marks['marks']; echo $st_marks['marks'];?></td>
+					               $res_subject=db_query($select_marks_sql);
+								  $st_marks=db_fetch_array($res_subject);   ?><td><?php  $total_obt_marks+=$st_marks['marks']; echo $st_marks['marks'];?></td>
 								  
 								  <?php } ?>
 

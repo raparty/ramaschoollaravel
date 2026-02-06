@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <div class="page_title">
 	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
@@ -54,8 +57,8 @@
 											<option value="" selected="selected"> - Select fees term - </option>
 							<?php
 							 $sql="SELECT * FROM fees_term ";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{
 									?>
 									<option value="<?php echo $row['fees_term_id']; ?>"><?php echo $row['term_name']; ?></option>
@@ -74,8 +77,8 @@
 											<option value="" selected="selected"> - Select Class - </option>
 							<?php
 							 $sql="SELECT * FROM class ";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{
 									?>
 									<option value="<?php echo $row['class_id']; ?>"><?php echo $row['class_name']; ?></option>
@@ -158,7 +161,7 @@
                         <?php 
 					
 					/*$sql="SELECT * FROM student_fees_detail where session='".$_SESSION['session']."'";
-					$res=mysql_query($sql);*/
+					$res=db_query($sql);*/
 					      $mytablename="student_fees_detail";
 				          include_once("fees_manager_pagination.php");
 						  	$i=1;
@@ -169,16 +172,16 @@
 								}
 								
 								$i=($_GET['page']-1)*$limit+1;
-							while($row=mysql_fetch_array($result_res))
+							while($row=db_fetch_array($result_res))
 							{
 								
 								$sql="SELECT * FROM student_info where registration_no='".$row[1]."' ";
-	                           $student_info=mysql_fetch_array(mysql_query($sql));
+	                           $student_info=db_fetch_array(db_query($sql));
 							   
 							   $sql1="SELECT * FROM class where class_id='".$student_info['class']."'";
-					$class=mysql_fetch_array(mysql_query($sql1));
+					$class=db_fetch_array(db_query($sql1));
 							   $sql1="SELECT * FROM fees_term where fees_term_id='".$row['fees_term']."' ";
-	                           $fees_term=mysql_fetch_array(mysql_query($sql1));
+	                           $fees_term=db_fetch_array(db_query($sql1));
 								
 								
 								?>

@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <?php 
 $msgs='';
@@ -55,8 +58,8 @@ if(isset($_POST['submit']))
 								<option value="" selected="selected"> - Select Class - </option>
 							<?php
 							 $sql="SELECT * FROM class ";
-	                           $res=mysql_query($sql);
-								while($row=mysql_fetch_array($res))
+	                           $res=db_query($sql);
+								while($row=db_fetch_array($res))
 								{
 									?>
 									<option value="<?php echo $row['class_id']; ?>"><?php echo $row['class_name']; ?></option>
@@ -94,8 +97,8 @@ if(isset($_POST['submit']))
 								<option value=""> - Select term - </option>
 							<?php
 							 $sqls1="SELECT * FROM exam_nuber_of_term";
-	                           $ress=mysql_query($sqls1);
-								while($row22=mysql_fetch_array($ress))
+	                           $ress=db_query($sqls1);
+								while($row22=db_fetch_array($ress))
 								{
 									?>
 									<option value="<?php echo $row22['term_id']; ?>"><?php echo $row22['term_name']; ?></option>

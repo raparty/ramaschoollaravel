@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <?php 
 if(isset($_POST['submit']))
@@ -8,8 +11,8 @@ if(isset($_POST['submit']))
 	//$school_logo = $_POST['school_logo'];
 	
 	 $sql1="SELECT * FROM stream where stream_name='".$stream_name."' ";
-	$res1=mysql_query($sql1) or die("Error : " . mysql_error());
-	$num=mysql_num_rows($res1);
+	$res1=db_query($sql1) or die("Error : " . db_error());
+	$num=db_num_rows($res1);
 	if($num==0)
 	{
 		
@@ -17,7 +20,7 @@ if(isset($_POST['submit']))
 		if($_POST['stream_name']!="")
 		{
 		 $sql3="INSERT INTO stream(stream_name) VALUES ('".$stream_name."')";
-		$res3=mysql_query($sql3) or die("Error : " . mysql_error());
+		$res3=db_query($sql3) or die("Error : " . db_error());
 		header("Location:stream.php?msg=1");
 		}else
 		{    header("location:add_stream.php?error=2");

@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <div class="page_title">
 	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
@@ -70,17 +73,17 @@
                         <?php 
 						$i=1;
 					$sql="SELECT * FROM allocate_class_subject";
-					$res=mysql_query($sql);
+					$res=db_query($sql);
 				
-							while($row=mysql_fetch_array($res))
+							while($row=db_fetch_array($res))
 							{
 								
 								$sql1="SELECT * FROM class where class_id='".$row['class_id']."'";
-					$class=mysql_fetch_array(mysql_query($sql1));
+					$class=db_fetch_array(db_query($sql1));
 						$sql2="SELECT * FROM stream where stream_id='".$row['stream_id']."'";
-					$stream=mysql_fetch_array(mysql_query($sql2));
+					$stream=db_fetch_array(db_query($sql2));
 					$sql3="SELECT * FROM subject where subject_id='".$row['subject_id']."'";
-					$subject=mysql_fetch_array(mysql_query($sql3));
+					$subject=db_fetch_array(db_query($sql3));
 					?>		
 						<tr>
 							

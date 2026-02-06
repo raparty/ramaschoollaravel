@@ -1,4 +1,7 @@
-<?php include_once("includes/header.php");?>
+<?php
+
+declare(strict_types=1);
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <?php 
 $msgs='';
@@ -8,8 +11,8 @@ if(isset($_POST['submit']))
 
 	
 	 $sql1="SELECT * FROM exam_add_maximum_marks where subject_id='".$_POST['subject_id']."' and session='".$_SESSION['session']."'  ";
-	$res1=mysql_query($sql1) or die("Error : " . mysql_error());
-	$num=mysql_num_rows($res1);
+	$res1=db_query($sql1) or die("Error : " . db_error());
+	$num=db_num_rows($res1);
 	
 	if($num==0)
 	{
@@ -17,7 +20,7 @@ if(isset($_POST['submit']))
 		{
 			
 	       $sql3="INSERT INTO  exam_add_maximum_marks(class_id,stream_id,subject_id,term_id,max_marks,session) VALUES ('".$_POST['class_id']."','".$_POST['stream']."', '".$_POST['subject_id']."','".$_POST['term_id']."', '".$_POST['marks']."','".$_SESSION['session']."')";
-		   $res3=mysql_query($sql3) or die("Error : " . mysql_error());
+		   $res3=db_query($sql3) or die("Error : " . db_error());
 		  //header("Location:exam_show_maximum_marks.php?msg=1");
 			
 			
@@ -144,8 +147,8 @@ xmlhttp.send();
 								<option value="all"> All term </option>
 							<?php
 							 $sqls1="SELECT * FROM fees_term";
-	                           $ress=mysql_query($sqls1);
-								while($row22=mysql_fetch_array($ress))
+	                           $ress=db_query($sqls1);
+								while($row22=db_fetch_array($ress))
 								{
 									?>
 									<option value="<?php echo $row22['fees_term_id']; ?>"><?php echo $row22['term_name']; ?></option>

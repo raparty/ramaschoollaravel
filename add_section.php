@@ -4,6 +4,7 @@ declare(strict_types=1);
 include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <?php 
+$msg = "";
 if(isset($_POST['submit']))
 {
 	// $class_name = $_POST['class_name'];
@@ -35,23 +36,23 @@ if(isset($_POST['submit']))
 }
 else
 {
-	if($_GET['msg']==1)
+	if(isset($_GET['msg']) && $_GET['msg']==1)
 	{
 		$msg = "<span style='color:#009900;'><h4> Section Detail Added Successfully </h4></span>";
 	}
-	if($_GET['msg']==2)
+	else if(isset($_GET['msg']) && $_GET['msg']==2)
 	{
 		$msg = "<span style='color:#009900;'><h4> Section Detail Deleted Successfully </h4></span>";
 	}
-	if($_GET['msg']==3)
+	else if(isset($_GET['msg']) && $_GET['msg']==3)
 	{
 		$msg = "<span style='color:#009900;'><h4> Section Detail Updated Successfully </h4></span>";
 	}
-	else if($_GET['error']==1)
+	else if(isset($_GET['error']) && $_GET['error']==1)
 	{
 		$msg = "<span style='color:#FF0000;'><h4> Section Detail Already Exists </h4></span>";
 	}
-	else if($_GET['error']==2)
+	else if(isset($_GET['error']) && $_GET['error']==2)
 	{
 		$msg = "<span style='color:#FF0000;'><h4> Please fill all detail </h4></span>";
 	}

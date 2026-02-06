@@ -27,9 +27,9 @@ include_once("includes/header.php");?>
 		<div class="grid_container">
 			<div class="grid_12 full_block">
 				<div class="widget_wrap">
-					<div class="widget_content">
-						<h2 style="padding:20px; text-align:center;">Library Settings Dashboard</h2>
-						<p style="padding:20px; text-align:center;">Use the navigation above to manage library books, categories, fines, and student book records.</p>
+					<div class="widget_content settings-dashboard">
+						<h2>Library Settings Dashboard</h2>
+						<p>Use the navigation above to manage library books, categories, fines, and student book records.</p>
 					</div>
 				</div>
 			</div>

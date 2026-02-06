@@ -26,8 +26,8 @@ include_once("includes/header.php");?>
 		<div class="grid_container">
 			<div class="grid_12 full_block">
 				<div class="widget_wrap">
-					<div class="widget_content">
-						<h2 style="padding:20px; text-align:center;">Staff Settings Dashboard</h2>
+					<div class="widget_content settings-dashboard">
+						<h2>Staff Settings Dashboard</h2>
 					</div>
 				</div>
 			</div>

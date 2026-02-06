@@ -23,9 +23,9 @@
 		<div class="grid_container">
 			<div class="grid_12 full_block">
 				<div class="widget_wrap">
-					<div class="widget_content">
-						<h2 style="padding:20px; text-align:center;">Transport Settings Dashboard</h2>
-						<p style="padding:20px; text-align:center;">Use the navigation above to manage transport routes, vehicles, and student transport details.</p>
+					<div class="widget_content settings-dashboard">
+						<h2>Transport Settings Dashboard</h2>
+						<p>Use the navigation above to manage transport routes, vehicles, and student transport details.</p>
 					</div>
 				</div>
 			</div>

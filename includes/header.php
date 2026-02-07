@@ -71,7 +71,7 @@ $mysqlServerInfoSafe = htmlspecialchars($mysqlServerInfo, ENT_QUOTES, 'UTF-8');
         </div>
         <div style="display: flex; align-items: center; gap: 15px;">
             <span style="font-size: 13px; color: var(--fluent-slate);">Welcome, <strong style="color: var(--fluent-azure);"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></strong></span>
-            <button onclick="window.history.back()" class="btn-fluent-secondary" title="Go back to previous page">
+            <button type="button" id="backButton" class="btn-fluent-secondary" title="Go back to previous page">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                 </svg>
@@ -79,5 +79,18 @@ $mysqlServerInfoSafe = htmlspecialchars($mysqlServerInfo, ENT_QUOTES, 'UTF-8');
             </button>
             <a href="logout.php" class="btn-fluent-primary">Sign Out</a>
         </div>
+    </header>
+    <script>
+        // Back button functionality with fallback
+        document.getElementById('backButton').addEventListener('click', function() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Fallback to dashboard if no history
+                window.location.href = 'dashboard.php';
+            }
+        });
+    </script>
+    <div class="app-shell">
     </header>
     <div class="app-shell">

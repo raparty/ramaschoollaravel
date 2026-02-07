@@ -24,6 +24,7 @@
     --app-radius: 4px;
     --app-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);
     --app-shadow-lifted: 0 3.2px 7.2px 0 rgba(0,0,0,0.132), 0 0.6px 1.8px 0 rgba(0,0,0,0.108);
+    --app-shadow-top: 0 -1.6px 3.6px 0 rgba(0,0,0,0.132), 0 -0.3px 0.9px 0 rgba(0,0,0,0.108);
     --app-transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -41,7 +42,7 @@
 }
 
 body.app-body {
-    font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
     background: var(--app-bg);
     color: var(--fluent-slate);
     -webkit-font-smoothing: antialiased;
@@ -141,6 +142,26 @@ body.app-body {
 .app-footer {
     background: var(--app-surface);
     border-top: 1px solid var(--app-border);
+}
+
+.btn-fluent-primary {
+    background: var(--app-primary);
+    color: var(--fluent-white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--app-radius);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--app-shadow);
+    transition: var(--app-transition);
+    display: inline-block;
+}
+
+.btn-fluent-primary:hover {
+    background: var(--app-primary-dark);
+    box-shadow: var(--app-shadow-lifted);
+    color: var(--fluent-white);
 }
 
 @media (max-width: 1100px) {

@@ -63,7 +63,7 @@ $mysqlServerInfoSafe = htmlspecialchars($mysqlServerInfo, ENT_QUOTES, 'UTF-8');
 <body class="app-body">
     <header class="app-header shadow-sm" style="background: var(--fluent-white); border-bottom: 1px solid var(--fluent-slate-lighter); padding: 10px 30px; display: flex; justify-content: space-between; align-items: center; height: 75px; flex-shrink: 0;">
         <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="background: var(--fluent-azure); color: var(--fluent-white); padding: 6px 14px; border-radius: 4px; font-weight: 600; font-size: 18px; box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);">ERP</div>
+            <div style="background: var(--fluent-azure); color: var(--fluent-white); padding: 6px 14px; border-radius: 4px; font-weight: 600; font-size: 18px; box-shadow: var(--app-shadow);">ERP</div>
             <div>
                 <div style="font-weight: 600; font-size: 16px; color: var(--fluent-slate);"><?php echo htmlspecialchars($appName); ?></div>
                 <div style="font-size: 12px; color: var(--fluent-slate-light); text-transform: uppercase; letter-spacing: 0.5px;">Enterprise School Management</div>
@@ -71,7 +71,7 @@ $mysqlServerInfoSafe = htmlspecialchars($mysqlServerInfo, ENT_QUOTES, 'UTF-8');
         </div>
         <div style="display: flex; align-items: center; gap: 20px;">
             <span style="font-size: 13px; color: var(--fluent-slate);">Welcome, <strong style="color: var(--fluent-azure);"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></strong></span>
-            <a href="logout.php" class="btn btn-sm" style="background: var(--fluent-azure); color: var(--fluent-white); border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108); transition: all 0.1s ease;">Sign Out</a>
+            <a href="logout.php" class="btn btn-sm btn-fluent-primary">Sign Out</a>
         </div>
     </header>
     <div class="app-shell">

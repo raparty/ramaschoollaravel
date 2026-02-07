@@ -278,7 +278,10 @@ echo $grade_point;
 </table>
 <table width="100%" id="student1">
 <tr >
-<td colspan="6" id="hidebutton" style="display:block;"> <a href="entry_exam_marksheet.php"  style="text-decoration:none;"><input type="button" name="search" value="Back" class="btn_small btn_orange"></a>  <a href="#" onclick="return printdata()"  style="text-decoration:none; margin-left:50px;"><input type="button" name="search" value="Print" class="btn_small btn_orange"></a></td>
+<td colspan="6" id="hidebutton" style="display:block;"> 
+  <a href="entry_exam_marksheet.php" class="btn-fluent-secondary" style="text-decoration:none; display:inline-block; padding: 8px 15px;">Back</a>  
+  <a href="#" onclick="return printdata()" class="btn-fluent-secondary" style="text-decoration:none; margin-left:50px; display:inline-block; padding: 8px 15px;">Print</a>
+</td>
 </tr>
 
 </table>

@@ -29,8 +29,8 @@ include_once("includes/header.php");?>
 	<div id="content">
 		<div class="grid_container">
         	<div class="grid_12">
- <div class="btn_30_blue" style="float:right; margin-top:10px;">
-								<a href="add_new_staff_detail.php"><span style="width:140px">Add Staff  </span></a>
+ <div style="float:right; margin-top:10px;">
+								<a href="add_new_staff_detail.php" class="btn-fluent-primary"><span style="padding: 8px 16px; display: inline-block;">+ Add Staff</span></a>
 			</div>
          
 				

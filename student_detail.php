@@ -28,7 +28,7 @@ $reg = $_GET['reg'] ?? '';
                     <div class="widget_top">
                         <h6>Enrolled Students</h6>
                         <div class="widget_actions">
-                            <a href="add_admission.php" class="btn_blue">+ New Admission</a>
+                            <a href="add_admission.php" class="btn-fluent-primary">+ New Admission</a>
                         </div>
                     </div>
                     <div class="widget_content">

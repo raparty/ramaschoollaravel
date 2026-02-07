@@ -16,7 +16,7 @@ include_once("includes/school_setting_sidebar.php");
                         <span class="h_icon blocks_images"></span>
                         <h6 style="display:inline-block">Allocated Sections</h6>
                         <div style="float:right; padding: 5px;">
-                            <a href="add_allocate_section.php" class="btn_small btn_blue"><span>+ Allocate Section</span></a>
+                            <a href="add_allocate_section.php" class="btn-fluent-primary"><span style="padding: 8px 16px; display: inline-block;">+ Allocate Section</span></a>
                         </div>
                     </div>
                     <div class="widget_content">
@@ -45,8 +45,8 @@ include_once("includes/school_setting_sidebar.php");
                                     <td class="center"><strong><?php echo htmlspecialchars($row['class_name']); ?></strong></td>
                                     <td class="center"><?php echo htmlspecialchars($row['section_name']); ?></td>
                                     <td class="center">
-                                        <span><a class="action-icons c-edit" href="edit_allocate_section.php?sid=<?php echo $row['id']; ?>" title="Edit">Edit</a></span>
-                                        <span><a class="action-icons c-delete" href="delete_allocate_section.php?sid=<?php echo $row['id']; ?>" title="Delete" onClick="return confirm('Remove this allocation?')">Delete</a></span>
+                                        <span><a class="action-icons c-edit" href="edit_allocate_section.php?sid=<?php echo $row['id']; ?>" title="Edit"><svg style="width:16px; height:16px; fill:currentColor; vertical-align:middle; margin-right:4px;" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>Edit</a></span>
+                                        <span><a class="action-icons c-delete" href="delete_allocate_section.php?sid=<?php echo $row['id']; ?>" title="Delete" onClick="return confirm('Remove this allocation?')"><svg style="width:16px; height:16px; fill:currentColor; vertical-align:middle; margin-right:4px;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Delete</a></span>
                                     </td>
                                 </tr>
                                 <?php $i++; } ?>

@@ -12,22 +12,22 @@ if(isset($_POST['submit']))
 	
 		if($_POST['pending_amount']>=$_POST['fees_amount'])
 	{
-	 $sql1="SELECT * FROM student_fees_detail where registration_no='".$_POST['registration_no']."' and fees_term='".$_POST['fees_term']."' and session='".$_SESSION['session']."' and student_fees_id!='".$_GET['sid']."'";
+	 $sql1="SELECT * FROM student_fees_detail where registration_no='".$_POST['registration_no']."' and fees_term='".$_POST['fees_term']."' and session='".$_SESSION['session']."' and student_fees_id!='".$_GET['fee_id']."'";
 	$res1=db_query($sql1) or die("Error : " . db_error());
 	$num=db_num_rows($res1);
 	if($num==0)
 	{
-	  $sql3="UPDATE student_fees_detail SET registration_no='".$_POST['registration_no']."',fees_term='".$_POST['fees_term']."',fees_amount='".$_POST['fees_amount']."' where student_fees_id='".$_GET['sid']."'";
+	  $sql3="UPDATE student_fees_detail SET registration_no='".$_POST['registration_no']."',fees_term='".$_POST['fees_term']."',fees_amount='".$_POST['fees_amount']."' where student_fees_id='".$_GET['fee_id']."'";
 	$res3=db_query($sql3) or die("Error : " . db_error());
 	header("Location:fees_manager.php?msg=3");
 	}else
 	{
-		header("Location:edit_student_fees.php?error=2&&sid=".$_GET['sid']);
+		header("Location:edit_student_fees.php?error=2&&fee_id=".$_GET['fee_id']);
 	}
 }
 else
 	{
-		header("location:edit_student_fees.php?error=3&&sid=".$_GET['sid']);
+		header("location:edit_student_fees.php?error=3&&fee_id=".$_GET['fee_id']);
 	}
 }
 
@@ -42,7 +42,7 @@ if($_GET['error']==3)
 	}
 	
 		
-	$sql2="SELECT * FROM student_fees_detail WHERE `student_fees_id` = '" . $_GET['sid'] . "';";
+	$sql2="SELECT * FROM student_fees_detail WHERE `student_fees_id` = '" . $_GET['fee_id'] . "';";	
 	$res2=db_query($sql2);	
 	$row2=db_fetch_array($res2);
 		

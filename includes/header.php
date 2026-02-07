@@ -82,13 +82,16 @@ $mysqlServerInfoSafe = htmlspecialchars($mysqlServerInfo, ENT_QUOTES, 'UTF-8');
     </header>
     <script>
         // Back button functionality with fallback
-        document.getElementById('backButton').addEventListener('click', function() {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                // Fallback to dashboard if no history
-                window.location.href = 'dashboard.php';
-            }
-        });
+        var backBtn = document.getElementById('backButton');
+        if (backBtn) {
+            backBtn.addEventListener('click', function() {
+                if (window.history.length > 1 && document.referrer) {
+                    window.history.back();
+                } else {
+                    // Fallback to dashboard if no history
+                    window.location.href = 'dashboard.php';
+                }
+            });
+        }
     </script>
     <div class="app-shell">

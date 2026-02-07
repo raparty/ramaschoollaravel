@@ -66,7 +66,7 @@ $mysqlServerInfoSafe = htmlspecialchars($mysqlServerInfo, ENT_QUOTES, 'UTF-8');
             <div style="background: var(--fluent-azure); color: var(--fluent-white); padding: 6px 14px; border-radius: 4px; font-weight: 600; font-size: 18px; box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);">ERP</div>
             <div>
                 <div style="font-weight: 600; font-size: 16px; color: var(--fluent-slate);"><?php echo htmlspecialchars($appName); ?></div>
-                <div style="font-size: 11px; color: var(--fluent-slate-light); text-transform: uppercase; letter-spacing: 0.5px;">Enterprise School Management</div>
+                <div style="font-size: 12px; color: var(--fluent-slate-light); text-transform: uppercase; letter-spacing: 0.5px;">Enterprise School Management</div>
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 20px;">

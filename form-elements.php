@@ -66,7 +66,7 @@ include_once("includes/header.php"); ?>
 				</li>
 				<li><a href="table.html"><span class="nav_icon blocks_images"></span> Tables</a>
 				</li>
-				<li><a href="ui-elements.html"><span class="nav_icon"></span>User Interface Elements</a></li>
+				<li><a href="ui-elements.html">User Interface Elements</a></li>
 				<li><a href="buttons-icons.html"><span class="nav_icon coverflow"></span>Butons And Icons</a></li>
 				<li><a href="widgets.html"><span class="nav_icon list_image"></span>All Widgets</a></li>
 				<li><a href="#"><span class="nav_icon documents"></span>Pages<span class="alert_notify blue">5</span><span class="up_down_arrow">&nbsp;</span></a>

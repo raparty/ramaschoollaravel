@@ -42,7 +42,7 @@ include_once("includes/header.php");?>
 			<div class="grid_12">
 				<div class="widget_wrap">
 					<div class="widget_top">
-						<span class="h_icon list_images"></span>
+						
 						<h6>Book Category detail</h6>
 					</div>
 					<div class="widget_content">

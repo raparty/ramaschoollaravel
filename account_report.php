@@ -119,7 +119,7 @@ if(isset($_POST['category_type']) && $_POST['category_type']!="")
             <div class="grid_12">
 				<div class="widget_wrap">
 					<div class="widget_top">
-						<span class="h_icon list_images"></span>
+						
 						<h6>Account Report Detail</h6>
 					</div>
 					<div class="widget_content">

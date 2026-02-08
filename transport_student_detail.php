@@ -135,7 +135,7 @@ db_query("delete from transport_student_detail where transport_id='".$_GET['sid'
 			<div class="grid_12">
 				<div class="widget_wrap">
 					<div class="widget_top">
-						<span class="h_icon list_images"></span>
+						
 						<h6>Transport Student  Managment</h6>
 					</div>
 					<div class="widget_content">

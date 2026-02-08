@@ -12,7 +12,7 @@ include_once("includes/school_setting_sidebar.php");
             <div class="grid_12">
                 <div class="widget_wrap">
                     <div class="widget_top">
-                        <span class="h_icon list_images"></span>
+                        
                         <h6 style="display:inline-block">Class Management</h6>
                         <div style="float:right; padding: 5px;">
                             <a href="add_class.php" class="btn_small btn_blue"><span>+ Add New Class</span></a>

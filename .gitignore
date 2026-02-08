@@ -1,4 +1,3 @@
-docs/
 # Ignore sensitive config files
 includes/config.php
 config/config.inc.php

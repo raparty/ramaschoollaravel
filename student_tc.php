@@ -1,316 +1,112 @@
 <?php
-
 declare(strict_types=1);
-include_once("config/config.inc.php");ob_start();?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Student TC</title>
-    <link rel="stylesheet" href="css/enterprise.css">
-</head>
 
-<body>
-<style type="text/css">
-#student
-{
-	background:#0052a6;
-	border:1px solid #003c7a;
-	text-align:center;
-	color:#FFF;
-	}
-	#student2
-{
-	background:#ededed;
-	border:1px solid #333;
-	
-	}
-	#student1
-{
-	background:#ededed;
-	border:1px solid #003c7a;
-	text-align:center;
-	
-	}
-	#student1 td,#student1 th
-	{
-		border:1px solid #003c7a;
-		padding:3px 7px 2px 7px;
-		text-align:center;
-		}
-		#student1 th
-		{
-			font-size:1.1em;
+/**
+ * ID 1.5: Student Transfer Certificate (TC) Hub
+ * Integrated with reset logic for "Change Student" functionality.
+ */
+require_once("includes/bootstrap.php");
+require_once("includes/header.php");
+require_once("includes/sidebar.php");
 
-padding-top:5px;
-padding-bottom:4px;
-text-align: center;
-background-color:#0052a6;
-color:#ffffff;
+$conn = Database::connection();
+$student = null;
+$error_msg = "";
 
-			}
+// 1. Capture Registration Number
+// We use $_GET to ensure a clean refresh when the user clicks 'Change Student'
+$reg_no = $_GET['registration_no'] ?? '';
 
-</style>
+// 2. Data Retrieval Logic
+if (!empty($reg_no)) {
+    $safe_reg = mysqli_real_escape_string($conn, $reg_no);
+    $sql = "SELECT a.*, c.class_name 
+            FROM admissions a 
+            LEFT JOIN classes c ON a.class_id = c.id 
+            WHERE a.reg_no = '$safe_reg' LIMIT 1";
+    $result = mysqli_query($conn, $sql);
+    $student = mysqli_fetch_assoc($result);
 
- <?php
-            	 if(isset($_GET['registration_no']) && $_GET['registration_no']!="")
-				{
-					$_SESSION['registration_no']=$_GET['registration_no'];
-				}
-				
-				
-				if(isset($_POST['registration_no']) && $_POST['registration_no']!="")
-				{
-					$_SESSION['registration_no']=$_POST['registration_no'];
-				}
-				
-				// Check if registration_no is set in session
-				if(!isset($_SESSION['registration_no']) || empty($_SESSION['registration_no'])) {
-					echo '<div style="padding:20px;text-align:center;color:red;font-size:18px;">';
-					echo 'Error: No student registration number provided. Please access this page through <a href="entry_student_tc.php">Student TC Entry</a>.';
-					echo '</div></body></html>';
-					exit;
-				}
-				
-//$registration_no=$_SESSION['registration_no'];
-			  $id=$_SESSION['registration_no'];
-			    $names="select * from student_info where registration_no='".db_escape($_SESSION['registration_no'])."' and session='".(isset($_SESSION['session']) ? db_escape($_SESSION['session']) : '')."' ";
-			  if(isset($_SESSION['stream_id']) && $_SESSION['stream_id']!="")
-			  {
-				  $names.="and stream='".db_escape($_SESSION['stream_id'])."'";
-				  }
-				// echo $names;
-			   $values=db_query($names);
-			   $rows=db_fetch_array($values);
-			   
-			   if(!$rows) {
-				   echo '<div style="padding:20px;text-align:center;color:red;font-size:18px;">';
-				   echo 'Error: Student record not found. Please go back to <a href="entry_student_tc.php">Student TC Entry</a> and try again.';
-				   echo '</div></body></html>';
-				   exit;
-			   }
-			   
-			   $sql="SELECT * FROM school_detail";
-					$res=db_query($sql);
-				
-						$school_detail=db_fetch_array($res);
-						
-						$sql1="SELECT * FROM class where class_id='".$rows['class']."'";
-					$class=db_fetch_array(db_query($sql1));
-					$sql2="SELECT * FROM stream where stream_id='".$rows['stream']."'";
-					$stream=db_fetch_array(db_query($sql2));
-			    ?>
-                
-<form action="student_tc_show.php" method="post">    
-<input type="hidden" name="registration_no" value="<?php echo $_SESSION['registration_no'];?>"  />           
-<table width="100%"id="student" cellpadding="0" cellspacing="0">
+    if (!$student) {
+        $error_msg = "No student found with Registration No: " . htmlspecialchars($reg_no);
+    }
+}
+?>
 
-<tr>
-<td width="100" colspan="2"><img src="school_logo/<?php echo $school_detail['school_logo'];?>" width="150" height="60" /></td>
-<td width="350" align="left" style="font-size:32px; font-weight:bold" colspan="2"><?php echo ucwords($school_detail['school_name']);?>
-</td>
+<div class="grid_container">
+    <div class="page_title" style="margin-bottom: 25px;">
+        <h3 style="font-weight:300; color:var(--fluent-slate); font-size: 26px;">Transfer Certificate (TC) Module</h3>
+    </div>
 
+    <?php if (!$student): ?>
+    
+    <div class="azure-card" style="padding: 50px; text-align: center; border: 1px solid var(--app-border);">
+        <div style="max-width: 500px; margin: 0 auto;">
+            <div style="background: #eff6fc; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <svg viewBox="0 0 24 24" width="40" fill="var(--app-primary)"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            </div>
+            <h4 style="margin-bottom: 10px; color: var(--fluent-slate);">Initiate Transfer Certificate</h4>
+            <p style="color: #64748b; margin-bottom: 30px;">Enter a Registration Number to load records.</p>
+            
+            <form action="student_tc.php" method="GET" style="display: flex; gap: 10px;">
+                <input type="text" name="registration_no" class="form-control fluent-input" placeholder="e.g. ADM-2026-001" required style="flex: 1; padding: 12px;">
+                <button type="submit" class="btn-fluent-primary" style="padding: 0 25px;">Load Records</button>
+            </form>
+            
+            <?php if ($error_msg): ?>
+                <div style="margin-top: 20px; color: #e53e3e; font-size: 13px; font-weight: 600; padding: 10px; background: #fff5f5; border-radius: 4px; border: 1px solid #feb2b2;">
+                    <?php echo $error_msg; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
 
-</tr>
-</table>
+    <?php else: ?>
+    
+    <div class="azure-card" style="padding: 0; overflow: hidden; border: 1px solid var(--app-border);">
+        <form action="student_tc_show.php" method="POST">
+            <input type="hidden" name="registration_no" value="<?php echo htmlspecialchars($student['reg_no']); ?>">
 
-<table width="100%"id="student1"  cellpadding="0" cellspacing="0">
-<tr>
-<td  align="center" colspan="4" style="font-size:22px;"> Student T.C.</td>
+            <div style="background: var(--app-primary); color: white; padding: 25px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h4 style="margin:0; font-weight: 500; font-size: 20px;">Exit Details for: <?php echo htmlspecialchars($student['student_name']); ?></h4>
+                    <p style="margin:5px 0 0; opacity: 0.8; font-size: 13px;">Reg No: <?php echo htmlspecialchars($student['reg_no']); ?> | Class: <?php echo htmlspecialchars($student['class_name']); ?></p>
+                </div>
+                <a href="student_tc.php" style="color: white; font-size: 13px; text-decoration: none; border: 1px solid rgba(255,255,255,0.4); padding: 5px 12px; border-radius: 4px; background: rgba(255,255,255,0.1);">Change Student</a>
+            </div>
 
-</tr>
+            <div style="padding: 40px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                    <div class="form_group">
+                        <label style="font-weight:600; display:block; margin-bottom:10px; color: #475569;">Date of Admission</label>
+                        <input type="text" class="form-control fluent-input" value="<?php echo $student['admission_date']; ?>" readonly style="background:#f8fafc; border-color: #e2e8f0; color: #94a3b8;">
+                    </div>
+                    <div class="form_group">
+                        <label style="font-weight:600; display:block; margin-bottom:10px; color: #475569;">Date of Removal (TC Date)</label>
+                        <input type="date" name="removal_date" class="form-control fluent-input" value="<?php echo date('Y-m-d'); ?>" required>
+                    </div>
+                    <div class="form_group">
+                        <label style="font-weight:600; display:block; margin-bottom:10px; color: #475569;">Reason for Leaving</label>
+                        <input type="text" name="removal_cause" class="form-control fluent-input" placeholder="e.g. Relocating, Completed 10th Grade" required>
+                    </div>
+                    <div class="form_group">
+                        <label style="font-weight:600; display:block; margin-bottom:10px; color: #475569;">Student Conduct</label>
+                        <select name="conduct" class="form-control fluent-input">
+                            <option value="Excellent">Excellent</option>
+                            <option value="Very Good">Very Good</option>
+                            <option value="Good" selected>Good</option>
+                            <option value="Fair">Fair</option>
+                        </select>
+                    </div>
+                </div>
 
-<tr>
-<td>Scholar Register No.</td>
-<td width="300" align="left"><?php echo $rows['registration_no'];?>
-</td>
-<td >Admission Register No.</td>
-<td width="300"><?php echo $rows['student_id'];?></td>
+                <div style="text-align: right; border-top: 1px solid #f1f5f9; padding-top: 30px;">
+                    <button type="submit" class="btn-fluent-primary" style="padding: 12px 40px; font-weight: 600;">Generate TC PDF</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <?php endif; ?>
+</div>
 
-</tr>
-
-</table>
-<table width="100%" id="student1" cellpadding="0" cellspacing="0">
-<tr height="50px;"><td colspan="7" align="center">Record A</td></tr>
-
-<tr>
-<td colspan="2">Date Of Admission</td>
-<td colspan="2">Date of Removal</td>
-<td colspan="3">Case Of Removal</td>
-</tr>
-<tr>
-<td colspan="2"><input type="text" name="other_details[]" ></td>
-<td colspan="2"><input type="text" name="other_details[]" ></td>
-<td colspan="3" height="50px"><textarea  name="other_details[]" ></textarea></td>
-</tr>
-</table>
-
-<!----------------------------------------------------------------------->
-
-<table width="100%" id="student1" cellpadding="0" cellspacing="0">
-<tr height="50px;"><td colspan="7" align="center">Record B</td></tr>
-<tr>
-<td >Name Of Scholar</td>
-<td >Date of Birth</td>
-<td >Age at date of first Admission</td>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="100" >
-<tr>
-<td  colspan="3" >Name occupation and address</td>
-</tr>
-<tr>
-<td  >Father </td>
-<td  >Mother </td>
-<td  >Guardian</td>
-</tr>
-
-</table>
-</td>
-<td width="150">The last school.if any which the scholar attend before joining this school</td>
-<td width="150" >The highest class form which the scholar was wounded was fit for promotion for leaving this school</td>
-<td >The Date of marriage</td>
-
-</tr>
-<tr>
-<td><?php echo $rows['name'];?></td>
-<td><?php echo $rows['dob'];?></td>
-<td><input type="text" name="other_details[]" ></td>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="40" >
-
-<tr>
-<td  ><?php echo $rows['f_name'];?></td>
-<td  ><?php echo $rows['m_name'];?> </td>
-<td  ><?php echo $rows['f_name'];?></td>
-</tr>
-
-</table>
-</td>
-<td><input type="text" name="other_details[]" ></td>
-<td><input type="text" name="other_details[]" ></td>
-<td><input type="text" name="other_details[]" ></td>
-</tr>
-
-
-</table>
-
-
-<table width="100%" id="student1" cellpadding="0" cellspacing="0">
-
-<tr height="50px;"><td colspan="7" align="center">Record C</td></tr>
-
-<tr>
-<td style="padding:0 0 0 0; border:0px;" ><table border="1" width="100%" height="100" >
-<tr>
-<td  colspan="2" >Addmission Or Promotion
-</td>
-</tr>
-<tr>
-<td  >class </td>
-<td  >Date</td>
-
-</tr>
-
-</table></td>
-<td >Date of passing standard or class from this school</td>
-
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="100" >
-<tr>
-<td  colspan="2" >Attendance
-</td>
-</tr>
-<tr>
-<td  >Number of school meetings </td>
-<td  >Number of school meetings in which present </td>
-
-</tr>
-
-</table>
-</td>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="100" >
-<tr>
-<td  colspan="2" >Rank In class
-</td>
-</tr>
-<tr>
-<td  >Number of scholars in class  </td>
-<td  >Please as shown by final examination in class </td>
-
-</tr>
-
-</table>
-</td>
-<td width="150">Subject Taken</td>
-<td width="150" colspan="2" >Conduct and work during school year </td>
-
-</tr>
-<tr>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="40" >
-
-<tr>
-<td  ><input type="text" name="other_details[]" > </td>
-<td  ><input type="text" name="other_details[]" > </td>
-
-</tr>
-
-</table>
-</td>
-<td><input type="text" name="other_details[]" ></td>
-<td style="padding:0 0 0 0; border:0px;"><table border="1" width="100%" height="40" >
-
-<tr>
-<td  ><input type="text" name="other_details[]" ></td>
-<td  ><input type="text" name="other_details[]" ></td>
-
-</tr>
-
-</table></td>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="40" >
-
-<tr>
-<td  ><input type="text" name="other_details[]" > </td>
-<td  ><input type="text" name="other_details[]" > </td>
-
-</tr>
-
-</table>
-</td>
-<td><input type="text" name="other_details[]" ></td>
-<td colspan="2"><input type="text" name="other_details[]" ></td>
-
-</tr>
-
-</table>
-
-<!----------------------------------->
-
-
-<!----------------------------------->
-
-<!------------------------------------------------------------------>
-
-
-
-<table width="100%" id="student1">
-<tr >
-<td colspan="6"  style="display:block;"><input type="submit" name="submit" value="Submit" align="center" ></td>
-</tr>
-
-</table>
-
-</form>
-
-<!------------------------------------------------------------------>
-
-
-
-
-
-
-</body>
-</html>
+<?php include_once("includes/footer.php"); ?>

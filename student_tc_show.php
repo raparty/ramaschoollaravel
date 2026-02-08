@@ -1,324 +1,115 @@
 <?php
+// 1. Error Reporting
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
 
-declare(strict_types=1);
-include_once("config/config.inc.php");ob_start();?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+require_once("includes/bootstrap.php");
+
+// 2. Database Connection
+$conn = Database::connection(); 
+if (!$conn) {
+    die("Database connection failed.");
+}
+
+// 3. Capture POST Data
+$reg_no = $_POST['registration_no'] ?? '';
+$removal_date = $_POST['removal_date'] ?? date('Y-m-d');
+$removal_cause = $_POST['removal_cause'] ?? 'Course Completion';
+$conduct = $_POST['conduct'] ?? 'Good';
+
+if (empty($reg_no)) {
+    die("Error: No registration number received.");
+}
+
+// 4. Fetch Student Details (admissions table)
+$safe_reg = mysqli_real_escape_string($conn, $reg_no);
+$sql = "SELECT a.*, c.class_name 
+        FROM admissions a 
+        LEFT JOIN classes c ON a.class_id = c.id 
+        WHERE a.reg_no = '$safe_reg' LIMIT 1";
+
+$result = mysqli_query($conn, $sql);
+$student = mysqli_fetch_assoc($result);
+
+if (!$student) {
+    die("Error: Student record not found for Reg No: " . htmlspecialchars($reg_no));
+}
+
+// 5. FIXED: Fail-Safe School Details
+// We check if table exists first; if not, we use defaults to prevent the Fatal Error
+$school = ['school_name' => 'Your School Name', 'school_address' => 'Your School Address'];
+$check_table = mysqli_query($conn, "SHOW TABLES LIKE 'school_detail'");
+if (mysqli_num_rows($check_table) > 0) {
+    $school_res = mysqli_query($conn, "SELECT * FROM school_detail LIMIT 1");
+    if ($school_data = mysqli_fetch_assoc($school_res)) {
+        $school = $school_data;
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Student TC</title>
-    <link rel="stylesheet" href="css/enterprise.css">
+    <meta charset="UTF-8">
+    <title>TC_<?php echo htmlspecialchars($reg_no); ?></title>
+    <style>
+        body { font-family: 'Times New Roman', serif; background: #525659; margin: 0; padding: 40px; display: flex; justify-content: center; }
+        .certificate-paper { 
+            background: white; width: 210mm; min-height: 297mm; padding: 50px; 
+            box-sizing: border-box; border: 15px double #333; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .header { text-align: center; border-bottom: 3px solid #333; padding-bottom: 15px; margin-bottom: 40px; }
+        .school-name { font-size: 36px; font-weight: bold; margin: 0; text-transform: uppercase; }
+        .tc-heading { font-size: 28px; text-decoration: underline; margin: 25px 0; font-weight: bold; }
+        .content-table { width: 100%; border-collapse: collapse; }
+        .content-table td { padding: 18px 5px; font-size: 19px; line-height: 1.5; border-bottom: 1px dotted #ccc; }
+        .label { width: 45%; }
+        .value { font-weight: bold; text-transform: uppercase; }
+        .footer-section { margin-top: 100px; display: flex; justify-content: space-between; text-align: center; }
+        .sig-box { width: 200px; border-top: 2px solid #000; padding-top: 8px; font-weight: bold; }
+        @media print {
+            body { background: none; padding: 0; }
+            .certificate-paper { box-shadow: none; border: 10px double #000; margin: 0; width: 100%; }
+            .print-btn { display: none; }
+        }
+        .print-btn {
+            position: fixed; top: 20px; right: 20px; background: #0078d4; color: white;
+            padding: 15px 30px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;
+        }
+    </style>
 </head>
-
 <body>
-<style type="text/css">
-#student
-{
-	background:#0052a6;
-	border:1px solid #003c7a;
-	text-align:center;
-	color:#FFF;
-	}
-	#student2
-{
-	background:#ededed;
-	border:1px solid #333;
-	
-	}
-	#student1
-{
-	background:#ededed;
-	border:1px solid #003c7a;
-	text-align:center;
-	
-	}
-	#student1 td,#student1 th
-	{
-		border:1px solid #003c7a;
-		padding:3px 7px 2px 7px;
-		text-align:center;
-		}
-		#student1 th
-		{
-			font-size:1.1em;
 
-padding-top:5px;
-padding-bottom:4px;
-text-align: center;
-background-color:#0052a6;
-color:#ffffff;
+    <button class="print-btn" onclick="window.print()">PRINT / SAVE AS PDF</button>
 
-			}
+    <div class="certificate-paper">
+        <div class="header">
+            <h1 class="school-name"><?php echo htmlspecialchars($school['school_name']); ?></h1>
+            <p style="font-size: 16px; margin: 10px 0;"><?php echo htmlspecialchars($school['school_address']); ?></p>
+            <div class="tc-heading">TRANSFER CERTIFICATE</div>
+        </div>
 
-</style>
+        <table class="content-table">
+            <tr><td class="label">Admission / Scholar No:</td><td class="value"><?php echo htmlspecialchars($student['reg_no']); ?></td></tr>
+            <tr><td class="label">Name of the Pupil:</td><td class="value"><?php echo htmlspecialchars($student['student_name']); ?></td></tr>
+            <tr><td class="label">Father's / Guardian's Name:</td><td class="value"><?php echo htmlspecialchars($student['guardian_name'] ?? 'N/A'); ?></td></tr>
+            <tr><td class="label">Date of Birth:</td><td class="value"><?php echo date('d-M-Y', strtotime($student['dob'])); ?></td></tr>
+            <tr><td class="label">Date of Admission:</td><td class="value"><?php echo date('d-M-Y', strtotime($student['admission_date'])); ?></td></tr>
+            <tr><td class="label">Class Last Studied:</td><td class="value"><?php echo htmlspecialchars($student['class_name'] ?? 'N/A'); ?></td></tr>
+            <tr><td class="label">Date of Removal from Rolls:</td><td class="value"><?php echo date('d-M-Y', strtotime($removal_date)); ?></td></tr>
+            <tr><td class="label">Reason for Leaving:</td><td class="value"><?php echo htmlspecialchars($removal_cause); ?></td></tr>
+            <tr><td class="label">Conduct and Character:</td><td class="value"><?php echo htmlspecialchars($conduct); ?></td></tr>
+        </table>
 
- <?php
-            	 if(isset($_GET['registration_no']) && $_GET['registration_no']!="")
-				{
-					$_SESSION['registration_no']=$_GET['registration_no'];
-				}
-				
-				
-				if(isset($_POST['registration_no']) && $_POST['registration_no']!="")
-				{
-					$_SESSION['registration_no']=$_POST['registration_no'];
-				}
-				
-				// Check if registration_no is set in session
-				if(!isset($_SESSION['registration_no']) || empty($_SESSION['registration_no'])) {
-					echo '<div style="padding:20px;text-align:center;color:red;font-size:18px;">';
-					echo 'Error: No student registration number provided. Please access this page through <a href="entry_student_tc.php">Student TC Entry</a>.';
-					echo '</div></body></html>';
-					exit;
-				}
-				
-//$registration_no=$_SESSION['registration_no'];
-			  $id=$_SESSION['registration_no'];
-			    $names="select * from student_info where registration_no='".db_escape($_SESSION['registration_no'])."' and session='".(isset($_SESSION['session']) ? db_escape($_SESSION['session']) : '')."' ";
-			  if(isset($_SESSION['stream_id']) && $_SESSION['stream_id']!="")
-			  {
-				  $names.="and stream='".db_escape($_SESSION['stream_id'])."'";
-				  }
-				// echo $names;
-			   $values=db_query($names);
-			   $rows=db_fetch_array($values);
-			   
-			   if(!$rows) {
-				   echo '<div style="padding:20px;text-align:center;color:red;font-size:18px;">';
-				   echo 'Error: Student record not found. Please go back to <a href="entry_student_tc.php">Student TC Entry</a> and try again.';
-				   echo '</div></body></html>';
-				   exit;
-			   }
-			   
-			   $ArrOtherDetails=isset($_POST['other_details']) ? $_POST['other_details'] : [];
-			   $sql="SELECT * FROM school_detail";
-					$res=db_query($sql);
-				
-						$school_detail=db_fetch_array($res);
-						
-						$sql1="SELECT * FROM class where class_id='".$rows['class']."'";
-					$class=db_fetch_array(db_query($sql1));
-					$sql2="SELECT * FROM stream where stream_id='".$rows['stream']."'";
-					$stream=db_fetch_array(db_query($sql2));
-			    ?>
-<table width="100%"id="student" cellpadding="0" cellspacing="0">
+        <div style="margin-top: 60px; font-size: 18px; font-style: italic;">
+            Certified that the above information is in accordance with the School Records.
+        </div>
 
-<tr>
-<td width="100" colspan="2"><img src="school_logo/<?php echo $school_detail['school_logo'];?>" width="150" height="60" /></td>
-<td width="350" align="left" style="font-size:32px; font-weight:bold" colspan="2"><?php echo ucwords($school_detail['school_name']);?>
-</td>
-
-
-</tr>
-</table>
-
-<table width="100%"id="student1"  cellpadding="0" cellspacing="0">
-<tr>
-<td  align="center" colspan="4" style="font-size:22px;"> Student T.C.</td>
-
-</tr>
-
-<tr>
-<td>Scholar Register No.</td>
-<td width="300" align="left"><?php echo $rows['registration_no'];?>
-</td>
-<td >Admission Register No.</td>
-<td width="300"><?php echo $rows['student_id'];?></td>
-
-</tr>
-
-</table>
-<table width="100%" id="student1" cellpadding="0" cellspacing="0">
-<tr height="50px;"><td colspan="7" align="center">Record A</td></tr>
-
-<tr>
-<td colspan="2">Date Of Admission</td>
-<td colspan="2">Date of Removal</td>
-<td colspan="3">Case Of Removal</td>
-</tr>
-<tr>
-<td colspan="2"><?php echo $ArrOtherDetails[0];?></td>
-<td colspan="2"><?php echo $ArrOtherDetails[1];?></td>
-<td colspan="3" height="50px"><?php echo $ArrOtherDetails[2];?></td>
-</tr>
-</table>
-
-<!----------------------------------------------------------------------->
-
-<table width="100%" id="student1" cellpadding="0" cellspacing="0">
-<tr height="50px;"><td colspan="7" align="center">Record B</td></tr>
-<tr>
-<td >Name Of Scholar</td>
-<td >Date of Birth</td>
-<td >Age at date of first Admission</td>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="100" >
-<tr>
-<td  colspan="3" >Name occupation and address</td>
-</tr>
-<tr>
-<td  >Father </td>
-<td  >Mother </td>
-<td  >Guardian</td>
-</tr>
-
-</table>
-</td>
-<td width="150">The last school.if any which the scholar attend before joining this school</td>
-<td width="150" >The highest class form which the scholar was wounded was fit for promotion for leaving this school</td>
-<td >The Date of marriage</td>
-
-</tr>
-<tr>
-<td><?php echo $rows['name'];?></td>
-<td><?php echo $rows['dob'];?></td>
-<td><?php echo $ArrOtherDetails[3];?></td>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="40" >
-
-<tr>
-<td  ><?php echo $rows['f_name'];?></td>
-<td  ><?php echo $rows['m_name'];?> </td>
-<td  ><?php echo $rows['f_name'];?></td>
-</tr>
-
-</table>
-</td>
-<td><?php echo $ArrOtherDetails[4];?></td>
-<td><?php echo $ArrOtherDetails[5];?></td>
-<td><?php echo $ArrOtherDetails[6];?></td>
-</tr>
-
-
-</table>
-
-
-<table width="100%" id="student1" cellpadding="0" cellspacing="0">
-
-<tr height="50px;"><td colspan="7" align="center">Record C</td></tr>
-
-<tr>
-<td style="padding:0 0 0 0; border:0px;" ><table border="1" width="100%" height="100" >
-<tr>
-<td  colspan="2" >Addmission Or Promotion
-</td>
-</tr>
-<tr>
-<td  >class </td>
-<td  >Date</td>
-
-</tr>
-
-</table></td>
-<td >Date of passing standard or class from this school</td>
-
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="100" >
-<tr>
-<td  colspan="2" >Attendance
-</td>
-</tr>
-<tr>
-<td  >Number of school meetings </td>
-<td  >Number of school meetings in which present </td>
-
-</tr>
-
-</table>
-</td>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="100" >
-<tr>
-<td  colspan="2" >Rank In class
-</td>
-</tr>
-<tr>
-<td  >Number of scholars in class  </td>
-<td  >Please as shown by final examination in class </td>
-
-</tr>
-
-</table>
-</td>
-<td width="150">Subject Taken</td>
-<td width="150" colspan="2" >Conduct and work during school year </td>
-
-</tr>
-<tr>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="40" >
-
-<tr>
-<td  ><?php echo $ArrOtherDetails[7];?></td>
-<td  ><?php echo $ArrOtherDetails[8];?> </td>
-
-</tr>
-
-</table>
-</td>
-<td><?php echo $ArrOtherDetails[9];?></td>
-<td style="padding:0 0 0 0; border:0px;"><table border="1" width="100%" height="40" >
-
-<tr>
-<td  ><?php echo $ArrOtherDetails[10];?></td>
-<td  ><?php echo $ArrOtherDetails[11];?></td>
-
-</tr>
-
-</table></td>
-<td   style="padding:0 0 0 0; border:0px;" >
-<table border="1" width="100%" height="40" >
-
-<tr>
-<td  ><?php echo $ArrOtherDetails[12];?> </td>
-<td  ><?php echo $ArrOtherDetails[13];?> </td>
-
-</tr>
-
-</table>
-</td>
-<td><?php echo $ArrOtherDetails[14];?></td>
-<td colspan="2"><?php echo $ArrOtherDetails[15];?></td>
-
-</tr>
-
-</table>
-
-<!----------------------------------->
-
-
-<!----------------------------------->
-
-<!------------------------------------------------------------------>
-
-
-
-<table width="100%" id="student1">
-<tr >
-<td colspan="6" id="hidebutton" style="display:block;"> <a href="entry_student_tc.php"  style="text-decoration:none;"><input type="button" name="search" value="Back" class="btn_small btn_orange"></a>  <a href="#" onclick="return printdata()"  style="text-decoration:none; margin-left:50px;"><input type="button" name="search" value="Print" class="btn_small btn_orange"></a></td>
-</tr>
-
-</table>
-
-<script language="javascript">
-function printdata()
-{
-	document.getElementById('hidebutton').style.display='none';
-	javascript:window.print();
-	
-	return true;
-	}
-
-</script>
-
-
-<!------------------------------------------------------------------>
-
-
-
-
-
-
+        <div class="footer-section">
+            <div class="sig-box">Prepared By</div>
+            <div class="sig-box">Office Clerk</div>
+            <div class="sig-box">Principal Signature</div>
+        </div>
+    </div>
 </body>
 </html>

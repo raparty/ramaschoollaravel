@@ -1,160 +1,118 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-<?php 
-if(isset($_POST['submit']))
-{
-	$school_name = $_POST['school_name'];
-	$school_address = $_POST['school_address'];
-	$path="school_logo/";
-	    if(isset($_FILES['school_logo']['name'])&&$_FILES['school_logo']['name']!="")
-		{
-			$school_logo=$_FILES['school_logo']['name'];
-			
-			move_uploaded_file($_FILES['school_logo']['tmp_name'],$path.$school_logo);
-			$old_photo=$_POST['old_logo'];
-			
-			 @unlink($path.$old_photo);
-			
-			}
-			else
-			{
-				$old_photo=$_POST['old_logo'];
-				$school_logo=$old_photo;
-				
-			//move_uploaded_file($_FILES['school_logo']['tmp_name'],$path.$school_logo);
-				
-				}
-		
-	  $sql3="UPDATE school_detail SET `school_name` = '".$school_name."',`school_address` = '".$school_address."',`school_logo` = '".$school_logo."' where id='".$_GET['sid']."'";
-	$res3=db_query($sql3) or die("Error : " . db_error());
-	header("Location:school_detail.php?msg=3");
+
+// Enable error reporting to diagnose if the query fails
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+include_once("includes/school_setting_sidebar.php");
+
+$conn = Database::connection();
+$sid = isset($_GET['sid']) ? mysqli_real_escape_string($conn, (string)$_GET['sid']) : '';
+
+// Process Update Logic
+if(isset($_POST['submit'])) {
+    $school_name = mysqli_real_escape_string($conn, trim((string)$_POST['school_name']));
+    $school_address = mysqli_real_escape_string($conn, trim((string)$_POST['school_address']));
+    $path = "school_logo/";
+    
+    if(isset($_FILES['school_logo']['name']) && $_FILES['school_logo']['name'] != "") {
+        $school_logo = time() . "_" . $_FILES['school_logo']['name'];
+        move_uploaded_file($_FILES['school_logo']['tmp_name'], $path . $school_logo);
+        
+        // Remove old logo if it exists
+        $old_photo = $_POST['old_logo'];
+        if(!empty($old_photo) && file_exists($path . $old_photo)) {
+            @unlink($path . $old_photo);
+        }
+    } else {
+        $school_logo = $_POST['old_logo'];
+    }
+
+    // Updated to use your pluralized table 'school_details'
+    $sql_update = "UPDATE school_details SET 
+                   `school_name` = '$school_name', 
+                   `school_address` = '$school_address', 
+                   `school_logo` = '$school_logo' 
+                   WHERE id = '$sid'";
+    
+    if(mysqli_query($conn, $sql_update)) {
+        // JS redirect avoids the blank page issue caused by headers
+        echo "<script>window.location.href='school_detail.php?msg=3';</script>";
+        exit;
+    } else {
+        die("Update Error: " . mysqli_error($conn));
+    }
 }
 
-	
-		
-	$sql2="SELECT * FROM school_detail WHERE `id` = '" . $_GET['sid'] . "';";
-	$res2=db_query($sql2);	
-	$row2=db_fetch_array($res2);
-		
-  ?>
-<div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
-<?php include_once("includes/school_setting_sidebar.php");?>
+// Fetch existing data
+if(empty($sid)) {
+    echo "<script>window.location.href='school_detail.php';</script>";
+    exit;
+}
+
+$sql_fetch = "SELECT * FROM school_details WHERE `id` = '$sid'";
+$res_fetch = mysqli_query($conn, $sql_fetch);
+$row = mysqli_fetch_array($res_fetch);
+
+if(!$row) {
+    echo "<script>window.location.href='school_detail.php?error=notfound';</script>";
+    exit;
+}
+?>
 
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
+    <div id="content">
+        <div class="grid_container">
+            <h3 style="padding:10px 0 0 20px; color:#1c75bc">Institutional Identity</h3>
+            <div class="grid_12">
+                <div class="widget_wrap">
+                    <div class="widget_top">
+                        <h6>Edit School Information</h6>
+                    </div>
+                    <div class="widget_content" style="padding: 20px;">
+                        <form action="edit_school_detail.php?sid=<?php echo htmlspecialchars($sid); ?>" method="post" enctype="multipart/form-data">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label style="display:block; margin-bottom:5px; font-weight:bold;">School Name <span style="color:red;">*</span></label>
+                                    <input name="school_name" type="text" style="width:100%;" value="<?php echo htmlspecialchars((string)$row['school_name']); ?>" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label style="display:block; margin-bottom:5px; font-weight:bold;">School Address <span style="color:red;">*</span></label>
+                                    <input name="school_address" type="text" style="width:100%;" value="<?php echo htmlspecialchars((string)$row['school_address']); ?>" required />
+                                </div>
+                            </div>
 
-          
-			<div class="grid_12">
-				<div class="widget_wrap">
-					<h3 style="padding-left:20px; color:#0078D4">Edit school name</h3>
-                    
-                    <?php if($msg!=""){echo $msg; } ?>
-					<form action="" method="post" class="form_container left_label" enctype="multipart/form-data">
-							<ul>
-								<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title"> School Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="school_name" type="text" value="<?php echo $row2['school_name'];?>"/>
-											<span class=" label_intro">School name</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label style="display:block; margin-bottom:5px; font-weight:bold;">Update School Logo</label>
+                                    <input name="school_logo" type="file" style="width:100%;" accept="image/*" />
+                                    <input type="hidden" name="old_logo" value="<?php echo htmlspecialchars((string)$row['school_logo']); ?>">
+                                    <div style="margin-top: 10px;">
+                                        <small style="display:block; color:#666;">Current Logo:</small>
+                                        <img src="school_logo/<?php echo $row['school_logo']; ?>" width="60" height="60" style="border: 1px solid #ddd; border-radius: 4px;" />
+                                    </div>
+                                </div>
+                            </div>
 
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title"> School Address</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="school_address" type="text" value="<?php echo $row2['school_address'];?>"/>
-											<span class=" label_intro">School Address</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title"> School Logo</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="school_logo" type="file"/>
-											<span class=" label_intro">School image </span><img src="school_logo/<?php echo $row2['school_logo'];?>" width="50" height="50" /><input type="hidden" name="old_logo" value="<?php echo $row2['school_logo'];?>">
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-								<li>
-								<div class="form_grid_12">
-									<div class="form_input">
-										
-										<button type="submit" class="btn_small btn_blue" name="submit"><span>Save</span></button>
-										
-										<a href="school_detail.php"><button type="button" class="btn_small btn_orange"><span>Back</span></button></a>
-										
-									</div>
-								</div>
-								</li>
-							</ul>
-						</form>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                                <button type="submit" name="submit" class="btn_small btn_blue">
+                                    <span>Update Details</span>
+                                </button>
+                                <a href="school_detail.php" class="btn_small btn_orange" style="margin-left:10px;">
+                                    <span>Cancel</span>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<?php include_once("includes/footer.php");?>
+
+<?php include_once("includes/footer.php"); ?>

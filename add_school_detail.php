@@ -1,185 +1,96 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-<?php 
+
+// Enable error reporting to catch issues immediately
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+include_once("includes/school_setting_sidebar.php");
+
+$conn = Database::connection();
 $msg = "";
-if(isset($_POST['submit']))
-{
-	 $school_name = $_POST['school_name'];
-	 $school_address = $_POST['school_address'];
-	 $school_logo = "";
-	//$school_logo = $_POST['school_logo'];
-	
-	 $sql1="SELECT * FROM school_detail ";
-	$res1=db_query($sql1) or die("Error : " . db_error());
-	$num=db_num_rows($res1);
-	if($num==0)
-	{
-		if(isset($_FILES['school_logo']['name'])&&$_FILES['school_logo']['name']!="")
-		{
-			$school_logo=$_FILES['school_logo']['name'];
-			$path="school_logo/";
-			move_uploaded_file($_FILES['school_logo']['tmp_name'],$path.$school_logo);
-			
-			}
-		
-		if($_POST['school_name']!=""&&$_POST['school_address']!=""&&$school_logo!="")
-		{
-		 $sql3="INSERT INTO school_detail(school_name,school_address, school_logo) VALUES ('".$school_name."','".$school_address."', '".$school_logo."')";
-		$res3=db_query($sql3) or die("Error : " . db_error());
-		header("Location:school_detail.php?msg=1");
-		}else
-		{    header("location:add_school_detail.php?error=2");
-			
-			}
-		
-	}
-	else
-	{
-		header("location: add_school_detail.php?error=1");
-	}
-}
-else
-{
-	if(isset($_GET['msg']) && $_GET['msg']==1)
-	{
-		$msg = "<span style='color:#009900;'><h4> School Detail Added Successfully </h4></span>";
-	}
-	else if(isset($_GET['msg']) && $_GET['msg']==2)
-	{
-		$msg = "<span style='color:#009900;'><h4> School Detail Deleted Successfully </h4></span>";
-	}
-	else if(isset($_GET['msg']) && $_GET['msg']==3)
-	{
-		$msg = "<span style='color:#009900;'><h4> School Detail Updated Successfully </h4></span>";
-	}
-	else if(isset($_GET['error']) && $_GET['error']==1)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> School Detail Already Exists </h4></span>";
-	}
-	else if(isset($_GET['error']) && $_GET['error']==2)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> Please fill all details </h4></span>";
-	}
+
+if (isset($_POST['submit'])) {
+    $school_name = mysqli_real_escape_string($conn, trim((string)$_POST['school_name']));
+    $school_address = mysqli_real_escape_string($conn, trim((string)$_POST['school_address']));
+    
+    // Check if table exists and if any record is present
+    $sql_check = "SELECT * FROM school_details"; 
+    $res_check = mysqli_query($conn, $sql_check);
+    
+    if (!$res_check) {
+        $msg = "<div class='alert alert-danger'>Database Error: Table 'school_details' missing. Please run the SQL migration.</div>";
+    } elseif (mysqli_num_rows($res_check) == 0) {
+        $school_logo = "";
+        if (isset($_FILES['school_logo']['name']) && $_FILES['school_logo']['name'] != "") {
+            $school_logo = time() . "_" . $_FILES['school_logo']['name'];
+            $path = "school_logo/";
+            if (!is_dir($path)) { mkdir($path, 0775, true); }
+            move_uploaded_file($_FILES['school_logo']['tmp_name'], $path . $school_logo);
+        }
+
+        if (!empty($school_name) && !empty($school_address)) {
+            $sql_ins = "INSERT INTO school_details (school_name, school_address, school_logo) 
+                        VALUES ('$school_name', '$school_address', '$school_logo')";
+            
+            if (mysqli_query($conn, $sql_ins)) {
+                echo "<script>window.location.href='school_detail.php?msg=1';</script>";
+                exit;
+            } else {
+                $msg = "<div class='alert alert-danger'>Insert Failed: " . htmlspecialchars(mysqli_error($conn)) . "</div>";
+            }
+        } else {
+            $msg = "<div class='alert alert-danger'>Please fill in all required fields.</div>";
+        }
+    } else {
+        $msg = "<div class='alert alert-warning'>School details already exist. Please use the Edit page instead.</div>";
+    }
 }
 ?>
-<div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
-<?php include_once("includes/school_setting_sidebar.php");?>
 
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
-
-          
-			<div class="grid_12">
-				<div class="widget_wrap">
-					<h3 style="padding-left:20px; color:#0078D4">Add school name</h3>
-                    
-                    <?php if($msg!=""){echo $msg; } ?>
-					<form action="" method="post" class="form_container left_label" enctype="multipart/form-data">
-							<ul>
-								<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title"> School Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="school_name" type="text"/>
-											<span class=" label_intro">School name</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title"> School Address</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="school_address" type="text"/>
-											<span class=" label_intro">School Address</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title"> School Logo</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="school_logo" type="file"/>
-											<span class=" label_intro">School image </span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-								<li>
-								<div class="form_grid_12">
-									<div class="form_input">
-										
-										<button type="submit" class="btn_small btn_blue" name="submit"><span>Save</span></button>
-										
-										<a href="school_detail.php"><button type="button" class="btn_small btn_orange"><span>Back</span></button></a>
-										
-									</div>
-								</div>
-								</li>
-							</ul>
-						</form>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+    <div id="content">
+        <div class="grid_container">
+            <h3 style="padding:10px 0 0 20px; color:#1c75bc">Institutional Identity</h3>
+            <div class="grid_12">
+                <div class="widget_wrap">
+                    <div class="widget_top">
+                        <h6>Add School Information</h6>
+                    </div>
+                    <div class="widget_content" style="padding: 20px;">
+                        <?php if ($msg != "") echo $msg; ?>
+                        
+                        <form action="add_school_detail.php" method="post" enctype="multipart/form-data">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label style="display:block; margin-bottom:5px; font-weight:bold;">School Name <span style="color:red;">*</span></label>
+                                    <input name="school_name" type="text" style="width:100%;" placeholder="e.g. Hope School" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label style="display:block; margin-bottom:5px; font-weight:bold;">School Address <span style="color:red;">*</span></label>
+                                    <input name="school_address" type="text" style="width:100%;" placeholder="Location details" required />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label style="display:block; margin-bottom:5px; font-weight:bold;">Upload Logo</label>
+                                    <input name="school_logo" type="file" accept="image/*" />
+                                </div>
+                            </div>
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                                <button type="submit" name="submit" class="btn_small btn_blue"><span>Save Detail</span></button>
+                                <a href="school_detail.php" class="btn_small btn_orange" style="margin-left:10px;"><span>Cancel</span></a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<?php include_once("includes/footer.php");?>
+
+<?php include_once("includes/footer.php"); ?>

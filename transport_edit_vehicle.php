@@ -1,53 +1,41 @@
 <?php
 declare(strict_types=1);
-
-/**
- * ID 3.6: Edit Transport Vehicle
- * Fix: Standardized column mapping and removed SQL echos
- */
-
+require_once("includes/bootstrap.php");
 include_once("includes/header.php");
 include_once("includes/sidebar.php");
 
 $conn = Database::connection();
 $sid = isset($_GET['sid']) ? db_escape($_GET['sid']) : '';
+$msg = "";
 
-// 1. Process Update Logic
+// Process Update Logic
 if(isset($_POST['submit'])) {
     $vechile_number = db_escape($_POST['vechile_number']);
     $seats = db_escape($_POST['seat']);
     $route_id_str = isset($_POST['route_id']) ? implode(",", $_POST['route_id']) : "";
     
-    // Using standardized column names from the detail view
     $sql_update = "UPDATE transport_add_vechile SET vechile_no='$vechile_number', route_id='$route_id_str', no_of_seats='$seats' WHERE vechile_id='$sid'";
     
     if(db_query($sql_update)) {
-        header("Location:transport_vechile_detail.php?msg=3");
+        header("Location: transport_vechile_detail.php?msg=3");
         exit;
     } else {
-        die("Update Error: " . db_error());
+        $msg = "<div class='alert alert-danger'>Update Error: " . htmlspecialchars(db_error()) . "</div>";
     }
 }
 
-// 2. Fetch Data (Echos removed)
+// Fetch Data
 $sql_fetch = "SELECT * FROM transport_add_vechile WHERE vechile_id='$sid'";
 $res_fetch = db_query($sql_fetch);
 $row = db_fetch_array($res_fetch);
 
-// Logic to handle potential column name differences
+// Handle potential column name differences
 $display_number = $row['vechile_no'] ?? $row['vechile_number'] ?? '';
 $display_seats = $row['no_of_seats'] ?? $row['seat'] ?? '';
 ?>
 
 <div class="page_title">
-    <div class="top_search">
-        <form action="#" method="post">
-            <ul id="search_box">
-                <li><input name="" type="text" class="search_input" id="suggest1" placeholder="Search..."></li>
-                <li><input name="" type="submit" value="Search" class="search_btn"></li>
-            </ul>
-        </form>
-    </div>
+    <h3>Edit Vehicle</h3>
 </div>
 
 <?php include_once("includes/transport_setting_sidebar.php"); ?>
@@ -56,59 +44,59 @@ $display_seats = $row['no_of_seats'] ?? $row['seat'] ?? '';
     <div id="content">
         <div class="grid_container">
             <div class="grid_12">
-                <div class="widget_wrap">
-                    <h3 style="padding-left:20px; color:#0078D4">Edit Vehicle Detail</h3>
-                    
-                    <form action="#" method="post" class="form_container left_label">
-                        <ul>
-                            <li>
-                                <div class="form_grid_12">
-                                    <label class="field_title">Vehicle Number</label>
-                                    <div class="form_input">
-                                        <div class="form_grid_5 alpha">
-                                            <input name="vechile_number" type="text" value="<?php echo htmlspecialchars((string)$display_number); ?>"/>
-                                        </div>
-                                    </div>
+                <div class="widget_wrap enterprise-card">
+                    <div class="widget_top">
+                        <h6>Edit Vehicle Detail</h6>
+                    </div>
+                    <div class="widget_content p-4">
+                        <?php if($msg != "") echo $msg; ?>
+                        
+                        <form action="transport_edit_vehicle.php?sid=<?php echo htmlspecialchars($sid); ?>" method="post">
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Vehicle Number <span class="text-danger">*</span></label>
+                                    <input name="vechile_number" type="text" class="form-control" value="<?php echo htmlspecialchars((string)$display_number); ?>" required />
                                 </div>
-                            </li>
-                            <li>
-                                <div class="form_grid_12">
-                                    <label class="field_title">Select Route(s)</label>
-                                    <div class="form_input">
-                                        <select name="route_id[]" style="width:300px;" multiple class="chzn-select">
-                                            <?php 
-                                            $current_routes = explode(",", (string)$row['route_id']);
-                                            $sql_r = "SELECT * FROM transport_add_route";
-                                            $res_r = db_query($sql_r);
-                                            while($row_r = db_fetch_array($res_r)) {
-                                                $selected = in_array($row_r['route_id'], $current_routes) ? 'selected="selected"' : '';
-                                                echo "<option $selected value='".$row_r['route_id']."'>".htmlspecialchars($row_r['route_name'])."</option>";
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Number of Seats <span class="text-danger">*</span></label>
+                                    <input name="seat" type="number" class="form-control" value="<?php echo htmlspecialchars((string)$display_seats); ?>" required />
                                 </div>
-                            </li>
-                            <li>
-                                <div class="form_grid_12">
-                                    <label class="field_title">No of Seats</label>
-                                    <div class="form_input">
-                                        <div class="form_grid_5 alpha">
-                                            <input name="seat" type="text" value="<?php echo htmlspecialchars((string)$display_seats); ?>"/>
-                                        </div>
-                                    </div>
+                            </div>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold">Select Route(s)</label>
+                                    <select name="route_id[]" class="form-control" multiple size="5" style="height: auto;">
+                                        <?php 
+                                        $current_routes = explode(",", (string)$row['route_id']);
+                                        $sql_r = "SELECT * FROM transport_add_route ORDER BY route_name ASC";
+                                        $res_r = db_query($sql_r);
+                                        while($row_r = db_fetch_array($res_r)) {
+                                            $selected = in_array($row_r['route_id'], $current_routes) ? 'selected' : '';
+                                            echo "<option $selected value='".$row_r['route_id']."'>".htmlspecialchars($row_r['route_name'])."</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <small class="form-text text-muted">Hold Ctrl (or Cmd) to select multiple routes.</small>
                                 </div>
-                            </li>
-                            <li>
-                                <div class="form_grid_12">
-                                    <div class="form_input">
-                                        <button type="submit" name="submit" class="btn_small btn_blue"><span>Update</span></button>
-                                        <a href="transport_vechile_detail.php" class="btn_small btn_orange" style="text-decoration:none; padding:7px 20px; display:inline-block;"><span>Back</span></a>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </form>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" name="submit" class="btn-fluent-primary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:6px;">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                                    </svg>
+                                    Update Vehicle
+                                </button>
+                                <a href="transport_vechile_detail.php" class="btn-fluent-secondary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:6px;">
+                                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+                                    </svg>
+                                    Back
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

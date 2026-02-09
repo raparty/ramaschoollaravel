@@ -12,8 +12,12 @@ if(isset($_POST['submit'])) {
     $vechile_no = mysqli_real_escape_string($conn, trim((string)$_POST['number']));
     $seats = (int)($_POST['seat'] ?? 0);
     
-    // Convert multiple selected routes into a comma-separated string
-    $route_ids = isset($_POST['route_id']) ? implode(",", $_POST['route_id']) : "";
+    // Escape each route ID before joining
+    $route_ids_raw = isset($_POST['route_id']) ? $_POST['route_id'] : [];
+    $route_ids_escaped = array_map(function($id) use ($conn) {
+        return mysqli_real_escape_string($conn, $id);
+    }, $route_ids_raw);
+    $route_ids = implode(",", $route_ids_escaped);
 
     if(!empty($vechile_no)) {
         // Check if vehicle already exists
@@ -71,16 +75,26 @@ if(isset($_POST['submit'])) {
                             <div class="row g-3 mb-4">
                                 <div class="col-md-12">
                                     <label class="form-label fw-bold">Select Route(s)</label>
-                                    <select name="route_id[]" class="form-control" multiple size="5" style="height: auto;">
+                                    <div class="border rounded p-3 bg-light" style="max-height: 250px; overflow-y: auto;">
                                         <?php 
                                         $sql_r = "SELECT * FROM transport_add_route ORDER BY route_name ASC";
                                         $res_r = mysqli_query($conn, $sql_r);
-                                        while($row_r = mysqli_fetch_assoc($res_r)) {
-                                            echo "<option value='{$row_r['route_id']}'>".htmlspecialchars($row_r['route_name'])."</option>";
+                                        
+                                        if($res_r && mysqli_num_rows($res_r) > 0) {
+                                            while($row_r = mysqli_fetch_assoc($res_r)) {
+                                                echo '<div class="form-check mb-2">';
+                                                echo '<input class="form-check-input" type="checkbox" name="route_id[]" value="'.$row_r['route_id'].'" id="route_'.$row_r['route_id'].'">';
+                                                echo '<label class="form-check-label" for="route_'.$row_r['route_id'].'">';
+                                                echo htmlspecialchars($row_r['route_name']);
+                                                echo '</label>';
+                                                echo '</div>';
+                                            }
+                                        } else {
+                                            echo '<p class="text-muted mb-0">No routes available. Please add routes first.</p>';
                                         }
                                         ?>
-                                    </select>
-                                    <small class="form-text text-muted">Hold Ctrl (or Cmd) to select multiple routes.</small>
+                                    </div>
+                                    <small class="form-text text-muted">Select one or more routes for this vehicle.</small>
                                 </div>
                             </div>
 

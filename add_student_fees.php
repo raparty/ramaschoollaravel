@@ -1,296 +1,131 @@
 <?php
+// 1. Force Error Reporting to stop the blank page
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
-declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-<?php 
-if(isset($_POST['submit']))
-{
-	// $package_name = $_POST['package_name'];
-	 //$class_id = $_POST['class_id'];
-	//$school_logo = $_POST['school_logo'];
-	if($_POST['pending_amount']>=$_POST['fees_amount'])
-	{
-	 $sql1="SELECT * FROM student_fees_detail where registration_no='".$_POST['registration_no']."' and fees_term='".$_POST['fees_term']."' and session='".$_SESSION['session']."'";
-	$res1=db_query($sql1) or die("Error : " . db_error());
-	$num=db_num_rows($res1);
-	
-	if($num==0)
-	{
-		
-		$sql1_rept="SELECT max(student_fees_id) FROM student_fees_detail";
-		$recpt_no=db_fetch_array(db_query($sql1_rept));
-		$reciept_no="FEES-".$recpt_no[0]+1;
-		if($_POST['registration_no']!=""&&$_POST['fees_term']!=""&&$_POST['fees_amount']!="")
-		{
-		 $sql3="INSERT INTO student_fees_detail(registration_no,reciept_no,fees_term,fees_amount,session) VALUES ('".$_POST['registration_no']."','".$reciept_no."','".$_POST['fees_term']."','".$_POST['fees_amount']."','".$_SESSION['session']."')";
-		$res3=db_query($sql3) or die("Error : " . db_error());
-		header("Location:fees_reciept_byterm.php?registration_no=".$_POST['registration_no']."&&fees_term=".$_POST['fees_term']);
-		}else
-		{    header("location:add_student_fees.php?error=2");
-			
-			}
-		
-	}
-	else
-	{
-		header("location:add_student_fees.php?error=1");
-	}
-	}
-	else
-	{
-		header("location:add_student_fees.php?error=3");
-	}
-}
-else
-{
-	if($_GET['msg']==1)
-	{
-		$msg = "<span style='color:#009900;'><h4> Student Fees  Detail Added Successfully </h4></span>";
-	}
-	if($_GET['msg']==2)
-	{
-		$msg = "<span style='color:#009900;'><h4>Student Fees Detail Deleted Successfully </h4></span>";
-	}
-	if($_GET['msg']==3)
-	{
-		$msg = "<span style='color:#009900;'><h4> Student Fees Detail Updated Successfully </h4></span>";
-	}
-	else if($_GET['error']==1)
-	{
-		$msg = "<span style='color:#FF0000;'><h4>Student Fees Detail Already Exists </h4></span>";
-	}
-	else if($_GET['error']==2)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> Please fill all detail </h4></span>";
-	}
-	else if($_GET['error']==3)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> Deposit fees amount is greater than  pending amount.</h4></span>";
-	}
+require_once("includes/bootstrap.php");
+require_once("includes/header.php");
+require_once("includes/sidebar.php");
+
+$conn = Database::connection(); // Get active DB connection
+
+// 2. Logic to process payment
+$msg = "";
+if (isset($_POST['submit'])) {
+    $reg_no = mysqli_real_escape_string($conn, $_POST['registration_no']);
+    $amount = (float)$_POST['fees_amount'];
+    $pending = (float)$_POST['pending_amount'];
+    $term_id = (int)$_POST['fees_term'];
+
+    if ($amount > 0 && $amount <= $pending) {
+        $res_max = mysqli_query($conn, "SELECT MAX(id) as max_id FROM student_fees_detail");
+        $max_row = mysqli_fetch_assoc($res_max);
+        $receipt_no = "FEES-" . (($max_row['max_id'] ?? 0) + 1001);
+
+        $sql_in = "INSERT INTO student_fees_detail(registration_no, reciept_no, fees_term, fees_amount, payment_date) 
+                   VALUES ('$reg_no', '$receipt_no', '$term_id', '$amount', NOW())";
+        
+        if (mysqli_query($conn, $sql_in)) {
+            echo "<script>window.location='fees_receipt.php?receipt_no=$receipt_no';</script>";
+            exit;
+        }
+    } else {
+        $msg = "<div style='color:red; font-weight:bold; margin-bottom:20px;'>Error: Amount exceeds pending balance or is zero.</div>";
+    }
 }
 
-if($_GET['registration_no']!="")
-{
-$_SESSION['registration_no']=$_GET['registration_no'];
+// 3. Fetch student from 'admissions' table
+$reg_no = $_REQUEST['registration_no'] ?? '';
+$student = null;
+$pending_balance = 0;
+
+if (!empty($reg_no)) {
+    $safe_reg = mysqli_real_escape_string($conn, $reg_no);
+    $sql = "SELECT a.*, c.class_name FROM admissions a 
+            LEFT JOIN classes c ON a.class_id = c.id 
+            WHERE a.reg_no = '$safe_reg' LIMIT 1";
+    $result = mysqli_query($conn, $sql);
+    $student = mysqli_fetch_assoc($result);
+
+    if ($student) {
+        // Calculate Total Paid
+        $paid_res = mysqli_query($conn, "SELECT SUM(fees_amount) as paid FROM student_fees_detail WHERE registration_no = '$safe_reg'");
+        $paid_row = mysqli_fetch_assoc($paid_res);
+        $total_paid = (float)($paid_row['paid'] ?? 0);
+        
+        // Use 'admission_fee' as total package from admissions module
+        $total_package = (float)($student['admission_fee'] ?? 0);
+        $pending_balance = $total_package - $total_paid;
+    }
 }
-
-
-if($_POST['registration_no']!="")
-{
-$_SESSION['registration_no']=$_POST['registration_no'];
-}
-$registration_no=$_SESSION['registration_no'];
-?>
-<div class="page_title">
-	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
-<?php include_once("includes/fees_setting_sidebar.php");?>
-
-<div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
-
-          
-			<div class="grid_12">
-				<div class="widget_wrap">
-					<h3 style="padding-left:20px; color:#0078D4">Add student  fees </h3>
-                    
-                    <?php if($msg!=""){echo $msg; } ?>
-					<form action="" method="post" class="form_container left_label" enctype="multipart/form-data">
-							<ul>
-								<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Registration no.</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="registration_no"   onBlur="getCheckreg('checkregno.php?registration_no='+this.value)" type="text" value="<?php echo $registration_no;?>" />
-                                            
-											<span class=" label_intro">Registration number</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                
-                                
-                                
-                                <?php 
-//$registration_no=$_GET['registration_no'];
-//$fees_term=$_GET['fees_term'];
- $studentinfo="select * from student_info where registration_no='".$registration_no."' and session='".$_SESSION['session']."'";
-$row=db_fetch_array(db_query($studentinfo));
-
-
-	      $sql_pending="select sum(fees_amount) from student_fees_detail where registration_no='".$registration_no."'  and session='".$_SESSION['session']."'";
-	$deposit_amount=db_fetch_array(db_query($sql_pending));
-	
-	
-
-
-//$student_fees_detail="select ";
 ?>
 
-<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Student Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="name" type="text" value="<?php echo $row['name'];?>"/>
-											<span class=" label_intro">student name</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
+<div style="margin-left: 280px !important; padding: 40px !important; display: block !important;">
+    <div class="page_title" style="margin-bottom: 25px;">
+        <h3 style="color: #1c75bc; font-size: 26px;">Fee Collection Form</h3>
+    </div>
 
-									
-									<div class="form_input">
+    <?php echo $msg; ?>
 
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title"> Class Name </label>
-									<div class="form_input">
-										<select style=" width:300px" name="class" class="chzn-select" tabindex="13">
-											
-							<?php
-							 $sql="SELECT * FROM class  where class_id='".$row['class']."'";
-	                           $res=db_query($sql);
-								while($row1=db_fetch_array($res))
-								{
-									?>
-									<option value="<?php echo $row1['class_id']; ?>"><?php echo $row1['class_name']; ?></option>
-									<?php
-								}
-							?>
-										</select>
-									</div>
-								</div>
-								</li>
-                                <?php if($row['stream']!=0){?>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Stream</label>
-									<div class="form_input">
-										<select style=" width:300px" name="stream" class="chzn-select" tabindex="13">
-										
-                                        	<?php
-							 $sql="SELECT * FROM stream where stream_id='".$row['stream']."' ";
-	                           $res=db_query($sql);
-								while($row2=db_fetch_array($res))
-								{
-									?>
-									<option value="<?php echo $row2['stream_id']; ?>"><?php echo $row2['stream_name']; ?></option>
-									<?php
-								}
-							?>
-										</select>
-									</div>
-								</div>
-								</li>
-								
-								<?php } ?>
-								<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">  Fees Amount</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-                                        <?php
-							 $sql="SELECT * FROM fees_package where package_id='".$row['admission_fee']."' ";
-	                           $res=db_query($sql);
-								$row3=db_fetch_array($res);?>
-											<input name="fees_amount" type="text"/>
-											<span class=" label_intro" style="color:#F00;">pending fees amount is:<?php echo $pending_amount=$row3['package_fees']-$deposit_amount[0];?> <input name="pending_amount" type="hidden" value="<?php echo $pending_amount=$row3['package_fees']-$deposit_amount[0];?>"/></span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
+    <?php if (!$student): ?>
+        <div class="azure-card" style="padding: 30px; border: 1px solid #ffcc00; background: #fffdf2;">
+            <strong>No student selected.</strong> Please search for a student first.
+        </div>
+    <?php else: ?>
+        <div class="azure-card" style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+            <form action="add_student_fees.php" method="post">
+                <input type="hidden" name="registration_no" value="<?php echo htmlspecialchars($reg_no); ?>">
+                <input type="hidden" name="pending_amount" value="<?php echo $pending_balance; ?>">
 
-									
-									<div class="form_input">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                    <div>
+                        <label style="font-weight:600; display:block; margin-bottom:5px;">Registration No</label>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($reg_no); ?>" readonly style="background:#f1f5f9;">
+                    </div>
+                    <div>
+                        <label style="font-weight:600; display:block; margin-bottom:5px;">Student Name</label>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($student['student_name']); ?>" readonly style="background:#f1f5f9;">
+                    </div>
+                    <div>
+                        <label style="font-weight:600; display:block; margin-bottom:5px;">Class</label>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($student['class_name'] ?? 'N/A'); ?>" readonly style="background:#f1f5f9;">
+                    </div>
+                    <div>
+                        <label style="font-weight:600; color:red; display:block; margin-bottom:5px;">Pending Balance</label>
+                        <input type="text" class="form-control" value="<?php echo number_format($pending_balance, 2); ?>" readonly style="background:#fff5f5; border-color:#feb2b2; font-weight:700;">
+                    </div>
+                </div>
 
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title"> Fees Term</label>
-									<div class="form_input">
-										<select style=" width:300px" name="fees_term" class="chzn-select" tabindex="13">
-											<option value="" selected="selected"> - Select fees term  - </option>
-							<?php
-							 $sql="SELECT * FROM fees_term ";
-	                           $res=db_query($sql);
-								while($row=db_fetch_array($res))
-								{
-									?>
-									<option value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?></option>
-									<?php
-								}
-							?>
-										</select>
-									</div>
-								</div>
-								</li>
-                                
-                                
-                                
-                                
-                                
-								<li>
-								<div class="form_grid_12">
-									<div class="form_input">
-										
-										<button type="submit" class="btn_small btn_blue" name="submit"><span>Save</span></button>
-										
-										<a href="fees_manager.php"><button type="button" class="btn_small btn_orange"><span>Back</span></button></a>
-										
-									</div>
-								</div>
-								</li>
-							</ul>
-						</form>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 1px solid #eee; padding-top: 25px;">
+                    <div class="form_group">
+                        <label style="font-weight:600; display:block; margin-bottom:5px;">Fee Term <span style="color:red;">*</span></label>
+                        <select name="fees_term" class="form-control" required>
+                            <option value="">-- Select Term --</option>
+                            <?php
+                            $terms = mysqli_query($conn, "SELECT * FROM fees_term");
+                            while ($t = mysqli_fetch_assoc($terms)) {
+                                echo "<option value='{$t['id']}'>{$t['term_name']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form_group">
+                        <label style="font-weight:600; display:block; margin-bottom:5px;">Amount to Pay <span style="color:red;">*</span></label>
+                        <input type="number" name="fees_amount" step="0.01" class="form-control" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; text-align: right;">
+                    <button type="submit" name="submit" class="btn-fluent-primary" style="padding: 12px 40px;">Post Payment</button>
+                </div>
+            </form>
+        </div>
+    <?php endif; ?>
 </div>
-<?php include_once("includes/footer.php");?>
+
+<style>
+    .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+</style>
+
+<?php require_once("includes/footer.php"); ?>

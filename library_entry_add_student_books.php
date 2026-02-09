@@ -39,7 +39,7 @@ if (isset($_POST['submit'])) {
                     VALUES ('$reg_no', '$book_no', '$issue_dt', '1', '$session')";
         
         if (mysqli_query($conn, $sql_ins)) {
-            echo "<script>window.location.href='library_student_books_manager.php?msg=1';</script>";
+            header("Location: library_student_books_manager.php?msg=1");
             exit;
         } else {
             $msg = "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
@@ -97,7 +97,7 @@ include_once("includes/library_setting_sidebar.php");
 										class="form-control" 
 										placeholder="Enter Registration Number"
 										value="<?php echo htmlspecialchars((string)$registration_no); ?>"
-										onBlur="window.location.href='library_entry_add_student_books.php?registration_no='+this.value"
+										onBlur="window.location.href='library_entry_add_student_books.php?registration_no='+encodeURIComponent(this.value)"
 										required
 									/>
 								</div>

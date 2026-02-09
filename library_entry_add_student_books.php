@@ -3,77 +3,70 @@ declare(strict_types=1);
 
 require_once("includes/bootstrap.php");
 
+$conn = Database::connection();
 $msg = "";
-// Handle form submission (before headers)
-if(isset($_POST['submit']))
-{
-	$registration_no = trim((string)($_POST['registration_no'] ?? ''));
-	$fees_term = trim((string)($_POST['fees_term'] ?? ''));
-	$fees_amount = trim((string)($_POST['fees_amount'] ?? ''));
-	$pending_amount = (float)($_POST['pending_amount'] ?? 0);
-	$fees_amount_value = (float)($fees_amount !== '' ? $fees_amount : 0);
 
-	$registration_no_safe = db_escape($registration_no);
-	$fees_term_safe = db_escape($fees_term);
-	$fees_amount_safe = db_escape($fees_amount);
+// Fetch student details if registration number is provided
+$registration_no = $_REQUEST['registration_no'] ?? $_SESSION['registration_no'] ?? '';
+$student = null;
 
-	if($pending_amount >= $fees_amount_value)
-	{
-		$sql1="SELECT * FROM student_fees_detail where registration_no='".$registration_no_safe."' and fees_term='".$fees_term_safe."' and session='".$_SESSION['session']."'";
-		$res1=db_query($sql1) or die("Error : " . db_error());
-		$num=db_num_rows($res1);
-		if($num==0)
-		{
-			if($registration_no_safe!=""&&$fees_term_safe!=""&&$fees_amount_safe!="")
-			{
-				$sql3="INSERT INTO student_fees_detail(registration_no,fees_term,fees_amount,session) VALUES ('".$registration_no_safe."','".$fees_term_safe."','".$fees_amount_safe."','".$_SESSION['session']."')";
-				$res3=db_query($sql3) or die("Error : " . db_error());
-				header("Location:fees_manager.php?msg=1");
-			}else
-			{
-				header("location:add_student_fees.php?error=2");
-			}
-		}
-		else
-		{
-			header("location:add_student_fees.php?error=1");
-		}
-	}
-	else
-	{
-		header("location:add_student_fees.php?error=3");
-	}
+if ($registration_no) {
+    $_SESSION['registration_no'] = $registration_no;
+    $reg_safe = mysqli_real_escape_string($conn, (string)$registration_no);
+    $sql_std = "SELECT s.*, c.class_name FROM student_info s 
+                LEFT JOIN classes c ON s.class_id = c.id 
+                WHERE s.registration_no='$reg_safe'";
+    $res_std = mysqli_query($conn, $sql_std);
+    $student = mysqli_fetch_assoc($res_std);
 }
-else
-{
-	if(isset($_GET['msg']) && $_GET['msg']==1)
-	{
-		$msg = "<div class='alert alert-success'>Student Book Detail Added Successfully</div>";
-	}
-	if(isset($_GET['msg']) && $_GET['msg']==2)
-	{
-		$msg = "<div class='alert alert-success'>Student Book Detail Deleted Successfully</div>";
-	}
-	if(isset($_GET['msg']) && $_GET['msg']==3)
-	{
-		$msg = "<div class='alert alert-success'>Student Book Detail Updated Successfully</div>";
-	}
-	else if(isset($_GET['error']) && $_GET['error']==1)
-	{
-		$msg = "<div class='alert alert-danger'>Student Book Detail Already Exists</div>";
-	}
-	else if(isset($_GET['error']) && $_GET['error']==2)
-	{
-		$msg = "<div class='alert alert-danger'>Please fill all detail</div>";
-	}
-	else if(isset($_GET['error']) && $_GET['error']==3)
-	{
-		$msg = "<div class='alert alert-danger'>Deposit fees amount is greater than pending amount.</div>";
-	}
+
+// Handle form submission (before headers)
+if (isset($_POST['submit'])) {
+    $reg_no = mysqli_real_escape_string($conn, (string)$_POST['registration_no']);
+    $book_no = mysqli_real_escape_string($conn, (string)$_POST['book_number']);
+    $issue_dt = date('Y-m-d', strtotime((string)$_POST['issue_date']));
+    $session = mysqli_real_escape_string($conn, (string)$_SESSION['session']);
+
+    // Check if book is already issued
+    $check_sql = "SELECT * FROM student_books_details 
+                  WHERE book_number='$book_no' AND booking_status='1'";
+    $check_res = mysqli_query($conn, $check_sql);
+    
+    if (mysqli_num_rows($check_res) > 0) {
+        $msg = "<div class='alert alert-danger'>This book is already issued to another student</div>";
+    } else {
+        $sql_ins = "INSERT INTO student_books_details (registration_no, book_number, issue_date, booking_status, session) 
+                    VALUES ('$reg_no', '$book_no', '$issue_dt', '1', '$session')";
+        
+        if (mysqli_query($conn, $sql_ins)) {
+            echo "<script>window.location.href='library_student_books_manager.php?msg=1';</script>";
+            exit;
+        } else {
+            $msg = "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
+        }
+    }
+}
+
+// Handle success/error messages from redirects
+if (isset($_GET['msg']) && $_GET['msg']==1) {
+    $msg = "<div class='alert alert-success'>Student Book Issued Successfully</div>";
+}
+if (isset($_GET['msg']) && $_GET['msg']==2) {
+    $msg = "<div class='alert alert-success'>Book Record Deleted Successfully</div>";
+}
+if (isset($_GET['msg']) && $_GET['msg']==3) {
+    $msg = "<div class='alert alert-success'>Book Record Updated Successfully</div>";
+}
+if (isset($_GET['error']) && $_GET['error']==1) {
+    $msg = "<div class='alert alert-danger'>Book is already issued</div>";
+}
+if (isset($_GET['error']) && $_GET['error']==2) {
+    $msg = "<div class='alert alert-danger'>Please fill all required fields</div>";
 }
 
 include_once("includes/header.php");
 include_once("includes/sidebar.php");
+include_once("includes/library_setting_sidebar.php");
 ?>
 
 <div class="page_title">
@@ -86,12 +79,12 @@ include_once("includes/sidebar.php");
 			<div class="grid_12">
 				<div class="widget_wrap enterprise-card">
 					<div class="widget_top">
-						<h6>Add Student Book Detail</h6>
+						<h6>Issue Book to Student</h6>
 					</div>
 					<div class="widget_content">
 						<?php if($msg!=""){echo $msg; } ?>
 						
-						<form action="library_add_student_books.php" method="post" class="p-4" enctype="multipart/form-data">
+						<form action="library_entry_add_student_books.php" method="post" class="p-4">
 							<div class="row mb-4">
 								<div class="col-md-5">
 									<label for="registration_no" class="form-label fw-bold">
@@ -103,7 +96,8 @@ include_once("includes/sidebar.php");
 										type="text" 
 										class="form-control" 
 										placeholder="Enter Registration Number"
-										onBlur="getCheckreg('checkregno.php?registration_no='+this.value)" 
+										value="<?php echo htmlspecialchars((string)$registration_no); ?>"
+										onBlur="window.location.href='library_entry_add_student_books.php?registration_no='+this.value"
 										required
 									/>
 								</div>
@@ -120,14 +114,57 @@ include_once("includes/sidebar.php");
 								</div>
 							</div>
 							
+							<?php if ($student): ?>
+							<div class="row mb-4">
+								<div class="col-md-6">
+									<label class="form-label fw-bold">Student Name</label>
+									<input type="text" class="form-control" value="<?php echo htmlspecialchars($student['name'] ?? 'N/A'); ?>" readonly style="background:#f1f5f9;">
+								</div>
+								<div class="col-md-6">
+									<label class="form-label fw-bold">Class</label>
+									<input type="text" class="form-control" value="<?php echo htmlspecialchars($student['class_name'] ?? 'N/A'); ?>" readonly style="background:#f1f5f9;">
+								</div>
+							</div>
+							
+							<hr class="my-4">
+							
+							<div class="row mb-4">
+								<div class="col-md-6">
+									<label for="book_number" class="form-label fw-bold">
+										Book Number <span class="text-danger">*</span>
+									</label>
+									<input 
+										name="book_number" 
+										id="book_number"
+										type="text" 
+										class="form-control" 
+										placeholder="e.g. BK-101"
+										required
+									/>
+								</div>
+								<div class="col-md-6">
+									<label for="issue_date" class="form-label fw-bold">
+										Issue Date <span class="text-danger">*</span>
+									</label>
+									<input 
+										name="issue_date" 
+										id="issue_date"
+										type="text" 
+										class="form-control datepicker" 
+										value="<?php echo date('m/d/Y'); ?>"
+										required
+									/>
+								</div>
+							</div>
+							
 							<hr class="my-4">
 							
 							<div class="d-flex gap-2">
-								<button type="submit" name="submit12" class="btn-fluent-primary">
+								<button type="submit" name="submit" class="btn-fluent-primary">
 									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:6px;">
 										<path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
 									</svg>
-									Save
+									Issue Book
 								</button>
 								<a href="library_student_books_manager.php" class="btn-fluent-secondary">
 									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:6px;">
@@ -136,6 +173,11 @@ include_once("includes/sidebar.php");
 									Back
 								</a>
 							</div>
+							<?php else: ?>
+							<div class="alert alert-info">
+								<strong>Please enter a registration number</strong> or search for a student to issue a book.
+							</div>
+							<?php endif; ?>
 						</form>
 					</div>
 				</div>

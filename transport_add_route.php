@@ -1,150 +1,99 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-<?php 
-if(isset($_POST['submit']))
-{
-	
-	 $sql1="SELECT * FROM transport_add_route where route_name='".$_POST['destination']."'";
-	$res1=db_query($sql1) or die("Error : " . db_error());
-	$num=db_num_rows($res1);
-	if($num==0)
-	{
-		
-		
-		if($_POST['destination']!="")
-		{
-		 $sql3="INSERT INTO transport_add_route(route_name,cost) VALUES ('".$_POST['destination']."','".$_POST['cost']."')";
-		$res3=db_query($sql3) or die("Error : " . db_error());
-		header("Location:transport_add_route.php?msg=1");
-		}else
-		{    header("location:transport_add_route.php?error=2");
-			
-			}
-		
-	}
-	else
-	{
-		$msg = "<span style='color:#FF0000;'><h4> This is all ready exist </h4></span>";
 
-	}
+/**
+ * ID 3.2: Add Transport Route
+ * Fix: Added Debugger and standardized DB connection to fix blank page
+ */
+
+// 1. THE DEBUGGER: Force errors to show on screen
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+require_once("includes/bootstrap.php");
+require_once("includes/header.php");
+require_once("includes/sidebar.php");
+
+$conn = Database::connection(); // Standardized connection
+$msg = "";
+
+// 2. FORM PROCESSING LOGIC
+if(isset($_POST['submit'])) {
+    // Sanitize inputs
+    $destination = mysqli_real_escape_string($conn, trim((string)($_POST['destination'] ?? '')));
+    $cost = mysqli_real_escape_string($conn, trim((string)($_POST['cost'] ?? '0')));
+    
+    if(!empty($destination)) {
+        // Check if table exists to prevent crash
+        $table_check = mysqli_query($conn, "SHOW TABLES LIKE 'transport_add_route'");
+        if(mysqli_num_rows($table_check) == 0) {
+            die("Critical Error: Table 'transport_add_route' does not exist in the database.");
+        }
+
+        // Check for duplicates
+        $check = mysqli_query($conn, "SELECT * FROM transport_add_route WHERE route_name='$destination'");
+        if (!$check) { die("Query Error: " . mysqli_error($conn)); }
+
+        if(mysqli_num_rows($check) == 0) {
+            $sql = "INSERT INTO transport_add_route(route_name, cost) VALUES ('$destination', '$cost')";
+            if(mysqli_query($conn, $sql)) {
+                // Success: Redirect back to the list
+                echo "<script>window.location='transport_route_detail.php?msg=1';</script>";
+                exit;
+            } else {
+                die("Insert Error: " . mysqli_error($conn));
+            }
+        } else {
+            $msg = "<div class='alert fluent-danger'>This route destination already exists.</div>";
+        }
+    } else {
+        $msg = "<div class='alert fluent-danger'>Please enter a destination name.</div>";
+    }
 }
-else
-{
-	if($_GET['msg']==1)
-	{
-		$msg = "<span style='color:#009900;'><h4> Section Detail Added Successfully </h4></span>";
-	}
-	if($_GET['msg']==2)
-	{
-		$msg = "<span style='color:#009900;'><h4>Section Detail Deleted Successfully </h4></span>";
-	}
-	if($_GET['msg']==3)
-	{
-		$msg = "<span style='color:#009900;'><h4> Section Detail Updated Successfully </h4></span>";
-	}
-	else if($_GET['error']==1)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> Route Detail Already Exists </h4></span>";
-	}
-	else if($_GET['error']==2)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> Please fill all detail </h4></span>";
-	}
-}
-
-
 ?>
-<div class="page_title">
-	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
-<?php include_once("includes/transport_setting_sidebar.php");?>
 
-<div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
+<style>
+    #container, #content, .grid_container, .grid_12 { all: unset !important; display: block !important; }
+    .transport-form-layout {
+        margin-left: 270px !important; 
+        padding: 40px !important;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
+    .form-card {
+        background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+        padding: 40px; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .fluent-input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 20px; }
+    .fluent-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 15px; margin-bottom: 20px; }
+</style>
 
-          
-			<div class="grid_12">
-				<div class="widget_wrap">
-					<h3 style="padding-left:20px; color:#0078D4">Add New Route</h3> <?php if($msg!=""){echo $msg; } ?>
-					<form action="#" method="post" class="form_container left_label">
-							<ul>
-								<li>
-								<div class="form_grid_12">
-									<label class="field_title">Desitation</label>
-									 <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="destination" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
+<div class="transport-form-layout">
+    <div style="margin-bottom: 35px;">
+        <?php include_once("includes/transport_setting_sidebar.php"); ?>
+    </div>
 
-									
-									
-								</div>
+    <div style="margin-bottom: 25px;">
+        <h3 style="color: #0078D4; font-size: 26px; font-weight: 500;">Add New Route</h3>
+    </div>
 
-								</li>
-								<li>
-								<div class="form_grid_12">
-									<label class="field_title">Cost</label>
-									 <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="cost" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
+    <?php if($msg != "") echo $msg; ?>
 
-									
-									
-								</div>
+    <div class="form-card">
+        <form action="transport_add_route.php" method="post">
+            <label style="display:block; font-weight:600; margin-bottom:8px;">Destination Name</label>
+            <input name="destination" type="text" class="fluent-input" placeholder="e.g. Downtown" required />
 
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<div class="form_input"><div class="form_grid_4 alpha">
-										
-										<button type="submit" name="submit" class="btn_small btn_blue"><span>Save</span></button>
-										
-										<button type="submit" class="btn_small btn_orange"><span>Back</span></button>
-										</div>
-									</div>
-								</div>
-								</li>
-							</ul>
-						</form>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+            <label style="display:block; font-weight:600; margin-bottom:8px;">Monthly Cost (₹)</label>
+            <input name="cost" type="number" step="0.01" class="fluent-input" placeholder="0.00" required />
+
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <button type="submit" name="submit" style="background: #0078D4; color: white; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Save Route</button>
+                <a href="transport_route_detail.php" style="background: #f1f5f9; color: #475569; text-decoration: none; padding: 12px 30px; border-radius: 4px; border: 1px solid #e2e8f0;">Cancel</a>
+            </div>
+        </form>
+    </div>
 </div>
-<?php include_once("includes/footer.php"); ?>
+
+<?php require_once("includes/footer.php"); ?>

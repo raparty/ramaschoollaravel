@@ -1,178 +1,129 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-<?php 
-if(isset($_POST['submit']))
-{
-	
-	 $sql1="SELECT * FROM transport_add_vechile where vechile_number='".$_POST['number']."'";
-	$res1=db_query($sql1) or die("Error : " . db_error());
-	$num=db_num_rows($res1);
-	if($num==0)
-	{
-		$route_id=implode(",",$_POST['route_id']);
-		
-		if($_POST['number']!="")
-		{
-		 $sql3="INSERT INTO transport_add_vechile(vechile_number,route_id,seat) VALUES ('".$_POST['number']."','".$route_id."','".$_POST['seat']."')";
-		$res3=db_query($sql3) or die("Error : " . db_error());
-		header("Location:transport_add_vechile.php?msg=1");
-		}else
-		{    header("location:transport_add_vechile.php?error=2");
-			
-			}
-		
-	}
-	else
-	{
-		$msg = "<span style='color:#FF0000;'><h4> This is all ready exist </h4></span>";
 
-	}
+/**
+ * ID 3.5: Add Transport Vehicle
+ * Logic: Fixed SQL 'Blank Page' crash and enabled Route Dropdown
+ */
+
+// 1. DEBUGGER: Force errors to display instead of a blank page
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+require_once("includes/bootstrap.php");
+require_once("includes/header.php");
+require_once("includes/sidebar.php");
+
+$conn = Database::connection();
+$msg = "";
+
+// 2. FORM PROCESSING LOGIC
+if(isset($_POST['submit'])) {
+    $vechile_no = mysqli_real_escape_string($conn, trim((string)$_POST['number']));
+    $seats = (int)($_POST['seat'] ?? 0);
+    
+    // Convert multiple selected routes into a comma-separated string
+    $route_ids = isset($_POST['route_id']) ? implode(",", $_POST['route_id']) : "";
+
+    if(!empty($vechile_no)) {
+        // Check if vehicle already exists using correct column name
+        $check_sql = "SELECT * FROM transport_add_vechile WHERE vechile_no = '$vechile_no'";
+        $check_res = mysqli_query($conn, $check_sql);
+        
+        if($check_res && mysqli_num_rows($check_res) == 0) {
+            // INSERT using columns verified in detail view
+            $sql_ins = "INSERT INTO transport_add_vechile (vechile_no, route_id, no_of_seats) 
+                        VALUES ('$vechile_no', '$route_ids', '$seats')";
+            
+            if(mysqli_query($conn, $sql_ins)) {
+                echo "<script>window.location='transport_vechile_detail.php?msg=1';</script>";
+                exit;
+            } else {
+                // This will print the exact SQL error if the insert fails
+                die("SQL Insert Error: " . mysqli_error($conn));
+            }
+        } else {
+            $msg = "<span style='color:#FF0000;'><h4>Vehicle Number already exists.</h4></span>";
+        }
+    } else {
+        $msg = "<span style='color:#FF0000;'><h4>Please fill in the Vehicle Number.</h4></span>";
+    }
 }
-else
-{
-	if($_GET['msg']==1)
-	{
-		$msg = "<span style='color:#009900;'><h4> Section Detail Added Successfully </h4></span>";
-	}
-	if($_GET['msg']==2)
-	{
-		$msg = "<span style='color:#009900;'><h4>Section Detail Deleted Successfully </h4></span>";
-	}
-	if($_GET['msg']==3)
-	{
-		$msg = "<span style='color:#009900;'><h4> Section Detail Updated Successfully </h4></span>";
-	}
-	else if($_GET['error']==1)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> Route Detail Already Exists </h4></span>";
-	}
-	else if($_GET['error']==2)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> Please fill all detail </h4></span>";
-	}
-}
-
-
 ?>
+
 <div class="page_title">
-	<!--	<span class="title_icon"><span class="computer_imac"></span></span>
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
-<?php include_once("includes/transport_setting_sidebar.php");?>
+    <div class="top_search">
+        <form action="#" method="post">
+            <ul id="search_box">
+                <li><input name="" type="text" class="search_input" id="suggest1" placeholder="Search..."></li>
+                <li><input name="" type="submit" value="Search" class="search_btn"></li>
+            </ul>
+        </form>
+    </div>
+</div>
+<?php include_once("includes/transport_setting_sidebar.php"); ?>
 
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
-
-          
-			<div class="grid_12">
-				<div class="widget_wrap">
-					<h3 style="padding-left:20px; color:#0078D4">Add New  Vehicle Number</h3>
-                     <?php if($msg!=""){echo $msg; } ?>
-					<form action="#" method="post" class="form_container left_label">
-							<ul>
-								<li>
-								<div class="form_grid_12">
-									<label class="field_title"> Vehicle Number</label>
-									 <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="number" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-
-								</li>
-								<li>
-								<div class="form_grid_12">
-									<label class="field_title">Select Route</label>
-									<div class="form_input">
-										<select name="route_id[]" style=" width:300px; height:30px;" multiple class="chzn-select" tabindex="20">
-											<option value=""></option>
-											<?php 
-											$sql="select * from transport_add_route";
-											$ro=db_query($sql);
-											while($row=db_fetch_array($ro)){
-											
-											?>
-                                            											<option value="<?php echo $row['route_id'];?>"><?php echo $row['route_name'];?></option><?php }?>
-										</select>
-									</div>
-								</div>
-								</li>
-                                
-                                
-                                
-                                
-                               <li>
-								<div class="form_grid_12">
-									<label class="field_title">No of Seats</label>
-									 <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="seat" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-
-								</li>
-                                
-                                
-                                
-                                
-                                
-                                
-                                <li>
-								<div class="form_grid_12">
-									<div class="form_input"><div class="form_grid_4 alpha">
-										
-										<button type="submit" name="submit" class="btn_small btn_blue"><span>Save</span></button>
-										
-										<button type="submit" class="btn_small btn_orange"><span>Back</span></button>
-										
-									</div>
-								</div>
-								</li>
-							</ul>
-						</form>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+    <div id="content">
+        <div class="grid_container">
+            <div class="grid_12">
+                <div class="widget_wrap">
+                    <h3 style="padding-left:20px; color:#0078D4">Add New Vehicle</h3>
+                     <?php if($msg != "") echo $msg; ?>
+                    
+                    <form action="transport_add_vechile.php" method="post" class="form_container left_label">
+                        <ul>
+                            <li>
+                                <div class="form_grid_12">
+                                    <label class="field_title">Vehicle Number</label>
+                                    <div class="form_input">
+                                        <div class="form_grid_5 alpha">
+                                            <input name="number" type="text" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="form_grid_12">
+                                    <label class="field_title">Select Route(s)</label>
+                                    <div class="form_input">
+                                        <select name="route_id[]" style="width:300px;" multiple class="chzn-select">
+                                            <?php 
+                                            $sql_r = "SELECT * FROM transport_add_route ORDER BY route_name ASC";
+                                            $res_r = mysqli_query($conn, $sql_r);
+                                            while($row_r = mysqli_fetch_assoc($res_r)) {
+                                                echo "<option value='{$row_r['route_id']}'>".htmlspecialchars($row_r['route_name'])."</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                        <span class="label_intro">Hold Ctrl (or Cmd) to select multiple routes.</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="form_grid_12">
+                                    <label class="field_title">No of Seats</label>
+                                    <div class="form_input">
+                                        <div class="form_grid_5 alpha">
+                                            <input name="seat" type="number" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="form_grid_12">
+                                    <div class="form_input">
+                                        <button type="submit" name="submit" class="btn_small btn_blue"><span>Save Vehicle</span></button>
+                                        <a href="transport_vechile_detail.php" class="btn_small btn_orange" style="text-decoration:none; padding: 7px 20px;">Back</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<?php include_once("includes/footer.php"); ?>
+<?php require_once("includes/footer.php"); ?>

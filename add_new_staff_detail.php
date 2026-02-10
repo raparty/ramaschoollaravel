@@ -1,475 +1,199 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-    <div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+include_once("includes/staff_setting_sidebar.php");
 
-<?php include_once("includes/staff_setting_sidebar.php");?>
+$conn = Database::connection();
+$msg = "";
+
+if (isset($_POST['submit'])) {
+    // 1. Capture and Sanitize all requested fields
+    $emp_id         = mysqli_real_escape_string($conn, (string)$_POST['emp_id']);
+    $first          = mysqli_real_escape_string($conn, (string)$_POST['first']);
+    $last           = mysqli_real_escape_string($conn, (string)$_POST['last']);
+    $email          = mysqli_real_escape_string($conn, (string)$_POST['email']);
+    $gender         = mysqli_real_escape_string($conn, (string)$_POST['gender']);
+    $department     = (int)$_POST['staff_department'];
+    $category       = (int)$_POST['staff_category'];
+    $position       = (int)$_POST['staff_position'];
+    $qualification  = (int)$_POST['staff_qualification']; // Added back
+    $job            = mysqli_real_escape_string($conn, (string)$_POST['job_title']);
+    $exp            = mysqli_real_escape_string($conn, (string)$_POST['exp']);
+    $marritial      = mysqli_real_escape_string($conn, (string)$_POST['marritial_status']);
+    $father         = mysqli_real_escape_string($conn, (string)$_POST['father_name']); // Added back
+    $mother         = mysqli_real_escape_string($conn, (string)$_POST['mother_name']); // Added back
+    $blood_group    = mysqli_real_escape_string($conn, (string)$_POST['blood_group']); // Made separate
+    $nationality    = mysqli_real_escape_string($conn, (string)$_POST['nationality']); // Added back
+    $address1       = mysqli_real_escape_string($conn, (string)$_POST['address1']);
+    $address2       = mysqli_real_escape_string($conn, (string)$_POST['address2']);
+
+    $image_name = "";
+    if (isset($_FILES['image']['name']) && $_FILES['image']['name'] != "") {
+        $path = "employee_image/";
+        $image_name = time() . "_" . $_FILES['image']['name'];
+        move_uploaded_file($_FILES['image']['tmp_name'], $path . $image_name);
+    }
+
+    $check_sql = "SELECT * FROM staff_employee WHERE email='$email' OR emp_id='$emp_id'";
+    $check_res = mysqli_query($conn, $check_sql);
+    
+    if (mysqli_num_rows($check_res) == 0) {
+        $sql = "INSERT INTO staff_employee (
+                    emp_id, first, last, email, gender, staff_department_id, 
+                    staff_cat_id, staff_pos_id, staff_qualification_id, job_title, 
+                    exp, marritial_status, father_name, mother_name, blood_group, 
+                    nationality, address1, address2, image
+                ) VALUES (
+                    '$emp_id', '$first', '$last', '$email', '$gender', '$department', 
+                    '$category', '$position', '$qualification', '$job', 
+                    '$exp', '$marritial', '$father', '$mother', '$blood_group', 
+                    '$nationality', '$address1', '$address2', '$image_name'
+                )";
+        
+        if (mysqli_query($conn, $sql)) {
+            $msg = "<div class='alert alert-success'><h4>Employee Detail Added Successfully</h4></div>";
+        } else {
+            $msg = "<div class='alert alert-error'><h4>Error: " . mysqli_error($conn) . "</h4></div>";
+        }
+    } else {
+        $msg = "<div class='alert alert-error'><h4>Employee ID or Email Already Exists</h4></div>";
+    }
+}
+?>
+
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
-
-          
-			<div class="grid_12">
-				
-					<h3 style="padding-left:20px; color:#0078D4; border-bottom:1px solid #e2e2e2;">Employee Registration</h3>
-                  <?php 
-					 include_once('config/config.inc.php');
-					?>
-                    <?php 
-					$msg="";
-					if(isset($_POST['submit']))
-					{
-					
-						
-					$emp_id=$_POST['emp_id'];
-					$first=$_POST['first'];
-					$last=$_POST['last'];
-					$email=$_POST['email'];
-					$gender=$_POST['gender'];
-					$department=$_POST['staff_department'];
-					$category=$_POST['staff_category'];
-					$position=$_POST['staff_position'];
-					$qualification=$_POST['staff_qualification'];
-					$job=$_POST['job_title'];
-					$exp=$_POST['exp'];
-					$marritial=$_POST['marritial_status'];
-					$father=$_POST['father_name'];
-					$mother=$_POST['mother_name'];
-					$blood_group=$_POST['blood_group'];
-					$nationality=$_POST['nationality'];
-					$address1=$_POST['address1'];
-					$address2=$_POST['address2'];
-					 $image_size=$_FILES['image']['size'];
-						 $path="employee_image/";
-						  $image_name=$_FILES['image']['name'];
-						   move_uploaded_file($_FILES['image']['tmp_name'],$path.$image_name);
-					
-					$select_employee_q="select * from staff_employee where email='".$email."'";
-					$select_num_row=db_num_rows(db_query($select_employee_q));
-					
-					if($select_num_row==0)
-					{
-				 $sql="insert into staff_employee(emp_id,first,last,email,gender,staff_department_id,staff_cat_id,staff_pos_id,staff_qualification_id,job_title,exp,marritial_status,father_name,mother_name,blood_group,nationality,address1,address2,image) values('".$emp_id."','".$first."','".$last."','".$email."','".$gender."','".$department."','".$category."','".$position."','".$qualification."','".$job."','".$exp."','".$marritial."','".$father."','".$mother."','".$blood_group."','".$nationality."','".$address1."','".$address2."','".$image_name."')";
-					$query=db_query($sql);
-					
-				$msg = "<span style='color:#009900;'><h4> Employee Detail Added Successfully </h4></span>";
-					}else
-					{
-						
-						$msg = "<span style='color:#FF0000;'><h4> Employee Detail Already Exists </h4></span>";
-						}
-					}
-					
-					
-					
-
-					
-					?>
-                 <?php if($msg!=""){echo $msg; } ?>
-               	<form action="#" method="post" class="form_container left_label" enctype="multipart/form-data">
-                                    
-
-              <ul>
-               
-               
-               
-               
-           <br>
-<br>
-    <div class="grid_12">
-
- <div class="btn_30_light float-right">
-<a href="#">
-<span class="icon find_co"></span>
-<span class="btn_link">Advance Search</span>
-</a>
-</div>
-
-<div class="btn_30_light float-right">
-<a href="#">
-<span class="icon database_co"></span>
-<span class="btn_link">View All</span>
-</a>
-</div>
-
-           
-                            
-                            
-                            
-                            </div><br><br>
-<br>
-  
-           
-               <li style=" border-bottom:1px solid #F7630C;"><h4 style=" color:#F7630C; ">General Details</h4>     </li>
-               
-               
-               <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Employee Id</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-						<input  type="text" name="emp_id"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">First Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input type="text" name="first"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Last Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input type="text" name="last"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Email</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input  type="email" name="email"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Gender</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input  type="radio" name="gender" value="male"/>Male&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <input  type="radio" name="gender" value="female"/>Female
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Departmant</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="staff_department">
-											 <?php
-                     $category="select * from staff_department";
-				 $value=db_query($category);
-					 while($dep=db_fetch_array($value))
-					 {
-			?>
-											
-											<option value="<?php echo $dep['staff_department_id'];?>"><?php echo $dep['staff_department'];?></option><?php }?>
-											
-
-										</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Staff Category</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="staff_category">
-                                         <?php
-                     $cat="select * from staff_category";
-				 $val=db_query($cat);
-					 while($staff_category=db_fetch_array($val))
-					 {
-			?>
-											
-<option value="<?php echo $staff_category['staff_cat_id'];?>"><?php echo $staff_category['staff_category'];?></option><?php }?>
-						</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title"> Staff Position</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="staff_position">
-                                         <?php
-                     $cate="select * from staff_position";
-				 $val1=db_query($cate);
-					 while($pos=db_fetch_array($val1))
-					 {
-			?>
-											
-											
-											<option value="<?php echo $pos['staff_pos_id'];?>"><?php echo $pos['staff_position']?></option><?php }?>
-											</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Qualification</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="staff_qualification">
-                                         <?php
-                     $categ="select * from staff_qualification";
-				 $value1=db_query($categ);
-					 while($qua=db_fetch_array($value1))
-					 {
-			?>
-								<option value="<?php echo $qua['staff_qualification_id'];?>"><?php echo $qua['staff_qualification'];?></option><?php }?>
-		</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Job Title</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="job_title" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Experiance</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="exp" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                
-                                <li style=" border-bottom:1px solid #F7630C;"><h4 style=" color:#F7630C; ">Personal Details</h4>     </li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Marrital Status</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="marritial_status">
-											<option value=""></option>
-											
-											<option>Single</option>
-											<option>Married</option>
-											<option>Unmarried</option>
-											<option>Divorce</option>
-                                           
-
-<option>Other</option>
-										</select>
-									</div>
-								</div>
-								</li>
-                               <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Father Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="father_name" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Mother Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="mother_name" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Blood Group</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="blood_group" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Nationality</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="nationality">
-											<option value=""></option>
-											
-											<option>India</option>
-											<option>American</option>
-											<option>China</option>
-											<option>Japn</option>
-                                           
-
-<option>Other</option>
-										</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Address1</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="address1" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Address2</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="address2" type="text"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Employee Photo</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="image" type="file"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li> 
-       
-                                
-                                <li>
-								<div class="form_grid_12">
-									<div class="form_input">
-										
-										<button type="submit" class="btn_small btn_blue" name="submit"><span>Submit</span></button>
-										
-										
-										
-									</div>
-								</div>
-								</li>
-                                
-
-                </form>  
-
-					
-			
-			</div>
+    <div id="content">
+        <div class="grid_container">
+            <h3 style="padding:20px 0 0 20px; color:#0078D4; border-bottom:1px solid #e2e2e2;">Employee Registration</h3>
             
-            
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+            <div style="padding: 20px;">
+                <?php if($msg != "") echo $msg; ?>
+                
+                <form action="#" method="post" class="form_container left_label" enctype="multipart/form-data">
+                    <ul>
+                        <li style="border-bottom:1px solid #F7630C;"><h4 style="color:#F7630C;">General Details</h4></li>
+                        
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Employee Id / Email</label>
+                                <div class="form_input">
+                                    <input type="text" name="emp_id" placeholder="Employee ID" style="width:45%;" required />
+                                    <input type="email" name="email" placeholder="Email Address" style="width:45%;" required />
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Full Name</label>
+                                <div class="form_input">
+                                    <input type="text" name="first" placeholder="First Name" style="width:45%;" required />
+                                    <input type="text" name="last" placeholder="Last Name" style="width:45%;" required />
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Gender</label>
+                                <div class="form_input">
+                                    <input type="radio" name="gender" value="male" checked /> Male &nbsp;&nbsp;
+                                    <input type="radio" name="gender" value="female" /> Female
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Department / Qualification</label>
+                                <div class="form_input">
+                                    <select name="staff_department" style="width:45%">
+                                        <?php
+                                        $depts = mysqli_query($conn, "SELECT * FROM staff_department");
+                                        while($d = mysqli_fetch_assoc($depts)) echo "<option value='{$d['staff_department_id']}'>{$d['staff_department']}</option>";
+                                        ?>
+                                    </select>
+                                    <select name="staff_qualification" style="width:45%">
+                                        <?php
+                                        $quals = mysqli_query($conn, "SELECT * FROM staff_qualification");
+                                        while($q = mysqli_fetch_assoc($quals)) echo "<option value='{$q['staff_qualification_id']}'>{$q['staff_qualification']}</option>";
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Job Title / Experience</label>
+                                <div class="form_input">
+                                    <input type="text" name="job_title" placeholder="e.g. Senior Teacher" style="width:45%;" />
+                                    <input type="text" name="exp" placeholder="e.g. 5 Years" style="width:45%;" />
+                                </div>
+                            </div>
+                        </li>
+
+                        <li style="border-bottom:1px solid #F7630C; margin-top:20px;"><h4 style="color:#F7630C;">Personal Details</h4></li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Father's Name</label>
+                                <div class="form_input"><input type="text" name="father_name" style="width:91%" /></div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Mother's Name</label>
+                                <div class="form_input"><input type="text" name="mother_name" style="width:91%" /></div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Marital Status / Blood Group</label>
+                                <div class="form_input">
+                                    <select name="marritial_status" style="width:45%">
+                                        <option value="Single">Single</option>
+                                        <option value="Married">Married</option>
+                                    </select>
+                                    <input type="text" name="blood_group" placeholder="Blood Group (e.g. O+)" style="width:45%" />
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Nationality</label>
+                                <div class="form_input"><input type="text" name="nationality" value="Indian" style="width:91%" /></div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Address Line 1</label>
+                                <div class="form_input"><input type="text" name="address1" style="width:91%" /></div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Employee Photo</label>
+                                <div class="form_input"><input type="file" name="image" /></div>
+                            </div>
+                        </li>
+
+                        <li style="margin-top:20px;">
+                            <div class="form_input">
+                                <button type="submit" name="submit" class="btn_small btn_blue"><span>Register Staff</span></button>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-<?php include_once("includes/footer.php");?>
+<?php include_once("includes/footer.php"); ?>

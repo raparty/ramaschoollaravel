@@ -2,29 +2,29 @@
 declare(strict_types=1);
 require_once("includes/bootstrap.php");
 include_once("includes/header.php");
-include_once("includes/sidebar.php");
-
-$conn = Database::connection();
+include_once("includes/sidebar.php"); 
 ?>
+
+<div class="page_title">
+    <div class="top_search">
+        <form action="" method="post">
+            <ul id="search_box">
+                <li><input name="search" type="text" class="search_input" placeholder="Search by name or Reg No..."></li>
+                <li><input type="submit" value="Search" class="search_btn"></li>
+            </ul>
+        </form>
+    </div>
+</div>
 
 <?php include_once("includes/library_setting_sidebar.php");?>
 
 <div id="container">
     <div id="content">
         <div class="grid_container">
-            <h3 style="padding:15px 0 0 20px; color:#0078D4">Student Fine Details</h3>
-
-            <div class="grid_12">
-                <div class="btn_30_blue float-right">
-                    <a href="entry_student_fine_detail.php"><span style="width:140px"> Individual Student Fine </span></a>				
-                </div>
-            </div>
-
+            <h3 style="padding-left:20px; color:#0078D4">Student Fine Detail</h3>
             <div class="grid_12">
                 <div class="widget_wrap">
-                    <div class="widget_top">
-                        <h6>Fine Records</h6>
-                    </div>
+                    <div class="widget_top"><h6>Active Fine Records</h6></div>
                     <div class="widget_content">
                         <table class="display data_tbl">
                             <thead>
@@ -32,54 +32,42 @@ $conn = Database::connection();
                                     <th>S.No.</th>
                                     <th>Student Name</th>
                                     <th>Class</th>
-                                    <th>Book Name</th>
-                                    <th>Book Number</th>
                                     <th>Fine Amount</th>
                                     <th>Session</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
-                                $i = 1;
-                                $session = mysqli_real_escape_string($conn, (string)$_SESSION['session']);
+                            <?php 
+                            $conn = Database::connection();
+                            $session = mysqli_real_escape_string($conn, (string)($_SESSION['session'] ?? ''));
+                            
+                            // Query: Shows all positive fines, prioritizing current session
+                            $sql = "SELECT * FROM student_fine_detail WHERE fine_amount > 0 ORDER BY (session = '$session') DESC, id DESC";
+                            $res = mysqli_query($conn, $sql);
+                            
+                            $i = 1;
+                            while($row = mysqli_fetch_assoc($res)) {
+                                $reg_no = mysqli_real_escape_string($conn, $row['registration_no']);
+                                $sql_std = "SELECT student_name, class_id FROM admissions WHERE reg_no = '$reg_no'";
+                                $student_info = mysqli_fetch_assoc(mysqli_query($conn, $sql_std));
                                 
-                                // Querying fine details for the current active session
-                                $sql_fine = "SELECT * FROM student_fine_detail WHERE session='$session' AND fine_amount > 0";
-                                $res_fine = mysqli_query($conn, $sql_fine);
-
-                                if ($res_fine && mysqli_num_rows($res_fine) > 0) {
-                                    while($row = mysqli_fetch_assoc($res_fine)) {
-                                        // LINK TO ADMISSIONS TABLE
-                                        $reg_no = mysqli_real_escape_string($conn, (string)$row['registration_no']);
-                                        $sql_std = "SELECT student_name, class_id FROM admissions WHERE reg_no = '$reg_no'";
-                                        $res_std = mysqli_query($conn, $sql_std);
-                                        $student = mysqli_fetch_assoc($res_std);
-
-                                        // LINK TO BOOK_MANAGERS TABLE
-                                        $book_no = mysqli_real_escape_string($conn, (string)$row['book_number']);
-                                        $res_bk = mysqli_query($conn, "SELECT book_name FROM book_managers WHERE book_number = '$book_no'");
-                                        $book = mysqli_fetch_assoc($res_bk);
-                                ?>
-                                <tr>
-                                    <td class="center"><?php echo $i++; ?></td>
-                                    <td class="center"><?php echo htmlspecialchars($student['student_name'] ?? 'Record Not Found'); ?></td>
-                                    <td class="center"><?php echo htmlspecialchars($student['class_id'] ?? 'N/A'); ?></td>
-                                    <td class="center"><?php echo htmlspecialchars($book['book_name'] ?? 'N/A'); ?></td>
-                                    <td class="center"><code><?php echo htmlspecialchars($row['book_number']); ?></code></td>
-                                    <td class="center" style="color:red; font-weight:bold;">₹<?php echo $row['fine_amount']; ?></td>
-                                    <td class="center"><?php echo htmlspecialchars($row['session']); ?></td>
-                                    <td class="center">
-                                        <a href="library_edit_student_fine_detail.php?sid=<?php echo $row['id']; ?>" class="action-icons c-edit">Edit</a>
-                                        <a href="library_delete_student_fine_detail.php?sid=<?php echo $row['id']; ?>" class="action-icons c-delete" onclick="return confirm('Delete this fine record?')">Delete</a>
-                                    </td>
-                                </tr>
-                                <?php 
-                                    }
-                                } else {
-                                    echo "<tr><td colspan='8' class='center'>No active fine records found in session $session.</td></tr>";
-                                }
-                                ?>
+                                $class_id = (int)($student_info['class_id'] ?? 0);
+                                $sql_class = "SELECT class_name FROM classes WHERE id = '$class_id'";
+                                $class_data = mysqli_fetch_assoc(mysqli_query($conn, $sql_class));
+                            ?>
+                            <tr>
+                                <td class="center"><?php echo $i++; ?></td>
+                                <td class="center"><strong><?php echo htmlspecialchars($student_info['student_name'] ?? 'Not Found'); ?></strong></td>
+                                <td class="center"><?php echo htmlspecialchars($class_data['class_name'] ?? 'N/A'); ?></td>
+                                <td class="center" style="color: #d32f2f; font-weight: bold;">₹ <?php echo number_format((float)$row['fine_amount'], 2); ?></td>
+                                <td class="center"><?php echo htmlspecialchars($row['session'] ?: 'Unassigned'); ?></td>
+                                <td class="center">
+                                    <span><a class="action-icons c-edit" href="library_edit_student_fine_detail.php?sid=<?php echo $row['id']; ?>" title="Edit">Edit</a></span>
+                                    <span><a class="action-icons c-delete" href="library_delete_student_fine_detail.php?sid=<?php echo $row['id']; ?>" title="Delete" onClick="return confirm('Delete fine?')">Delete</a></span>
+                                </td>
+                            </tr>
+                            <?php } ?>
                             </tbody>
                         </table>
                     </div>

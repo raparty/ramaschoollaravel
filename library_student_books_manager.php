@@ -16,7 +16,7 @@ $conn = Database::connection();
             <div class="grid_12">
                 <div class="widget_wrap">
                     <div class="widget_top">
-                        <h6>Issued Student Books Detail</h6>
+                        <h6>Currently Issued Student Books</h6>
                         <div style="float:right; padding: 5px;">
                             <a href="library_entry_add_student_books.php" class="btn_small btn_blue">
                                 <span>+ Issue New Book</span>
@@ -42,18 +42,19 @@ $conn = Database::connection();
                                 $session = mysqli_real_escape_string($conn, (string)($_SESSION['session'] ?? ''));
                                 
                                 // Query confirming pluralized table 'student_books_details'
+                                // Only show books with status '1' (Active Issue)
                                 $sql = "SELECT * FROM student_books_details WHERE session = '$session' AND booking_status = '1' ORDER BY id DESC";
                                 $res = mysqli_query($conn, $sql);
                                 
                                 while($row = mysqli_fetch_assoc($res)) {
                                     $reg_no = mysqli_real_escape_string($conn, trim((string)$row['registration_no']));
 
-                                    // FIX: Look up student_name from admissions table using reg_no
+                                    // FIX: Cross-reference student_name from verified 'admissions' table
                                     $sql_std = "SELECT student_name FROM admissions WHERE reg_no = '$reg_no'";
                                     $res_std = mysqli_query($conn, $sql_std);
                                     $student = mysqli_fetch_assoc($res_std);
                                     
-                                    // Look up book details from book_managers
+                                    // FIX: Look up book details from 'book_managers' catalog
                                     $book_num = mysqli_real_escape_string($conn, trim((string)$row['book_number']));
                                     $sql_bk = "SELECT book_name FROM book_managers WHERE book_number = '$book_num'";
                                     $res_bk = mysqli_query($conn, $sql_bk);
@@ -62,15 +63,17 @@ $conn = Database::connection();
                                 <tr>
                                     <td class="center"><?php echo $i; ?></td>
                                     <td class="center">
-                                        <strong><?php echo htmlspecialchars((string)($student['student_name'] ?? 'Not Found')); ?></strong>
+                                        <strong><?php echo htmlspecialchars((string)($student['student_name'] ?? 'Record Missing')); ?></strong>
                                     </td>
                                     <td class="center"><code><?php echo htmlspecialchars($reg_no); ?></code></td>
-                                    <td class="center"><?php echo htmlspecialchars((string)($book['book_name'] ?? 'N/A')); ?></td>
+                                    <td class="center" style="color:#1c75bc;"><?php echo htmlspecialchars((string)($book['book_name'] ?? 'N/A')); ?></td>
                                     <td class="center"><?php echo htmlspecialchars($book_num); ?></td>
-                                    <td class="center"><?php echo date('d-m-Y', strtotime((string)$row['issue_date'])); ?></td>
+                                    <td class="center"><?php echo date('d-M-Y', strtotime((string)$row['issue_date'])); ?></td>
                                     <td class="center">
-                                        <span><a class="action-icons c-edit" href="library_edit_student_books.php?sid=<?php echo $row['id']; ?>" title="Edit">Edit</a></span>
-                                        <span><a class="action-icons c-delete" href="library_delete_student_books.php?sid=<?php echo $row['id']; ?>" title="Delete" onClick="return confirm('Are you sure you want to delete?')">Delete</a></span>
+                                        <div style="display: flex; gap: 5px; justify-content: center;">
+                                            <a class="action-icons c-edit" href="library_edit_student_books.php?sid=<?php echo $row['id']; ?>" title="Edit">Edit</a>
+                                            <a class="action-icons c-delete" href="library_delete_student_books.php?sid=<?php echo $row['id']; ?>" title="Delete" onClick="return confirm('Delete this issue record?')">Delete</a>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php $i++; } ?>

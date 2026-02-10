@@ -1,100 +1,89 @@
 <?php
+// 1. Force the server to show us the actual error if it crashes
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-    <div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
 
-<?php include_once("includes/staff_setting_sidebar.php");?>
-<div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
+// We only keep the bootstrap for the database connection
+require_once("includes/bootstrap.php");
 
-          
-			<div class="grid_12">
-				<div class="widget_wrap">
-               
-					<h3 style="padding-left:20px; color:#0078D4">Edit Staff Department</h3> <?php
-                include_once('config/config.inc.php');
-				?>
-                <?php
-				$get=$_GET['staff_department_id'];
-								if(isset($_POST['submit']))
-				{
-					$staff=$_POST['staff_department'];
-			   
-                $sql="update staff_department set staff_department='".$staff."' where staff_department_id='".$get."'";
-				$res=db_query($sql);
-				}
-			$select_sql="select * from staff_department where staff_department_id='".$get."'";	
-			$select_res=db_query($select_sql);
-		$row=db_fetch_array($select_res)
-		
-			
-				
-				?>
-					<form action="#" method="post" class="form_container left_label">
-							<ul>
-								<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Staff Department Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="staff_department" type="text"  value="<?php echo $row['staff_department']?>"/>
-											<span class=" label_intro">Staff Category</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
+$conn = Database::connection();
+$msg = "";
 
-									
-									<div class="form_input">
+// 2. Capture and validate ID
+$dept_id = isset($_GET['staff_department_id']) ? (int)$_GET['staff_department_id'] : 0;
 
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-								<li>
-								<div class="form_grid_12">
-									<div class="form_input">
-										
-										<button type="submit" class="btn_small btn_blue" name="submit"><span>Save</span></button>
-										
-										<a href="view_staff_department.php"><button type="button" class="btn_small btn_orange"><span>Back</span></button></a>
-										
-									</div>
-								</div>
-								</li>
-							</ul>
-						</form>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+if ($dept_id <= 0) {
+    die("<h1 style='color:red;'>Error: No Department ID found in URL.</h1><p>Please return to the list and click edit again.</p>");
+}
+
+// 3. Update Process
+if (isset($_POST['update_dept'])) {
+    $new_name = mysqli_real_escape_string($conn, trim((string)$_POST['dept_name']));
+    
+    if (!empty($new_name)) {
+        $update_sql = "UPDATE staff_department SET staff_department = '$new_name' WHERE staff_department_id = $dept_id";
+        
+        if (mysqli_query($conn, $update_sql)) {
+            $msg = "<div style='background:#d4edda; color:#155724; padding:15px; border:1px solid #c3e6cb; border-radius:5px; margin-bottom:20px;'>
+                        <strong>Success!</strong> Department has been updated.
+                    </div>";
+        } else {
+            $msg = "<div style='background:#f8d7da; color:#721c24; padding:15px; border:1px solid #f5c6cb; border-radius:5px; margin-bottom:20px;'>
+                        <strong>MySQL Error:</strong> " . mysqli_error($conn) . "
+                    </div>";
+        }
+    }
+}
+
+// 4. Fetch the data
+$fetch_sql = "SELECT * FROM staff_department WHERE staff_department_id = $dept_id";
+$res = mysqli_query($conn, $fetch_sql);
+
+if (!$res) {
+    die("Database Query Failed: " . mysqli_error($conn));
+}
+
+$data = mysqli_fetch_assoc($res);
+
+if (!$data) {
+    die("<h1>Error</h1><p>Could not find department with ID $dept_id in the database.</p>");
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Standalone Edit - Staff Department</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 50px; }
+        .card { background: white; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid #0078D4; }
+        h2 { color: #0078D4; margin-top: 0; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; margin-bottom: 20px; }
+        .btn-save { background: #0078D4; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-save:hover { background: #005a9e; }
+        .btn-back { color: #666; text-decoration: none; margin-left: 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Update Staff Department</h2>
+    <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 25px;">
+    
+    <?php echo $msg; ?>
+
+    <form action="edit_staff_department.php?staff_department_id=<?php echo $dept_id; ?>" method="post">
+        <label>Department Name</label>
+        <input type="text" name="dept_name" value="<?php echo htmlspecialchars((string)$data['staff_department']); ?>" required>
+        
+        <button type="submit" name="update_dept" class="btn-save">Save Changes</button>
+        <a href="view_staff_department.php" class="btn-back">Cancel & Go Back</a>
+    </form>
 </div>
-<?php include_once("includes/footer.php");?>
+
+</body>
+</html>

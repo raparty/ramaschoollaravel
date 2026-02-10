@@ -1,509 +1,185 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-    <div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+include_once("includes/staff_setting_sidebar.php");
 
-<?php include_once("includes/staff_setting_sidebar.php");?>
+$conn = Database::connection();
+$msg = "";
+$staff_id = (int)($_GET['staff_id'] ?? $_POST['staff_id'] ?? 0);
+
+if ($staff_id <= 0) {
+    echo "<script>window.location.href='view_staff.php';</script>";
+    exit;
+}
+
+// 1. HANDLE UPDATE SUBMISSION
+if (isset($_POST['submit'])) {
+    $emp_id         = mysqli_real_escape_string($conn, (string)$_POST['emp_id']);
+    $first          = mysqli_real_escape_string($conn, (string)$_POST['first']);
+    $last           = mysqli_real_escape_string($conn, (string)$_POST['last']);
+    $email          = mysqli_real_escape_string($conn, (string)$_POST['email']);
+    $gender         = mysqli_real_escape_string($conn, (string)$_POST['gender']);
+    $department     = (int)$_POST['staff_department'];
+    $category       = (int)$_POST['staff_category'];
+    $position       = (int)$_POST['staff_position'];
+    $qualification  = (int)$_POST['staff_qualification'];
+    $job            = mysqli_real_escape_string($conn, (string)$_POST['job_title']);
+    $exp            = mysqli_real_escape_string($conn, (string)$_POST['exp']);
+    $marritial      = mysqli_real_escape_string($conn, (string)$_POST['marritial_status']);
+    $father         = mysqli_real_escape_string($conn, (string)$_POST['father_name']);
+    $mother         = mysqli_real_escape_string($conn, (string)$_POST['mother_name']);
+    $blood_group    = mysqli_real_escape_string($conn, (string)$_POST['blood_group']);
+    $nationality    = mysqli_real_escape_string($conn, (string)$_POST['nationality']);
+    $address1       = mysqli_real_escape_string($conn, (string)$_POST['address1']);
+    
+    // Image Update Logic
+    $image_name = $_POST['old_image']; 
+    if (!empty($_FILES['image']['name'])) {
+        $path = "employee_image/";
+        // Delete old photo if it exists and isn't the default
+        if ($image_name != "" && $image_name != "no-photo.png" && file_exists($path . $image_name)) {
+            unlink($path . $image_name);
+        }
+        $image_name = time() . "_" . $_FILES['image']['name'];
+        move_uploaded_file($_FILES['image']['tmp_name'], $path . $image_name);
+    }
+
+    $sql_update = "UPDATE staff_employee SET 
+        emp_id='$emp_id', first='$first', last='$last', email='$email', gender='$gender', 
+        staff_department_id='$department', staff_cat_id='$category', staff_pos_id='$position', 
+        staff_qualification_id='$qualification', job_title='$job', exp='$exp', 
+        marritial_status='$marritial', father_name='$father', mother_name='$mother', 
+        blood_group='$blood_group', nationality='$nationality', address1='$address1', image='$image_name' 
+        WHERE staff_id = $staff_id";
+
+    if (mysqli_query($conn, $sql_update)) {
+        $msg = "<div class='alert alert-success'><h4>Staff Profile Updated Successfully</h4></div>";
+    } else {
+        $msg = "<div class='alert alert-error'><h4>Update Error: " . mysqli_error($conn) . "</h4></div>";
+    }
+}
+
+// 2. FETCH CURRENT DATA
+$sql_fetch = "SELECT * FROM staff_employee WHERE staff_id = $staff_id";
+$res_fetch = mysqli_query($conn, $sql_fetch);
+$row = mysqli_fetch_assoc($res_fetch);
+
+if (!$row) { die("Record not found."); }
+?>
+
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
+    <div id="content">
+        <div class="grid_container">
+            <h3 style="padding:20px 0 0 20px; color:#0078D4;">Edit Staff Profile</h3>
+            <div style="padding: 20px;">
+                <?php if($msg != "") echo $msg; ?>
+                
+                <form action="#" method="post" class="form_container left_label" enctype="multipart/form-data">
+                    <input type="hidden" name="staff_id" value="<?php echo $staff_id; ?>">
+                    <input type="hidden" name="old_image" value="<?php echo $row['image']; ?>">
+                    
+                    <ul>
+                        <li style="border-bottom:1px solid #F7630C;"><h4 style="color:#F7630C;">General Details</h4></li>
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Employee Id / Email</label>
+                                <div class="form_input">
+                                    <input type="text" name="emp_id" value="<?php echo htmlspecialchars($row['emp_id']); ?>" style="width:45%;" required />
+                                    <input type="email" name="email" value="<?php echo htmlspecialchars($row['email']); ?>" style="width:45%;" required />
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Full Name</label>
+                                <div class="form_input">
+                                    <input type="text" name="first" value="<?php echo htmlspecialchars($row['first']); ?>" style="width:45%;" required />
+                                    <input type="text" name="last" value="<?php echo htmlspecialchars($row['last']); ?>" style="width:45%;" required />
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Gender</label>
+                                <div class="form_input">
+                                    <input type="radio" name="gender" value="male" <?php if($row['gender'] == 'male') echo 'checked'; ?> /> Male &nbsp;&nbsp;
+                                    <input type="radio" name="gender" value="female" <?php if($row['gender'] == 'female') echo 'checked'; ?> /> Female
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Department / Qualification</label>
+                                <div class="form_input">
+                                    <select name="staff_department" style="width:45%">
+                                        <?php
+                                        $depts = mysqli_query($conn, "SELECT * FROM staff_department");
+                                        while($d = mysqli_fetch_assoc($depts)) {
+                                            $sel = ($d['staff_department_id'] == $row['staff_department_id']) ? "selected" : "";
+                                            echo "<option value='{$d['staff_department_id']}' $sel>{$d['staff_department']}</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <select name="staff_qualification" style="width:45%">
+                                        <?php
+                                        $quals = mysqli_query($conn, "SELECT * FROM staff_qualification");
+                                        while($q = mysqli_fetch_assoc($quals)) {
+                                            $sel = ($q['staff_qualification_id'] == $row['staff_qualification_id']) ? "selected" : "";
+                                            echo "<option value='{$q['staff_qualification_id']}' $sel>{$q['staff_qualification']}</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
 
-          
-			<div class="grid_12">
-				
-					<h3 style="padding-left:20px; color:#0078D4; border-bottom:1px solid #e2e2e2;">Employee Registration</h3>
-                  <?php 
-					 include_once('config/config.inc.php');
-					?>
-                    <?php 
-					$msg="";
-					$get=$_GET['staff_id'];
-					if(isset($_POST['submit']))
-					{
-					$emp_id=$_POST['emp_id'];
-					$first=$_POST['first'];
-					$last=$_POST['last'];
-					$email=$_POST['email'];
-					$gender=$_POST['gender'];
-					$department=$_POST['staff_department'];
-					$category=$_POST['staff_category'];
-					$position=$_POST['staff_position'];
-					$qualification=$_POST['staff_qualification'];
-					$job=$_POST['job_title'];
-					$exp=$_POST['exp'];
-					$marritial=$_POST['marritial_status'];
-					$father=$_POST['father_name'];
-					$mother=$_POST['mother_name'];
-					$blood_group=$_POST['blood_group'];
-					$nationality=$_POST['nationality'];
-					$address1=$_POST['address1'];
-					$address2=$_POST['address2'];
-					 $image_size=$_FILES['image']['size'];
-						 $path="employee_image/";
-					
-				if(isset($_FILES['image']['name']) && $_FILES['image']['name']!="")
-				{
-			 $image=$_FILES['image']['name'];
-					move_uploaded_file($_FILES['image']['tmp_name'],$path.$image);
-					$old_image=$_POST['oldimage'];
-					if($oldphoto="")
-					{
-						unlink($path.$oldimage);
-					}
-					
-				
-				}
-				else
-					{
-						 $image=$_POST['oldimage'];
-					}
-
-					
-					$sql1="SELECT * FROM staff_employee where email='".$email."' and staff_id!='".$get."'";
-	$res1=db_query($sql1) or die("Error : " . db_error());
-	$num=db_num_rows($res1);
-	if($num==0)
-	{
-					
-					
-				 $sql="update  staff_employee set emp_id='".$emp_id."',first='".$first."',last='".$last."',email='".$email."',gender='".$gender."',staff_cat_id='".$category."',staff_pos_id='".$position."',staff_qualification_id='".$qualification."',staff_department_id='".$department."',job_title='".$job."',exp='".$exp."',marritial_status='".$marritial."',father_name='".$father."',mother_name='".$mother."',blood_group='".$blood_group."',nationality='".$nationality."',address1='".$address1."',address2='".$address2."',image='".$image."'  where staff_id='".$get."'";
-					$query=db_query($sql);
-					$msg = "<span style='color:#009900;'><h4> Employee Detail Updated Successfully </h4></span>";
-					
-	}else
-	{
-		
-		$msg = "<span style='color:#FF0000;'><h4>Employee Detail Already Exists  </h4></span>";
-		}
-					
-					}
-					$sql="select * from staff_employee where staff_id='".$get."'";
-					$res=db_query($sql);
-				while($row=db_fetch_array($res))
-				{
-					
-					
-					
-					
-					
-
-					
-					?>
-                <?php if($msg!=""){echo $msg; } ?>
-               	<form action="#" method="post" class="form_container left_label" enctype="multipart/form-data">
-                                    
-
-              <ul>
-               
-               
-               
-               
-           <br>
-<br>
-    <div class="grid_12">
-
- <div class="btn_30_light float-right">
-<a href="#">
-<span class="icon find_co"></span>
-<span class="btn_link">Advance Search</span>
-</a>
+                        <li style="border-bottom:1px solid #F7630C; margin-top:20px;"><h4 style="color:#F7630C;">Personal Details</h4></li>
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Father's Name</label>
+                                <div class="form_input"><input type="text" name="father_name" value="<?php echo htmlspecialchars($row['father_name'] ?? ''); ?>" style="width:91%" /></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Mother's Name</label>
+                                <div class="form_input"><input type="text" name="mother_name" value="<?php echo htmlspecialchars($row['mother_name'] ?? ''); ?>" style="width:91%" /></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Marital Status / Blood Group</label>
+                                <div class="form_input">
+                                    <select name="marritial_status" style="width:45%">
+                                        <option value="Single" <?php if($row['marritial_status'] == 'Single') echo 'selected'; ?>>Single</option>
+                                        <option value="Married" <?php if($row['marritial_status'] == 'Married') echo 'selected'; ?>>Married</option>
+                                    </select>
+                                    <input type="text" name="blood_group" value="<?php echo htmlspecialchars($row['blood_group'] ?? ''); ?>" style="width:45%" />
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form_grid_12">
+                                <label class="field_title">Employee Photo</label>
+                                <div class="form_input">
+                                    <img src="employee_image/<?php echo $row['image'] ?: 'no-photo.png'; ?>" style="width:60px; height:60px; margin-bottom:10px; border-radius:4px;"><br>
+                                    <input type="file" name="image" />
+                                    <span class="label_intro">Leave blank to keep existing photo</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li style="margin-top:20px;">
+                            <div class="form_input">
+                                <button type="submit" name="submit" class="btn_small btn_blue"><span>Update Profile</span></button>
+                                <a href="view_staff.php" class="btn_small btn_orange"><span>Cancel</span></a>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="btn_30_light float-right">
-<a href="#">
-<span class="icon database_co"></span>
-<span class="btn_link">View All</span>
-</a>
-</div>
-
-           
-                            
-                            
-                            
-                            </div><br><br>
-<br>
-  
-           
-               <li style=" border-bottom:1px solid #F7630C;"><h4 style=" color:#F7630C; ">General Details</h4>     </li>
-               
-               
-               <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Employee Id</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-						<input  type="text" name="emp_id" value="<?php echo $row['emp_id'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">First Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input type="text" name="first" value="<?php echo $row['first'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Last Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input type="text" name="last" value="<?php echo $row['last'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Email</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input  type="email" name="email" value="<?php echo $row['email'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-                                <?php if($row['gender']=="male")
-									{
-										$male='checked="checked"';
-										}else
-										{
-											$female='checked="checked"';
-											
-											}?>
-									<label class="field_title">Gender</label>
-									<div class="form_input">
-										<span>
-										<input <?php echo $male;?> name="gender" class="radio" type="radio" value="male" tabindex="10">
-										<label class="choice">Male</label>
-										</span><span>
-										<input name="gender"  <?php echo $female;?> class="radio" type="radio" value="female" tabindex="11">
-										<label class="choice">Female</label>
-										</span><span>
-										
-										
-										</span>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Departmant</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="staff_department">
-											 <?php
-                     $category="select * from staff_department";
-				 $value=db_query($category);
-					 while($dep=db_fetch_array($value))
-					 {
-			?>
-											
-											<option value="<?php echo $dep['staff_department_id'];?>" selected="selected"><?php echo $dep['staff_department'];?></option><?php }?>
-											
-
-										</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Staff Category</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="staff_category">
-                                         <?php
-                     $cat="select * from staff_category";
-				 $val=db_query($cat);
-					 while($staff_category=db_fetch_array($val))
-					 {
-			?>
-											
-<option value="<?php echo $staff_category['staff_cat_id'];?>" selected="selected"><?php echo $staff_category['staff_category'];?></option><?php }?>
-						</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title"> Staff Position</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="staff_position">
-                                         <?php
-                     $cate="select * from staff_position";
-				 $val1=db_query($cate);
-					 while($pos=db_fetch_array($val1))
-					 {
-			?>
-											
-											
-											<option value="<?php echo $pos['staff_pos_id'];?>" selected="selected"><?php echo $pos['staff_position']?></option><?php }?>
-											</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Qualification</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="staff_qualification">
-                                         <?php
-                     $categ="select * from staff_qualification";
-				 $value1=db_query($categ);
-					 while($qua=db_fetch_array($value1))
-					 {
-			?>
-								<option value="<?php echo $qua['staff_qualification_id'];?>" selected="selected"><?php echo $qua['staff_qualification'];?></option><?php }?>
-		</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Job Title</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="job_title" type="text" value="<?php echo $row['job_title']?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Experiance</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="exp" type="text" value="<?php echo $row['exp']?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                
-                                <li style=" border-bottom:1px solid #F7630C;"><h4 style=" color:#F7630C; ">Personal Details</h4>     </li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Marrital Status</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="marritial_status">
-											
-											
-											<option selected="selected">Single</option>
-											<option selected="selected">Married</option>
-											<option selected="selected">Unmarried</option>
-											<option selected="selected">Divorce</option>
-                                           
-
-<option>Other</option>
-										</select>
-									</div>
-								</div>
-								</li>
-                               <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Father Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="father_name" type="text" value="<?php echo $row['father_name'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Mother Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="mother_name" type="text" value="<?php echo $row['mother_name'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Blood Group</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="blood_group" type="text" value="<?php echo $row['blood_group'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Nationality</label>
-									<div class="form_input">
-										<select style=" width:300px" class="chzn-select" tabindex="13" name="nationality">
-											
-											
-											<option selected="selected">India</option>
-											<option selected="selected">American</option>
-											<option selected="selected">China</option>
-											<option selected="selected">Japn</option>
-                                           
-
-<option>Other</option>
-										</select>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-
-									<label class="field_title">Address1</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="address1" type="text" value="<?php echo $row['address1'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Address2</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="address2" type="text" value="<?php echo $row['address2'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Employee Photo</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="image" type="file"/><img style="width:40px; height:40px" src="employee_image/<?php echo $row['image']?>">
-                                            <input type="hidden" name="oldimage" value="<?php echo $row['image'];?>">
-											
-										</div><?php }?>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li> 
-       
-                                
-                                <li>
-								<div class="form_grid_12">
-									<div class="form_input">
-										
-										<button type="submit" class="btn_small btn_blue" name="submit"><span>Submit</span></button>
-										
-										
-										
-									</div>
-								</div>
-								</li>
-                                
-
-                </form>  
-
-					
-			
-			</div>
-            
-            
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
-</div>
-<?php include_once("includes/footer.php");?>
+<?php include_once("includes/footer.php"); ?>

@@ -1,446 +1,120 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-    <div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+include_once("includes/staff_setting_sidebar.php");
 
-<?php include_once("includes/staff_setting_sidebar.php");?>
+$conn = Database::connection();
+$get_id = (int)($_GET['staff_id'] ?? 0);
+
+if ($get_id <= 0) {
+    echo "<script>window.location.href='view_staff.php';</script>";
+    exit;
+}
+
+// Optimized query to pull employee data and join related table names
+$sql = "SELECT e.*, d.staff_department, c.staff_category, p.staff_position, q.staff_qualification 
+        FROM staff_employee e
+        LEFT JOIN staff_department d ON e.staff_department_id = d.staff_department_id
+        LEFT JOIN staff_category c ON e.staff_cat_id = c.staff_cat_id
+        LEFT JOIN staff_position p ON e.staff_pos_id = p.staff_pos_id
+        LEFT JOIN staff_qualification q ON e.staff_qualification_id = q.staff_qualification_id
+        WHERE e.staff_id = $get_id";
+
+$res = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($res);
+
+if (!$row) {
+    echo "<div class='alert alert-error'>Employee record not found.</div>";
+    include_once("includes/footer.php");
+    exit;
+}
+?>
+
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
+    <div id="content">
+        <div class="grid_container">
+            <div class="grid_12">
+                <h3 style="padding:20px 0 10px 20px; color:#0078D4; border-bottom:1px solid #e2e8f0;">
+                    Staff Profile: <?php echo htmlspecialchars($row['first'] . " " . $row['last']); ?>
+                </h3>
+            </div>
 
-          
-			<div class="grid_12">
-				
-					<h3 style="padding-left:20px; color:#0078D4; border-bottom:1px solid #e2e2e2;">View Employee Registration</h3>
-                  <?php 
-					 include_once('config/config.inc.php');
-					?>
-                    <?php 
-					$msg="";
-					$get=$_GET['staff_id'];
-					if(isset($_POST['submit']))
-					{
-					$emp_id=$_POST['emp_id'];
-					$first=$_POST['first'];
-					$last=$_POST['last'];
-					$email=$_POST['email'];
-					$gender=$_POST['gender'];
-					$department=$_POST['staff_department'];
-					$category=$_POST['staff_category'];
-					$position=$_POST['staff_position'];
-					$qualification=$_POST['staff_qualification'];
-					$job=$_POST['job_title'];
-					$exp=$_POST['exp'];
-					$marritial=$_POST['marritial_status'];
-					$father=$_POST['father_name'];
-					$mother=$_POST['mother_name'];
-					$blood_group=$_POST['blood_group'];
-					$nationality=$_POST['nationality'];
-					$address1=$_POST['address1'];
-					$address2=$_POST['address2'];
-					 $image_size=$_FILES['image']['size'];
-						 $path="employee_image/";
-					
-				if(isset($_FILES['image']['name']) && $_FILES['image']['name']!="")
-				{
-			 $image=$_FILES['image']['name'];
-					move_uploaded_file($_FILES['image']['tmp_name'],$path.$image);
-					$old_image=$_POST['oldimage'];
-					if($oldphoto="")
-					{
-						unlink($path.$oldimage);
-					}
-					
-				
-				}
-				else
-					{
-						 $image=$_POST['oldimage'];
-					}
+            <div class="grid_4">
+                <div class="widget_wrap azure-card" style="text-align: center; padding: 25px;">
+                    <img src="employee_image/<?php echo $row['image'] ?: 'no-photo.png'; ?>" 
+                         style="width: 180px; height: 180px; border-radius: 12px; border: 1px solid #ddd; object-fit: cover; margin-bottom: 15px;">
+                    <h4 style="color:#334155; margin-bottom: 5px;"><?php echo htmlspecialchars($row['first'] . " " . $row['last']); ?></h4>
+                    <p style="color:#0078D4; font-weight: 700;"><?php echo htmlspecialchars($row['emp_id']); ?></p>
+                    <div style="margin-top: 15px;">
+                        <a href="edit_staf_employee_detail.php?staff_id=<?php echo $get_id; ?>" class="btn_small btn_blue">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
 
-					
-					$sql1="SELECT * FROM staff_employee where email='".$email."' and staff_id!='".$get."'";
-	$res1=db_query($sql1) or die("Error : " . db_error());
-	$num=db_num_rows($res1);
-	if($num==0)
-	{
-					
-					
-				 $sql="update  staff_employee set emp_id='".$emp_id."',first='".$first."',last='".$last."',email='".$email."',gender='".$gender."',staff_cat_id='".$category."',staff_pos_id='".$position."',staff_qualification_id='".$qualification."',staff_department_id='".$department."',job_title='".$job."',exp='".$exp."',marritial_status='".$marritial."',father_name='".$father."',mother_name='".$mother."',blood_group='".$blood_group."',nationality='".$nationality."',address1='".$address1."',address2='".$address2."',image='".$image."'  where staff_id='".$get."'";
-					$query=db_query($sql);
-					$msg = "<span style='color:#009900;'><h4> Employee Detail Updated Successfully </h4></span>";
-					
-	}else
-	{
-		
-		$msg = "<span style='color:#FF0000;'><h4>Employee Detail Already Exists  </h4></span>";
-		}
-					
-					}
-					$sql="select * from staff_employee where staff_id='".$get."'";
-					$res=db_query($sql);
-				$row=db_fetch_array($res);
-				
-					
-					
-					
-					
-					
- $staff="select * from staff_department where staff_department_id='".$row['staff_department_id']."'";
-					$staff_sel=db_query($staff);
-					$staff_sel_row=db_fetch_array($staff_sel);
-					
-					
-					 $staff_cat="select * from staff_category where staff_cat_id='".$row['staff_cat_id']."'";
-					$staff_cat_sel=db_query($staff_cat);
-					$staff_sel_cat=db_fetch_array($staff_cat_sel);
-					
-					 $staff_pos="select * from staff_position where staff_pos_id='".$row['staff_pos_id']."'";
-					$staff_pos_sel=db_query($staff_pos);
-					$staff_sel_pos=db_fetch_array($staff_pos_sel);
-					
-					 $staff_qua="select * from staff_qualification where staff_qualification_id='".$row['staff_qualification_id']."'";
-					$staff_qua_sel=db_query($staff_qua);
-					$staff_sel_qua=db_fetch_array($staff_qua_sel);
-					
-					?>
-                <?php if($msg!=""){echo $msg; } ?>
-               	<form action="#" method="post" class="form_container left_label" enctype="multipart/form-data">
-                                    
+            <div class="grid_8">
+                <div class="widget_wrap azure-card">
+                    <div class="widget_top"><h6 class="fluent-card-header">General & Professional Details</h6></div>
+                    <div class="widget_content" style="padding: 0;">
+                        <table class="fluent-data-table">
+                            <tr>
+                                <td class="label">Email Address</td>
+                                <td class="value"><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td class="label">Gender</td>
+                                <td class="value"><?php echo ucfirst(htmlspecialchars($row['gender'])); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Department</td>
+                                <td class="value"><?php echo htmlspecialchars($row['staff_department'] ?? 'N/A'); ?></td>
+                                <td class="label">Qualification</td>
+                                <td class="value"><?php echo htmlspecialchars($row['staff_qualification'] ?? 'N/A'); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Job Title</td>
+                                <td class="value"><?php echo htmlspecialchars($row['job_title']); ?></td>
+                                <td class="label">Experience</td>
+                                <td class="value"><?php echo htmlspecialchars($row['exp']); ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
-              <ul>
-               
-               
-               
-               
-           <br>
-<br>
-    <div class="grid_12">
-
- <div class="btn_30_light float-right">
-<a href="#">
-<span class="icon find_co"></span>
-<span class="btn_link">Advance Search</span>
-</a>
+                <div class="widget_wrap azure-card" style="margin-top: 20px;">
+                    <div class="widget_top"><h6 class="fluent-card-header">Personal Information</h6></div>
+                    <div class="widget_content" style="padding: 0;">
+                        <table class="fluent-data-table">
+                            <tr>
+                                <td class="label">Father's Name</td>
+                                <td class="value"><?php echo htmlspecialchars($row['father_name'] ?? 'N/A'); ?></td>
+                                <td class="label">Mother's Name</td>
+                                <td class="value"><?php echo htmlspecialchars($row['mother_name'] ?? 'N/A'); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Marital Status</td>
+                                <td class="value"><?php echo htmlspecialchars($row['marritial_status']); ?></td>
+                                <td class="label">Blood Group</td>
+                                <td class="value" style="color:#d32f2f; font-weight:700;"><?php echo htmlspecialchars($row['blood_group'] ?? 'N/A'); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Nationality</td>
+                                <td class="value"><?php echo htmlspecialchars($row['nationality'] ?? 'N/A'); ?></td>
+                                <td class="label">Current Address</td>
+                                <td class="value"><?php echo htmlspecialchars($row['address1']); ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="btn_30_light float-right">
-<a href="#">
-<span class="icon database_co"></span>
-<span class="btn_link">View All</span>
-</a>
-</div>
+<style>
+    .fluent-data-table { width: 100%; border-collapse: collapse; }
+    .fluent-data-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .fluent-data-table td.label { width: 25%; color: #64748b; font-weight: 600; background: #f8fafc; text-transform: uppercase; font-size: 11px; }
+    .fluent-data-table td.value { width: 25%; color: #1e293b; font-weight: 500; }
+</style>
 
-           
-                            
-                            
-                            
-                            </div><br><br>
-<br>
-  
-           
-               <li style=" border-bottom:1px solid #F7630C;"><h4 style=" color:#F7630C; ">General Details</h4>     </li>
-               <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Employee Photo</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<img style="width:40px; height:40px" src="employee_image/<?php echo $row['image']?>">
-                                           
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-               
-               <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Employee Id</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-						<?php echo $row['emp_id']; ?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">First Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											 <?php echo $row['first']; ?>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Last Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['last'];?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Email</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['email'];?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-                                <?php if($row['gender']=="male")
-									{
-										$male='checked="checked"';
-										}else
-										{
-											$female='checked="checked"';
-											
-											}?>
-									<label class="field_title">Gender</label>
-									<div class="form_input">
-										<?php echo $row['gender'];?>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Departmant</label>
-									<div class="form_input">
-										<?php echo $staff_sel_row['staff_department'];?>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Staff Category</label>
-									<div class="form_input">
-										<?php echo $staff_sel_cat['staff_category'];?>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title"> Staff Position</label>
-									<div class="form_input">
-										<?php echo $staff_sel_pos['staff_position'];?>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Qualification</label>
-									<div class="form_input">
-										<?php echo $staff_sel_qua['staff_qualification'];?>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Job Title</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['job_title'];?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Experiance</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['exp']?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                
-                                <li style=" border-bottom:1px solid #F7630C;"><h4 style=" color:#F7630C; ">Personal Details</h4>     </li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Marrital Status</label>
-									<div class="form_input">
-										<?php echo $row['marritial_status'];?>
-									</div>
-								</div>
-								</li>
-                               <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Father Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['father_name'];?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Mother Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['mother_name'];?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Blood Group</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['blood_group'];?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12">
-									<label class="field_title">Nationality</label>
-									<div class="form_input">
-										<?php echo $row['nationality'];?>
-									</div>
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-
-									<label class="field_title">Address1</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['address1'];?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Address2</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<?php echo $row['address2'];?>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									
-								</div>
-								</li>
-                                 
-       
-                                
-                                
-                                
-
-                </form>  
-
-					
-			
-			</div>
-            
-            
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
-</div>
-<?php include_once("includes/footer.php");?>
+<?php include_once("includes/footer.php"); ?>

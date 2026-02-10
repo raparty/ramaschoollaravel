@@ -1,116 +1,78 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-<div class="page_title">
-	
-	<h3>Staff Qualifications</h3>
-	<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
-<?php include_once("includes/staff_setting_sidebar.php");?>
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+include_once("includes/staff_setting_sidebar.php");
+
+$conn = Database::connection();
+?>
+
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
-<h3 style="padding-left:20px; color:#0078D4">Staff Qualification List</h3>
-          <div class="grid_12">
+    <div id="content">
+        <div class="grid_container">
+            <h3 style="padding-left:20px; color:#0078D4">Staff Qualification List</h3>
+            
+            <div class="grid_12">
+                <div class="btn_30_blue float-right">
+                    <a href="add_staff_qualification.php"><span style="width:140px">Add Qualification </span></a>
+                </div>
+            </div>
 
- 
-
-           <div class="btn_30_blue float-right">
-								<a href="add_staff_qualification.php"><span style="width:140px">Add Qualification </span></a>
-							</div>
-                            
-                            
-                            
-                            </div>
-			<div class="grid_12">
-				<div class="widget_wrap">
-					<div class="widget_top">
-						
-						<h6>Staff Qualification</h6>
-					</div>
+            <div class="grid_12">
+                <div class="widget_wrap">
+                    <div class="widget_top">
+                        <h6>Staff Qualification Inventory</h6>
+                    </div>
                    
-					<div class="widget_content">
-						
-						<table class="display data_tbl" >
-						<thead>
-						<tr>
-							
-							<th>
-								S.No.
-							</th>
-							<th>
-								 Staff Qualification 
-							</th>
-							
-							<th>
-								 Action
-							</th>
-						</tr>
-						</thead>
-                         <?php
-                include_once('config/config.inc.php');
-				?>
-                <?php $i=1;
-				
-               $sql="select * from staff_qualification order by staff_qualification asc";
-				$res=db_query($sql);
-				while($row=db_fetch_array($res))
-				
-				{
-				?>
-						<tbody>
-						<tr>
-							
-							<td class="center">
-								<a href="#"><?php echo $i;?></a>
-							</td>
-						<td class="center">
-								<?php echo $row['staff_qualification'];?>
-							</td>
-							
-							
-							
-							
-							<td class="center">
-								<span><a class="action-icons c-edit" href="edit_staff_qualification.php?staff_qualification_id=<?php echo $row['staff_qualification_id']?>" title="Edit">Edit</a></span> <a class="action-icons c-delete" href="delete_staff_qualification.php?staff_qualification_id=<?php echo $row['staff_qualification_id'];?>" title="delete"><span>Delete</span></a>
-							</td>
-						</tr><?php $i++; }?>
-						
-						
-						
-						</tbody>
-						
-						</table>
-                        
-                        
-                        
-					</div>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+                    <div class="widget_content">
+                        <table class="display data_tbl">
+                            <thead>
+                                <tr>
+                                    <th style="width:50px;">S.No.</th>
+                                    <th>Qualification Title</th>
+                                    <th style="text-align:center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+                                $i = 1;
+                                // Querying the verified table 'staff_qualification'
+                                $sql = "SELECT * FROM staff_qualification ORDER BY staff_qualification ASC";
+                                $res = mysqli_query($conn, $sql);
+                                
+                                if ($res && mysqli_num_rows($res) > 0) {
+                                    while($row = mysqli_fetch_assoc($res)) {
+                                ?>
+                                <tr>
+                                    <td class="center"><?php echo $i; ?></td>
+                                    <td class="center">
+                                        <strong><?php echo htmlspecialchars((string)$row['staff_qualification']); ?></strong>
+                                    </td>
+                                    <td class="center">
+                                        <span>
+                                            <a class="action-icons c-edit" href="edit_staff_qualification.php?staff_qualification_id=<?php echo $row['staff_qualification_id']; ?>" title="Edit">Edit</a>
+                                        </span> 
+                                        <span>
+                                            <a class="action-icons c-delete" href="delete_staff_qualification.php?staff_qualification_id=<?php echo $row['staff_qualification_id']; ?>" title="Delete" onclick="return confirm('Delete this qualification entry?')">Delete</a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <?php 
+                                        $i++; 
+                                    } 
+                                } else { ?>
+                                    <tr>
+                                        <td colspan="3" class="center" style="padding:30px; color:#888;">No qualifications found.</td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<?php include_once("includes/footer.php");?>
+
+<?php include_once("includes/footer.php"); ?>

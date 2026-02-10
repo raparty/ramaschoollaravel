@@ -1,104 +1,73 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-    <div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+include_once("includes/staff_setting_sidebar.php");
 
-<?php include_once("includes/staff_setting_sidebar.php");?>
+$conn = Database::connection();
+$msg = "";
+
+// 1. Handle the Form Submission
+if (isset($_POST['submit'])) {
+    $dept_name = mysqli_real_escape_string($conn, trim((string)$_POST['staff_department']));
+    
+    if (!empty($dept_name)) {
+        // Check if department already exists to prevent duplicates
+        $check_sql = "SELECT * FROM staff_department WHERE staff_department = '$dept_name'";
+        $check_res = mysqli_query($conn, $check_sql);
+        
+        if (mysqli_num_rows($check_res) == 0) {
+            $sql = "INSERT INTO staff_department (staff_department) VALUES ('$dept_name')";
+            if (mysqli_query($conn, $sql)) {
+                $msg = "<div class='alert alert-success'><h4>Staff Department Added Successfully</h4></div>";
+            } else {
+                $msg = "<div class='alert alert-error'><h4>Error: " . mysqli_error($conn) . "</h4></div>";
+            }
+        } else {
+            $msg = "<div class='alert alert-error'><h4>This Department already exists in the system</h4></div>";
+        }
+    } else {
+        $msg = "<div class='alert alert-error'><h4>Please enter a department name</h4></div>";
+    }
+}
+?>
+
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
-
-          
-			<div class="grid_12">
-				<div class="widget_wrap">
-               
-					<h3 style="padding-left:20px; color:#0078D4"> Staff Department</h3> <?php
-                include_once('config/config.inc.php');
-				?>
-                <?php
-				if(isset($_POST['submit']))
-				{
-					 $insert_check="select * from staff_department  where staff_department='".$_POST['staff_department']."'"; 
-	 $num=db_fetch_array(db_query($insert_check));
-			if($num==0)
-			{   
-                $sql="insert into staff_department(staff_department) values('".$_POST['staff_department']."')";
-				$res=db_query($sql);
-				$msg = "<span style='color:#009900;'><h4> Staff Department  Detail Added Successfully </h4></span>";
-				}
-				else
-				{ 
-					$msg = "<span style='color:#FF0000;'><h4> Staff Department Detail already exist </h4></span>";
-				
-				}}
-				
-				
-				?>
-                <?php if($msg!=""){echo $msg; } ?>
-					<form action="#" method="post" class="form_container left_label">
-							<ul>
-								<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Department Name</label>
+    <div id="content">
+        <div class="grid_container">
+            <div class="grid_12">
+                <div class="widget_wrap">
+                    <h3 style="padding:20px 0 0 20px; color:#0078D4">Add New Staff Department</h3>
+                    
+                    <div class="widget_content" style="padding: 25px;">
+                        <?php if($msg != "") echo $msg; ?>
+                        
+                        <form action="#" method="post" class="form_container left_label">
+                            <ul>
+                                <li>
+                                    <div class="form_grid_12">
+                                        <label class="field_title">Department Name <span style="color:red;">*</span></label>
+                                        <div class="form_input">
+                                            <input name="staff_department" type="text" required="required" placeholder="e.g. Academic, Administration, Accounts" style="width:400px;"/>
+                                            <span class="label_intro">Enter the name of the new school department</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
                                     <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="staff_department" type="text" required="required"/>
-											<span class=" label_intro">New Department</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-								<li>
-								<div class="form_grid_12">
-									<div class="form_input">
-										
-										<button type="submit" class="btn_small btn_blue" name="submit"><span>Save</span></button>
-										
-									<a href="view_staff_department.php">	<button type="button" class="btn_small btn_orange"><span>Back</span></button>
-				</a>						
-									</div>
-								</div>
-								</li>
-							</ul>
-						</form>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+                                        <button type="submit" name="submit" class="btn_small btn_blue"><span>Save Department</span></button>
+                                        <a href="view_staff_department.php" class="btn_small btn_orange" style="margin-left:10px; text-decoration:none;"><span>Back to List</span></a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<?php include_once("includes/footer.php");?>
+
+<?php include_once("includes/footer.php"); ?>

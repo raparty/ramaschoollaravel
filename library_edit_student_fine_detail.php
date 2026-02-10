@@ -1,267 +1,101 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-<?php 
-if(isset($_POST['submit']))
-{
-	// $package_name = $_POST['package_name'];
-	 //$class_id = $_POST['class_id'];
-	//$school_logo = $_POST['school_logo'];
-	
-	 
-	if($_POST['fine_amount']<=$_POST['total_fine_amount'])
-	{
-		
-		$fine_amount=$_POST['total_fine_amount']-$_POST['fine_amount'];
-		
-		  $sql3="UPDATE student_fine_detail set registration_no='".$_POST['registration_no']."',book_number='".$_POST['book_number']."',fine_amount='".$fine_amount."'  where student_fine_id='".$_GET['sid']."'";
-		$res3=db_query($sql3) or die("Error : " . db_error());
-		header("Location:student_fine_detail.php");
-		
-		
-	}
-	else
-	{
-		header("location:library_edit_student_fine_detail.php?error=1&&sid=".$_GET['sid']);
-	}
-	
-	
-}
-else
-{
-	if($_GET['msg']==1)
-	{
-		$msg = "<span style='color:#009900;'><h4> Student Books  Detail Added Successfully </h4></span>";
-	}
-	if($_GET['msg']==2)
-	{
-		$msg = "<span style='color:#009900;'><h4>Student Books Detail Deleted Successfully </h4></span>";
-	}
-	if($_GET['msg']==3)
-	{
-		$msg = "<span style='color:#009900;'><h4> Student Books Detail Updated Successfully </h4></span>";
-	}
-	else if($_GET['error']==1)
-	{
-		$msg = "<span style='color:#FF0000;'><h4>Deposit fine amount greater than total amount   </h4></span>";
-	}
-	else if($_GET['error']==2)
-	{
-		$msg = "<span style='color:#FF0000;'><h4> Please fill all detail </h4></span>";
-	}
-	
+
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+
+$conn = Database::connection();
+$msg = "";
+$sid = (int)($_GET['sid'] ?? $_POST['sid'] ?? 0);
+
+if ($sid <= 0) {
+    echo "<script>window.location.href='student_fine_detail.php';</script>";
+    exit;
 }
 
-$select_q="select * from student_fine_detail where student_fine_id='".$_GET['sid']."'";
-$result=db_query($select_q);
-$row_detail=db_fetch_array($result);
-$registration_no=$row_detail['registration_no'];
+// 1. HANDLE UPDATE SUBMISSION
+if (isset($_POST['submit'])) {
+    $fine_amount = mysqli_real_escape_string($conn, trim((string)$_POST['fine_amount']));
+    // Ensure session is never empty
+    $session = mysqli_real_escape_string($conn, trim((string)$_POST['session']));
+    if (empty($session)) { $session = $_SESSION['session']; }
+
+    $sql_upd = "UPDATE student_fine_detail SET 
+                fine_amount = '$fine_amount', 
+                session = '$session' 
+                WHERE id = '$sid'";
+
+    if (mysqli_query($conn, $sql_upd)) {
+        echo "<script>window.location.href='student_fine_detail.php?msg=update_success';</script>";
+        exit;
+    } else {
+        $msg = "<div class='alert alert-danger'>Update Failed: " . mysqli_error($conn) . "</div>";
+    }
+}
+
+// 2. FETCH CURRENT DATA
+$sql_fine = "SELECT * FROM student_fine_detail WHERE id = $sid";
+$res_fine = mysqli_query($conn, $sql_fine);
+$fine_row = mysqli_fetch_assoc($res_fine);
+
+if (!$fine_row) { die("Error: Fine record not found."); }
+
+$reg_no = mysqli_real_escape_string($conn, (string)$fine_row['registration_no']);
+$sql_std = "SELECT student_name FROM admissions WHERE reg_no = '$reg_no'";
+$student = mysqli_fetch_assoc(mysqli_query($conn, $sql_std));
 ?>
-<div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
-<?php include_once("includes/library_setting_sidebar.php");?>
+
+<?php include_once("includes/library_setting_sidebar.php"); ?>
 
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
-
-          
-			<div class="grid_12">
-				<div class="widget_wrap">
-					<h3 style="padding-left:20px; color:#0078D4">edit student fine</h3>
-                    
-                    <?php if($msg!=""){echo $msg; } ?>
-					<form action="" method="post" class="form_container left_label" enctype="multipart/form-data">
-							<ul>
-								<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Registration no.</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="registration_no"   onBlur="getCheckreg('checkregno.php?registration_no='+this.value)" type="text" value="<?php echo $registration_no;?>" />
-                                            
-											<span class=" label_intro">Registration number</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                
-                                
-                                
-                                <?php 
-//$registration_no=$_GET['registration_no'];
-//$fees_term=$_GET['fees_term'];
- $studentinfo="select * from student_info where registration_no='".$registration_no."' and session='".$_SESSION['session']."'";
-$row=db_fetch_array(db_query($studentinfo));
-	      $sql_pending="select sum(fees_amount) from student_fees_detail where registration_no='".$registration_no."'  and session='".$_SESSION['session']."'";
-	$deposit_amount=db_fetch_array(db_query($sql_pending));
-	
-	
-//$student_fees_detail="select ";
-?>
-
-<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">Student Name</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha">
-											<input name="name" type="text" value="<?php echo $row['name'];?>"/>
-											<span class=" label_intro">student name</span>
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                
+    <div id="content">
+        <div class="grid_container">
+            <div class="grid_12">
+                <div class="widget_wrap">
+                    <h3 style="padding:20px 0 0 20px; color:#0078D4">Edit Student Fine</h3>
+                    <div class="widget_content" style="padding: 25px;">
+                        <?php if($msg != "") echo $msg; ?>
+                        <form action="" method="post" class="form_container left_label">
+                            <input type="hidden" name="sid" value="<?php echo $sid; ?>">
+                            <ul>
                                 <li>
-								<div class="form_grid_12">
-									<label class="field_title"> Class Name </label>
-									<div class="form_input">
-										<select style=" width:300px" name="class" class="chzn-select" tabindex="13">
-											
-							<?php
-							 $sql="SELECT * FROM class  where class_id='".$row['class']."'";
-	                           $res=db_query($sql);
-								while($row1=db_fetch_array($res))
-								{
-									?>
-									<option value="<?php echo $row1['class_id']; ?>"><?php echo $row1['class_name']; ?></option>
-									<?php
-								}
-							?>
-										</select>
-									</div>
-								</div>
-								</li>
-                                <?php if($row['stream']!=0){?>
+                                    <div class="form_grid_12">
+                                        <label class="field_title">Student Name</label>
+                                        <div class="form_input">
+                                            <input type="text" value="<?php echo htmlspecialchars($student['student_name'] ?? 'Unknown'); ?>" readonly style="background:#f3f4f6; width:350px;" />
+                                        </div>
+                                    </div>
+                                </li>
                                 <li>
-								<div class="form_grid_12">
-									<label class="field_title">Stream</label>
-									<div class="form_input">
-										<select style=" width:300px" name="stream" class="chzn-select" tabindex="13">
-										
-                                        	<?php
-							 $sql="SELECT * FROM stream where stream_id='".$row['stream']."' ";
-	                           $res=db_query($sql);
-								while($row2=db_fetch_array($res))
-								{
-									?>
-									<option value="<?php echo $row2['stream_id']; ?>"><?php echo $row2['stream_name']; ?></option>
-									<?php
-								}
-							?>
-										</select>
-									</div>
-								</div>
-								</li>
-								
-								<?php } ?>
-								<li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title">  Book Number</label>
-                                    <div class="form_input">
-										<div class="form_grid_5 alpha" id="Checkbook">
-                                      
-											<input name="book_number" type="text" onBlur="getCheckbook('checkbookno.php?book_number='+this.value)" value="<?php echo $row_detail['book_number'];?>"/>
-											
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                
+                                    <div class="form_grid_12">
+                                        <label class="field_title">Fine Amount (₹) <span style="color:red;">*</span></label>
+                                        <div class="form_input">
+                                            <input name="fine_amount" type="number" step="0.01" value="<?php echo htmlspecialchars($fine_row['fine_amount']); ?>" required style="width:350px;" />
+                                        </div>
+                                    </div>
+                                </li>
                                 <li>
-								<div class="form_grid_12 multiline">
-									<label class="field_title"> Fine Amount</label>
+                                    <div class="form_grid_12">
+                                        <label class="field_title">Session <span style="color:red;">*</span></label>
+                                        <div class="form_input">
+                                            <input name="session" type="text" value="<?php echo htmlspecialchars($fine_row['session'] ?: $_SESSION['session']); ?>" required style="width:350px;" />
+                                            <span class="label_intro">Verify correct academic year (e.g. 2025-26)</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
                                     <div class="form_input">
-										<div class="form_grid_5 alpha" >
-                                      
-											<input name="fine_amount" type="text" required value="<?php echo $row_detail['fine_amount'];?>" />
-											<input name="total_fine_amount" type="hidden" required value="<?php echo $row_detail['fine_amount'];?>" />
-										</div>
-									
-										<span class="clear"></span>
-									</div>
-
-									
-									<div class="form_input">
-
-										<span class="clear"></span>
-									</div>
-								</div>
-								</li>
-                                
-                                
-                                
-                                
-                                
-								<li>
-								<div class="form_grid_12">
-									<div class="form_input">
-										
-										<button type="submit" class="btn_small btn_blue" name="submit"><span>Save</span></button>
-										
-										<a href="student_fine_detail.php"><button type="button" class="btn_small btn_orange"><span>Back</span></button></a>
-										
-									</div>
-								</div>
-								</li>
-							</ul>
-						</form>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+                                        <button type="submit" name="submit" class="btn_small btn_blue"><span>Update Fine</span></button>
+                                        <a href="student_fine_detail.php" class="btn_small btn_orange" style="margin-left:10px;"><span>Cancel</span></a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<?php include_once("includes/footer.php");?>
+<?php include_once("includes/footer.php"); ?>

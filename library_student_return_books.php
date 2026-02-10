@@ -5,10 +5,11 @@ include_once("includes/header.php");
 include_once("includes/sidebar.php");
 
 $conn = Database::connection();
+
 // Support both 'registration_no' and 'reg_no' from URL
 $reg_no = mysqli_real_escape_string($conn, trim((string)($_GET['registration_no'] ?? $_GET['reg_no'] ?? '')));
 
-// 1. Fetch Student Details from Admissions
+// 1. Fetch Student Name from the primary 'admissions' table
 $student_name = "Unknown Student";
 if ($reg_no) {
     $sql_std = "SELECT student_name FROM admissions WHERE reg_no = '$reg_no'";
@@ -45,40 +46,43 @@ if ($reg_no) {
                             <tbody>
                                 <?php 
                                 $i = 1;
-                                // 2. Querying confirmed plural table
+                                // 2. Querying the verified plural table 'student_books_details'
+                                // Filter by booking_status = '1' (Still Issued)
                                 $sql = "SELECT * FROM student_books_details 
                                         WHERE registration_no = '$reg_no' 
-                                        AND booking_status = '1'";
+                                        AND booking_status = '1' 
+                                        ORDER BY id DESC";
                                 
                                 $res = mysqli_query($conn, $sql);
 
                                 if ($res && mysqli_num_rows($res) > 0) {
                                     while($row = mysqli_fetch_assoc($res)) {
+                                        // 3. Nested lookup to 'book_managers' to get the actual Book Name
+                                        $book_num = mysqli_real_escape_string($conn, (string)$row['book_number']);
+                                        $bn_query = "SELECT book_name FROM book_managers WHERE book_number = '$book_num' LIMIT 1";
+                                        $bn_res = mysqli_query($conn, $bn_query);
+                                        $b_data = mysqli_fetch_assoc($bn_res);
                                 ?>
                                 <tr>
                                     <td class="center"><?php echo $i++; ?></td>
-                                    <td class="center"><?php echo htmlspecialchars($student_name); ?></td>
-                                    <td class="center">
-                                        <?php 
-                                        // Fetch book name from book_managers
-                                        $bn = mysqli_query($conn, "SELECT book_name FROM book_managers WHERE book_number='".$row['book_number']."'");
-                                        $b_data = mysqli_fetch_assoc($bn);
-                                        echo htmlspecialchars($b_data['book_name'] ?? 'N/A');
-                                        ?>
+                                    <td class="center"><strong><?php echo htmlspecialchars($student_name); ?></strong></td>
+                                    <td class="center" style="color:#1c75bc; font-weight:600;">
+                                        <?php echo htmlspecialchars($b_data['book_name'] ?? 'Book Not in Catalog'); ?>
                                     </td>
-                                    <td class="center"><?php echo htmlspecialchars($row['book_number']); ?></td>
-                                    <td class="center"><?php echo date('d-m-Y', strtotime($row['issue_date'])); ?></td>
+                                    <td class="center"><code><?php echo htmlspecialchars($row['book_number']); ?></code></td>
+                                    <td class="center"><?php echo date('d-M-Y', strtotime($row['issue_date'])); ?></td>
                                     <td class="center"><?php echo htmlspecialchars($row['session']); ?></td>
                                     <td class="center">
-                                        <a href="library_process_return.php?id=<?php echo $row['id']; ?>" class="btn_small btn_blue" onclick="return confirm('Confirm book return?')">
+                                        <a href="library_process_return.php?id=<?php echo $row['id']; ?>" class="btn_small btn_blue" onclick="return confirm('Process return for this book?')">
                                             <span>Return</span>
                                         </a>
                                     </td>
                                 </tr>
                                 <?php } } else { ?>
                                     <tr>
-                                        <td colspan="7" class="center" style="padding:20px; color:red;">
-                                            No issued books found for this student.
+                                        <td colspan="7" class="center" style="padding:40px;">
+                                            <div style="color:#d32f2f; font-weight:bold;">No active issued books found.</div>
+                                            <small>Verify if the book was already returned or issued under a different Registration No.</small>
                                         </td>
                                     </tr>
                                 <?php } ?>

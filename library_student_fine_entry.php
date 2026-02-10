@@ -1,72 +1,59 @@
 <?php
-// 1. DO NOT add session_start() here if it is already in bootstrap.php
+declare(strict_types=1);
+
 require_once("includes/bootstrap.php");
 include_once("includes/header.php");
 include_once("includes/sidebar.php");
-include_once("includes/library_setting_sidebar.php");
 
 $conn = Database::connection();
 $msg = "";
 
-// 2. CHECK IF TABLE EXISTS BEFORE RUNNING
-$table_check = mysqli_query($conn, "SHOW TABLES LIKE 'student_fine_detail'");
-$table_exists = (mysqli_num_rows($table_check) > 0);
-
-if (!$table_exists) {
-    // If student_fine_detail is missing, try checking for 'student_fine_details'
-    $alt_check = mysqli_query($conn, "SHOW TABLES LIKE 'student_fine_details'");
-    if (mysqli_num_rows($alt_check) > 0) {
-        $active_table = "student_fine_details";
-        $table_exists = true;
-    } else {
-        $msg = "<div style='color:red; background:#fee; padding:15px; border:1px solid red; margin-bottom:20px;'>
-                    <strong>CRITICAL ERROR:</strong> Neither 'student_fine_detail' nor 'student_fine_details' exists in the database. 
-                    Please check your table names.
-                </div>";
-    }
-} else {
-    $active_table = "student_fine_detail";
-}
-
-// 3. DATA PROCESSING
-if (isset($_POST['save_fine']) && $table_exists) {
+// 1. HANDLE FINE SUBMISSION
+if (isset($_POST['submit'])) {
     $reg_no = mysqli_real_escape_string($conn, trim((string)$_POST['registration_no']));
     $book_no = mysqli_real_escape_string($conn, trim((string)$_POST['book_number']));
-    $amount = (float)$_POST['fine_amount'];
+    $amount = mysqli_real_escape_string($conn, trim((string)$_POST['fine_amount']));
+    $session = mysqli_real_escape_string($conn, (string)($_SESSION['session'] ?? ''));
+    $date = date('Y-m-d');
+
+    // Verify student exists in 'admissions' before allowing fine entry
+    $check_std = mysqli_query($conn, "SELECT id FROM admissions WHERE reg_no = '$reg_no'");
     
-    // Safety check for session variable
-    $session = mysqli_real_escape_string($conn, (string)($_SESSION['session'] ?? '2025-2026'));
-
-    // Verify Student
-    $sql_check = "SELECT student_name FROM admissions WHERE reg_no = '$reg_no' LIMIT 1";
-    $res_check = mysqli_query($conn, $sql_check);
-
-    if ($res_check && mysqli_num_rows($res_check) > 0) {
-        $student = mysqli_fetch_assoc($res_check);
-        
-        // Insert using the dynamically found table name
-        $sql_ins = "INSERT INTO $active_table (registration_no, book_number, fine_amount, session, date) 
-                    VALUES ('$reg_no', '$book_no', '$amount', '$session', NOW())";
+    if (mysqli_num_rows($check_std) > 0) {
+        // Insert into pluralized table 'student_fine_detail'
+        $sql_ins = "INSERT INTO student_fine_detail (registration_no, book_number, fine_amount, session, date) 
+                    VALUES ('$reg_no', '$book_no', '$amount', '$session', '$date')";
         
         if (mysqli_query($conn, $sql_ins)) {
-            $msg = "<div style='color:green; background:#e6fffa; padding:15px; border:1px solid green; margin-bottom:20px;'>
-                        <strong>Success!</strong> Fine recorded for <strong>" . $student['student_name'] . "</strong>.
-                    </div>";
+            echo "<script>alert('Fine recorded successfully.'); window.location.href='student_fine_detail.php?msg=1';</script>";
+            exit;
         } else {
-            $msg = "<div style='color:red;'>SQL Error: " . mysqli_error($conn) . "</div>";
+            $msg = "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
         }
     } else {
-        $msg = "<div style='color:red; padding:15px; border:1px solid red;'>Error: Student ID '$reg_no' not found in Admissions.</div>";
+        $msg = "<div class='alert alert-danger'>Student Registration No. not found.</div>";
+    }
+}
+
+// 2. FETCH STUDENT NAME (AJAX-like preview)
+$reg_param = mysqli_real_escape_string($conn, (string)($_GET['reg_no'] ?? ''));
+$student_name = "";
+if ($reg_param) {
+    $res_name = mysqli_query($conn, "SELECT student_name FROM admissions WHERE reg_no = '$reg_param'");
+    if ($row_n = mysqli_fetch_assoc($res_name)) {
+        $student_name = $row_n['student_name'];
     }
 }
 ?>
 
+<?php include_once("includes/library_setting_sidebar.php"); ?>
+
 <div id="container">
     <div id="content">
         <div class="grid_container">
-            <h3 style="padding:15px 0 0 20px; color:#0078D4">Library Fine Management</h3>
             <div class="grid_12">
                 <div class="widget_wrap">
+                    <h3 style="padding:20px 0 0 20px; color:#0078D4">Record Individual Student Fine</h3>
                     <div class="widget_content" style="padding: 25px;">
                         <?php if($msg != "") echo $msg; ?>
                         
@@ -74,32 +61,48 @@ if (isset($_POST['save_fine']) && $table_exists) {
                             <ul>
                                 <li>
                                     <div class="form_grid_12">
-                                        <label class="field_title">S.R. Number (Reg No)</label>
+                                        <label class="field_title">Registration No. <span style="color:red;">*</span></label>
                                         <div class="form_input">
-                                            <input name="registration_no" type="text" required style="width:300px;" />
+                                            <input name="registration_no" id="reg_no_input" type="text" value="<?php echo htmlspecialchars($reg_param); ?>" 
+                                                   placeholder="e.g. ADM-2026-001" required style="width:250px;" 
+                                                   onblur="if(this.value != '') window.location.href='?reg_no='+this.value;" />
+                                            <span class="label_intro">Press TAB to verify student name</span>
                                         </div>
                                     </div>
                                 </li>
+
                                 <li>
                                     <div class="form_grid_12">
-                                        <label class="field_title">Book Number</label>
+                                        <label class="field_title">Student Name</label>
                                         <div class="form_input">
-                                            <input name="book_number" type="text" required style="width:300px;" />
+                                            <input type="text" value="<?php echo htmlspecialchars($student_name); ?>" readonly 
+                                                   placeholder="Auto-fills after verification" style="background:#f9f9f9; width:350px;" />
                                         </div>
                                     </div>
                                 </li>
+
                                 <li>
                                     <div class="form_grid_12">
-                                        <label class="field_title">Fine Amount (₹)</label>
+                                        <label class="field_title">Book Number <span style="color:red;">*</span></label>
                                         <div class="form_input">
-                                            <input name="fine_amount" type="number" step="0.01" required style="width:300px;" />
+                                            <input name="book_number" type="text" placeholder="e.g. LIB-502" required style="width:250px;" />
                                         </div>
                                     </div>
                                 </li>
-                                <li style="margin-top: 20px;">
+
+                                <li>
+                                    <div class="form_grid_12">
+                                        <label class="field_title">Fine Amount (₹) <span style="color:red;">*</span></label>
+                                        <div class="form_input">
+                                            <input name="fine_amount" type="number" step="0.01" placeholder="0.00" required style="width:250px;" />
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li style="margin-top: 25px; border-top: 1px solid #eee; padding-top: 20px;">
                                     <div class="form_input">
-                                        <button type="submit" name="save_fine" class="btn_small btn_blue"><span>Save Fine Record</span></button>
-                                        <a href="student_fine_detail.php" class="btn_small btn_orange" style="margin-left:10px;"><span>View Records</span></a>
+                                        <button type="submit" name="submit" class="btn_small btn_blue"><span>Save Fine Entry</span></button>
+                                        <a href="student_fine_detail.php" class="btn_small btn_orange" style="margin-left:10px;"><span>Back to List</span></a>
                                     </div>
                                 </li>
                             </ul>

@@ -39,12 +39,12 @@ include_once("includes/header.php");?>
 				$get=$_GET['id'];
 								if(isset($_POST['submit']))
 				{
-					$staff=$_POST['staff_position'];
+					$staff=db_escape($_POST['staff_position']);
 			   
-                $sql="update staff_position set staff_position='".$staff."' where id='".$get."'";
+                $sql="update staff_position set staff_position='".$staff."' where id=$get";
 				$res=db_query($sql);
 				}
-			$select_sql="select * from staff_position where id='".$get."'";	
+			$select_sql="select * from staff_position where id=$get";	
 			$select_res=db_query($select_sql);
 		$row=db_fetch_array($select_res)
 		

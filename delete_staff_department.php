@@ -8,7 +8,7 @@ if ($staff <= 0) {
     header('location:view_staff_department.php');
     exit;
 }
-$sql="delete  from  staff_department where id='".$staff."'";
+$sql="delete  from  staff_department where id=$staff";
 $res=db_query($sql);
 header('location:view_staff_department.php');
 die();

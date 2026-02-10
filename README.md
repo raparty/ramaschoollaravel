@@ -456,6 +456,24 @@ crontab -e
 
 ## Support and Documentation
 
+### Documentation Files
+
+The repository includes comprehensive documentation in the `/docs` folder:
+
+- **[Navigation Table](docs/NAVIGATION_TABLE.md)**: Complete mapping of file-to-file navigation relationships in the application
+- **[ERP Application Guide](docs/ERP_APPLICATION_GUIDE.md)**: Detailed guide for using the ERP system
+- **[Quick Answers](docs/QUICK_ANSWERS.md)**: FAQ and quick reference guide
+- **[Documentation Index](docs/DOCUMENTATION_INDEX.md)**: Index of all documentation files
+- **[Schema Audit Report](docs/SCHEMA_AUDIT_REPORT.md)**: Database schema audit and recommendations
+- **[Navigation Flow Diagram](docs/NAVIGATION_FLOW_DIAGRAM.txt)**: Text-based navigation flow diagram
+- **[Database Schema](docs/DATABASE_SCHEMA.md)**: Complete database schema documentation
+- **[Project Summary](docs/PROJECT_SUMMARY.md)**: Overview of the project structure
+- **[Page Documentation](docs/PAGE_DOCUMENTATION.md)**: Documentation for individual pages
+- **[Modernization Summary](docs/MODERNIZATION_SUMMARY.md)**: Details on UI/UX modernization
+- **[Fluent UI Update](docs/FLUENT_UI_UPDATE.md)**: Fluent UI design system integration
+- **[Wireframes](docs/WIREFRAMES.md)**: UI wireframes and mockups
+- **[Fix Summary](docs/FIX_SUMMARY.md)**: Bug fixes and improvements
+
 ### Getting Help
 - **Issues**: Report bugs via GitHub Issues
 - **Documentation**: Check the `/docs` folder for detailed documentation

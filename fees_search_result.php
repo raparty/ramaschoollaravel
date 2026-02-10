@@ -61,7 +61,7 @@ include_once("includes/header.php");?>
 								while($row=db_fetch_array($res))
 								{
 									?>
-									<option value="<?php echo $row['fees_term_id']; ?>"><?php echo $row['term_name']; ?></option>
+									<option value="<?php echo $row['id']; ?>"><?php echo $row['term_name']; ?></option>
 									<?php
 								}
 							?>
@@ -209,7 +209,7 @@ include_once("includes/header.php");?>
 								$sql="SELECT * FROM student_info where registration_no='".$row[1]."'  and  session='".$_SESSION['session']."'";
 	                           $student_fees_detail=db_fetch_array(db_query($sql));
 							   
-							   $sql1="SELECT * FROM fees_term where fees_term_id='".$row['fees_term']."'";
+							   $sql1="SELECT * FROM fees_term where id='".$row['fees_term']."'";
 	                           $fees_term=db_fetch_array(db_query($sql1));
 								
 								

@@ -149,7 +149,7 @@ xmlhttp.send();
 								while($row22=db_fetch_array($ress))
 								{
 									?>
-									<option value="<?php echo $row22['fees_term_id']; ?>"><?php echo $row22['term_name']; ?></option>
+									<option value="<?php echo $row22['id']; ?>"><?php echo $row22['term_name']; ?></option>
 									<?php
 								}
 							?>

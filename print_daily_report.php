@@ -190,7 +190,7 @@ $select_fees_detail=db_query("select * from student_fees_detail where registrati
 //					          $sql12="SELECT * FROM exam_nuber_of_term ";
 //	                           $res12=db_query($sql12);*/
 //							   
-//							    $sql="SELECT * FROM fees_term where fees_term_id='".$row['fees_term']."' ";			
+//							    $sql="SELECT * FROM fees_term where id='".$row['fees_term']."' ";			
 // 	                            $res=db_query($sql);
 //								$month=db_fetch_array($res);						  
 				?>		

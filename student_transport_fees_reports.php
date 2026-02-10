@@ -204,7 +204,7 @@ include_once("includes/header.php");?>
 							   
 							   $sql1="SELECT * FROM class where class_id='".$student_info['class']."'";
 					$class=db_fetch_array(db_query($sql1));
-							   $sql1="SELECT * FROM fees_term where fees_term_id='".$row['fees_term']."' ";
+							   $sql1="SELECT * FROM fees_term where id='".$row['fees_term']."' ";
 	                           $fees_term=db_fetch_array(db_query($sql1));
 								
 								

@@ -281,7 +281,44 @@ CREATE TABLE `month` (
 CREATE TABLE `registration_counter` (
   `id` int NOT NULL AUTO_INCREMENT,
   `counter_value` int NOT NULL,
+  `session` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--- Table: rte_student_info ---
+CREATE TABLE `rte_student_info` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `registration_no` varchar(50) NOT NULL,
+  `student_admission_no` varchar(50) DEFAULT NULL,
+  `addmission_date` varchar(50) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `dob` varchar(50) DEFAULT NULL,
+  `class` varchar(50) DEFAULT NULL,
+  `stream` varchar(50) DEFAULT NULL,
+  `admission_fee` varchar(50) DEFAULT NULL,
+  `category` varchar(50) DEFAULT NULL,
+  `gender` varchar(20) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `s_address` text,
+  `country` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `pin_code` varchar(20) DEFAULT NULL,
+  `s_mobile_no` varchar(20) DEFAULT NULL,
+  `s_email` varchar(255) DEFAULT NULL,
+  `f_name` varchar(255) DEFAULT NULL,
+  `m_name` varchar(255) DEFAULT NULL,
+  `f_address` text,
+  `f_mobile_no` varchar(20) DEFAULT NULL,
+  `f_email` varchar(255) DEFAULT NULL,
+  `caste_certificate` varchar(10) DEFAULT NULL,
+  `bonafied_cetificate` varchar(10) DEFAULT NULL,
+  `income_certificate` varchar(10) DEFAULT NULL,
+  `previous_class_certificate` varchar(10) DEFAULT NULL,
+  `session` varchar(50) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `registration_no` (`registration_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --- Table: school_detail ---
@@ -328,6 +365,13 @@ CREATE TABLE `staff_departments` (
   UNIQUE KEY `dept_name` (`dept_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--- Table: staff_department ---
+CREATE TABLE `staff_department` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `staff_department` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --- Table: staff_details ---
 CREATE TABLE `staff_details` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -363,6 +407,13 @@ CREATE TABLE `staff_positions` (
   `position_name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `position_name` (`position_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--- Table: staff_position ---
+CREATE TABLE `staff_position` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `staff_position` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --- Table: staff_qualification ---
@@ -456,6 +507,14 @@ CREATE TABLE `subjects` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `subject_name` (`subject_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--- Table: streams ---
+CREATE TABLE `streams` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `stream_name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `stream_name` (`stream_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --- Table: transport ---
 CREATE TABLE `transport` (

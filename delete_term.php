@@ -5,7 +5,7 @@ ob_start();
 $sid = (int)($_GET['sid'] ?? 0);
 if ($sid > 0)
 {
-	$delete_detail="delete from fees_term where fees_term_id='".$sid."'";
+	$delete_detail="delete from fees_term where id='".$sid."'";
 	db_query($delete_detail);
 	header("Location:term_manager.php?msg=2");
 	

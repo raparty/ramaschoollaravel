@@ -460,7 +460,7 @@ crontab -e
 
 The repository includes comprehensive documentation in the `/docs` folder:
 
-- **[Navigation Table](NAVIGATION_TABLE.md)**: Complete mapping of file-to-file navigation relationships in the application
+- **[Navigation Table](docs/NAVIGATION_TABLE.md)**: Complete mapping of file-to-file navigation relationships in the application
 - **[ERP Application Guide](docs/ERP_APPLICATION_GUIDE.md)**: Detailed guide for using the ERP system
 - **[Quick Answers](docs/QUICK_ANSWERS.md)**: FAQ and quick reference guide
 - **[Documentation Index](docs/DOCUMENTATION_INDEX.md)**: Index of all documentation files

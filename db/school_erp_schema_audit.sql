@@ -365,6 +365,13 @@ CREATE TABLE `staff_departments` (
   UNIQUE KEY `dept_name` (`dept_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--- Table: staff_department ---
+CREATE TABLE `staff_department` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `staff_department` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --- Table: staff_details ---
 CREATE TABLE `staff_details` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -400,6 +407,13 @@ CREATE TABLE `staff_positions` (
   `position_name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `position_name` (`position_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--- Table: staff_position ---
+CREATE TABLE `staff_position` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `staff_position` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --- Table: staff_qualification ---

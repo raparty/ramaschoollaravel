@@ -58,7 +58,7 @@
 								while($row=db_fetch_array($res))
 								{
 									?>
-									<option value="<?php echo $row['fees_term_id']; ?>"><?php echo $row['term_name']; ?></option>
+									<option value="<?php echo $row['id']; ?>"><?php echo $row['term_name']; ?></option>
 									<?php
 								}
 							?>

@@ -10,12 +10,12 @@ if(isset($_POST['submit']))
 	$term_name_safe = db_escape($term_name);
 	// $class_id = $_POST['class_id'];
 	
-		$sql1="SELECT * FROM fees_term where term_name='".$term_name_safe."' and fees_term_id!='".$sid."'";
+		$sql1="SELECT * FROM fees_term where term_name='".$term_name_safe."' and id!='".$sid."'";
 	$res1=db_query($sql1) or die("Error : " . db_error());
 	$num=db_num_rows($res1);
 	if($num==0)
 	{
-	  $sql3="UPDATE fees_term SET term_name='".$term_name_safe."'  where fees_term_id='".$sid."'";
+	  $sql3="UPDATE fees_term SET term_name='".$term_name_safe."'  where id='".$sid."'";
 	$res3=db_query($sql3) or die("Error : " . db_error());
 	header("Location:term_manager.php?msg=3");
 	}else
@@ -30,7 +30,7 @@ if(($_GET['error'] ?? null)==2)
 
 	
 		
-	$sql2="SELECT * FROM fees_term WHERE `fees_term_id` = '" . $sid . "';";
+	$sql2="SELECT * FROM fees_term WHERE `id` = '" . $sid . "';";
 	$res2=db_query($sql2);	
 	$row2=db_fetch_array($res2);
 		

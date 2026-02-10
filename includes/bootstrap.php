@@ -46,12 +46,59 @@ require_once __DIR__ . '/database.php';
 try {
     Database::init($config['db']);
 } catch (RuntimeException $e) {
-    // Store generic error flag in session (detailed error logged server-side)
     $_SESSION['db_error'] = true;
-    // Log the detailed error for debugging (don't expose to users)
     error_log('Database connection failed: ' . $e->getMessage());
-    // Don't crash the application - let pages handle missing database gracefully
 }
+
+// =========================================================================
+// MASTER COMPATIBILITY LAYER
+// This translates legacy GitHub code functions to modern mysqli.
+// =========================================================================
+
+if (!function_exists('db_query')) {
+    /**
+     * Replaces legacy db_query() calls
+     */
+    function db_query(string $sql): mixed {
+        try {
+            return mysqli_query(Database::connection(), $sql);
+        } catch (Exception $e) {
+            error_log("SQL Error in db_query: " . $e->getMessage());
+            return false;
+        }
+    }
+}
+
+if (!function_exists('db_fetch_array')) {
+    /**
+     * Replaces legacy db_fetch_array() calls
+     */
+    function db_fetch_array($result): ?array {
+        if (!$result) return null;
+        return mysqli_fetch_array($result);
+    }
+}
+
+if (!function_exists('db_num_rows')) {
+    /**
+     * Replaces legacy db_num_rows() calls
+     */
+    function db_num_rows($result): int {
+        if (!$result) return 0;
+        return mysqli_num_rows($result);
+    }
+}
+
+if (!function_exists('db_error')) {
+    /**
+     * Replaces legacy db_error() calls
+     */
+    function db_error(): string {
+        return mysqli_error(Database::connection());
+    }
+}
+
+// =========================================================================
 
 /**
  * Access application configuration values

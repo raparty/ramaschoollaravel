@@ -1,178 +1,91 @@
 <?php
-
 declare(strict_types=1);
-include_once("includes/header.php");?>
-<?php include_once("includes/sidebar.php"); ?>
-<div class="page_title">
-	<!--	
-		<h3>Dashboard</h3>-->
-		<div class="top_search">
-			<form action="#" method="post">
-				<ul id="search_box">
-					<li>
-					<input name="" type="text" class="search_input" id="suggest1" placeholder="Search...">
-					</li>
-					<li>
-					<input name="" type="submit" value="Search" class="search_btn">
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
+require_once("includes/bootstrap.php");
+include_once("includes/header.php");
+include_once("includes/sidebar.php");
+
+$conn = Database::connection();
+?>
+
 <?php include_once("includes/library_setting_sidebar.php");?>
 
 <div id="container">
-	
-	
-	
-	<div id="content">
-		<div class="grid_container">
-<h3 style="padding-left:20px; color:#0078D4">Student fine  Detail</h3>
+    <div id="content">
+        <div class="grid_container">
+            <h3 style="padding:15px 0 0 20px; color:#0078D4">Student Fine Details</h3>
 
-          <div class="grid_12">
+            <div class="grid_12">
+                <div class="btn_30_blue float-right">
+                    <a href="entry_student_fine_detail.php"><span style="width:140px"> Individual Student Fine </span></a>				
+                </div>
+            </div>
 
- 
+            <div class="grid_12">
+                <div class="widget_wrap">
+                    <div class="widget_top">
+                        <h6>Fine Records</h6>
+                    </div>
+                    <div class="widget_content">
+                        <table class="display data_tbl">
+                            <thead>
+                                <tr>
+                                    <th>S.No.</th>
+                                    <th>Student Name</th>
+                                    <th>Class</th>
+                                    <th>Book Name</th>
+                                    <th>Book Number</th>
+                                    <th>Fine Amount</th>
+                                    <th>Session</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+                                $i = 1;
+                                $session = mysqli_real_escape_string($conn, (string)$_SESSION['session']);
+                                
+                                // Querying fine details for the current active session
+                                $sql_fine = "SELECT * FROM student_fine_detail WHERE session='$session' AND fine_amount > 0";
+                                $res_fine = mysqli_query($conn, $sql_fine);
 
-           <div class="btn_30_blue float-right">
-				<a href="entry_student_fine_detail.php"><span style="width:140px"> Individual Student Fine </span></a>				
-			</div>
-                            
-                            
-                            
-          </div>
-			<div class="grid_12">
-				<div class="widget_wrap">
-					<div class="widget_top">
-						
-						<h6>Student fine Detail</h6>
-					</div>
-					<div class="widget_content">
-						
-						<table class="display data_tbl" >
-						<thead>
-						<tr>
-							
-							<th>
-								S.No.
-							</th>
-							<th>
-								Student   Name
-							</th>
-                          <th>
-								Class
-							</th>
-                          <th>
-								Book Name
-							</th>
-                               
-                          <th>
-								Book number
-							</th>
-                            <th>
-								Fine Amount
-							</th>
-                             
-                            <th>
-								Session  
-							</th>
-							<th>
-								 Action
-							</th>
-						</tr>
-						</thead>
-						<tbody>
-                        <?php 
-					
-					$sql="SELECT * FROM student_fine_detail where session='".$_SESSION['session']."' and fine_amount>0";
-					$res=db_query($sql);
-					    //  $mytablename="student_fees_detail";
-				          //include_once("fees_manager_pagination.php");
-						  	$i=1;
-							/*if($_GET['page']=="")
-							{
-								$_GET['page']=1;
-								
-								}
-								
-								$i=($_GET['page']-1)*$limit+1;*/
-							while($row=db_fetch_array($res))
-							{
-								
-								$sql="SELECT * FROM student_info where registration_no='".$row[1]."' ";
-	                           $student_info=db_fetch_array(db_query($sql));
-							   
-							   $sql1="SELECT * FROM class where class_id='".$student_info['class']."'";
-					$class=db_fetch_array(db_query($sql1));
-							   $sql1="SELECT * FROM book_manager where book_number='".$row['book_number']."' ";
-	                           $book_detail=db_fetch_array(db_query($sql1));
-								
-								
-								?>
-						<tr>
-							
-							<td class="center">
-								<a href="#"><?php echo $i;?></a>
-							</td>
-						
-                            <td class="center">
-								<?php echo $student_info['name']; ?>
-							</td>
-                             <td class="center">
-								<?php echo $class['class_name']; ?>
-							</td>
-							<td class="center">
-								<?php echo $book_detail['book_name']; ?>
-							</td>
-                            <td class="center">
-								<?php echo $book_detail['book_number']; ?>
-							</td>
-							
-                            <td class="center">
-								<?php echo $row['fine_amount']; ?>
-							</td>
-							
-                            <td class="center">
-								<?php echo $row['session']; ?>
-							</td>
-							
-							
-							<td class="center">
-							<span><a class="action-icons c-edit" href="library_edit_student_fine_detail.php?sid=<?php echo $row[0]; ?>" title="Edit">Edit</a></span><span><a class="action-icons c-delete" href="library_delete_student_fine_detail.php?sid=<?php echo $row[0]; ?>" title="delete" onClick="return checkform1()">Delete</a></span>
-							</td>
-						</tr>
-						
-						<?php $i++;} ?>
-                       
-						</tbody>
-						
-						</table>
-                        
-                      <script type="text/javascript" language="javascript">
-									frm2=document.del;
-									function checkform1()
-									{
-										if(confirm("Are you sure you want to delete"))
-										{
-											return true;
-										}else
-										{
-											return false;
-											
-											}
-									}
-								</script>
-                        
-					</div>
-				</div>
-			</div>
-			
-			
-			<span class="clear"></span>
-			
-			
-			
-		</div>
-		<span class="clear"></span>
-	</div>
+                                if ($res_fine && mysqli_num_rows($res_fine) > 0) {
+                                    while($row = mysqli_fetch_assoc($res_fine)) {
+                                        // LINK TO ADMISSIONS TABLE
+                                        $reg_no = mysqli_real_escape_string($conn, (string)$row['registration_no']);
+                                        $sql_std = "SELECT student_name, class_id FROM admissions WHERE reg_no = '$reg_no'";
+                                        $res_std = mysqli_query($conn, $sql_std);
+                                        $student = mysqli_fetch_assoc($res_std);
+
+                                        // LINK TO BOOK_MANAGERS TABLE
+                                        $book_no = mysqli_real_escape_string($conn, (string)$row['book_number']);
+                                        $res_bk = mysqli_query($conn, "SELECT book_name FROM book_managers WHERE book_number = '$book_no'");
+                                        $book = mysqli_fetch_assoc($res_bk);
+                                ?>
+                                <tr>
+                                    <td class="center"><?php echo $i++; ?></td>
+                                    <td class="center"><?php echo htmlspecialchars($student['student_name'] ?? 'Record Not Found'); ?></td>
+                                    <td class="center"><?php echo htmlspecialchars($student['class_id'] ?? 'N/A'); ?></td>
+                                    <td class="center"><?php echo htmlspecialchars($book['book_name'] ?? 'N/A'); ?></td>
+                                    <td class="center"><code><?php echo htmlspecialchars($row['book_number']); ?></code></td>
+                                    <td class="center" style="color:red; font-weight:bold;">₹<?php echo $row['fine_amount']; ?></td>
+                                    <td class="center"><?php echo htmlspecialchars($row['session']); ?></td>
+                                    <td class="center">
+                                        <a href="library_edit_student_fine_detail.php?sid=<?php echo $row['id']; ?>" class="action-icons c-edit">Edit</a>
+                                        <a href="library_delete_student_fine_detail.php?sid=<?php echo $row['id']; ?>" class="action-icons c-delete" onclick="return confirm('Delete this fine record?')">Delete</a>
+                                    </td>
+                                </tr>
+                                <?php 
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='8' class='center'>No active fine records found in session $session.</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <?php include_once("includes/footer.php");?>

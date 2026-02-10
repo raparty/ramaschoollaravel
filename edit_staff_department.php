@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
+
 // 1. Force the server to show us the actual error if it crashes
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
-
-declare(strict_types=1);
 
 // We only keep the bootstrap for the database connection
 require_once("includes/bootstrap.php");

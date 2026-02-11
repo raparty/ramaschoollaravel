@@ -20,7 +20,7 @@ while ($row = db_fetch_assoc($permissionsResult)) {
 }
 
 // Get role permissions
-$roles = ['Admin', 'Teacher', 'Student'];
+$roles = ['Admin', 'Office Manager', 'Librarian', 'Teacher', 'Student'];
 $rolePermissions = [];
 foreach ($roles as $role) {
     $query = "SELECT permission_id FROM role_permissions WHERE role = '" . db_escape($role) . "'";
@@ -70,6 +70,8 @@ foreach ($permissions as $perm) {
                                         <div style="width: 50px; height: 50px; border-radius: 50%; background: <?php 
                                             echo match($role) {
                                                 'Admin' => '#FF6B6B',
+                                                'Office Manager' => '#FFA726',
+                                                'Librarian' => '#29B6F6',
                                                 'Teacher' => '#0078D4',
                                                 'Student' => '#4CAF50',
                                                 default => '#8A8886'
@@ -88,7 +90,9 @@ foreach ($permissions as $perm) {
                                         <?php 
                                         echo match($role) {
                                             'Admin' => 'Full system access with all permissions. Can manage users, roles, and system settings.',
-                                            'Teacher' => 'Academic operations access. Can manage exams, attendance, library, and view student records.',
+                                            'Office Manager' => 'Operational management. Handles transport, fees, accounts, and general administrative tasks.',
+                                            'Librarian' => 'Library operations specialist. Manages library catalog, book issues, returns, and fines.',
+                                            'Teacher' => 'Academic operations only. Can manage exams, attendance, and view student records. NO transport or library.',
                                             'Student' => 'Limited view access. Can view personal records, exam results, and library status.',
                                             default => ''
                                         };
@@ -110,6 +114,8 @@ foreach ($permissions as $perm) {
                                             <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--app-border); font-weight: 600; color: var(--fluent-slate);">Module</th>
                                             <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--app-border); font-weight: 600; color: var(--fluent-slate);">Action</th>
                                             <th style="padding: 15px; text-align: center; border-bottom: 2px solid var(--app-border); font-weight: 600; color: var(--fluent-slate);">Admin</th>
+                                            <th style="padding: 15px; text-align: center; border-bottom: 2px solid var(--app-border); font-weight: 600; color: var(--fluent-slate);">Office Mgr</th>
+                                            <th style="padding: 15px; text-align: center; border-bottom: 2px solid var(--app-border); font-weight: 600; color: var(--fluent-slate);">Librarian</th>
                                             <th style="padding: 15px; text-align: center; border-bottom: 2px solid var(--app-border); font-weight: 600; color: var(--fluent-slate);">Teacher</th>
                                             <th style="padding: 15px; text-align: center; border-bottom: 2px solid var(--app-border); font-weight: 600; color: var(--fluent-slate);">Student</th>
                                         </tr>

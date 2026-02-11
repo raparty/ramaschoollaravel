@@ -256,6 +256,8 @@ class RBAC
     {
         return match($role) {
             'Admin' => 'badge-danger',
+            'Office Manager' => 'badge-warning',
+            'Librarian' => 'badge-info',
             'Teacher' => 'badge-primary',
             'Student' => 'badge-success',
             default => 'badge-secondary',

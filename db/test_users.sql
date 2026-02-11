@@ -1,9 +1,9 @@
 -- ============================================================================
--- Test Users Setup for RBAC Testing
+-- Test Users Setup for RBAC Testing (v2 - 5 Roles)
 -- ============================================================================
 -- This script creates test users for each role to test RBAC functionality
 -- 
--- IMPORTANT: Run rbac_schema.sql FIRST before running this script
+-- IMPORTANT: Run rbac_schema.sql and rbac_schema_v2.sql FIRST
 -- ============================================================================
 
 -- Create test users with different roles
@@ -21,6 +21,32 @@ VALUES (
 ) ON DUPLICATE KEY UPDATE 
     password = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
     role = 'Admin';
+
+-- Office Manager User
+INSERT INTO `users` (`user_id`, `password`, `role`, `full_name`, `contact_no`, `created_at`) 
+VALUES (
+    'office1',
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', -- password: Test@123
+    'Office Manager',
+    'Robert Brown',
+    '9876543213',
+    NOW()
+) ON DUPLICATE KEY UPDATE 
+    password = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    role = 'Office Manager';
+
+-- Librarian User
+INSERT INTO `users` (`user_id`, `password`, `role`, `full_name`, `contact_no`, `created_at`) 
+VALUES (
+    'librarian1',
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', -- password: Test@123
+    'Librarian',
+    'Sarah Williams',
+    '9876543214',
+    NOW()
+) ON DUPLICATE KEY UPDATE 
+    password = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    role = 'Librarian';
 
 -- Teacher User
 INSERT INTO `users` (`user_id`, `password`, `role`, `full_name`, `contact_no`, `created_at`) 
@@ -49,7 +75,7 @@ VALUES (
     role = 'Student';
 
 -- ============================================================================
--- Test User Credentials
+-- Test User Credentials (v2 - 5 Roles)
 -- ============================================================================
 -- 
 -- Admin:
@@ -58,11 +84,24 @@ VALUES (
 --   Role: Admin
 --   Access: Full system access, all modules
 -- 
+-- Office Manager:
+--   Username: office1
+--   Password: Test@123
+--   Role: Office Manager
+--   Access: Transport, fees, accounts, student view
+-- 
+-- Librarian:
+--   Username: librarian1
+--   Password: Test@123
+--   Role: Librarian
+--   Access: Library management, student view
+-- 
 -- Teacher:
 --   Username: teacher1
 --   Password: Test@123
 --   Role: Teacher
---   Access: Academic modules (students, exams, library, attendance)
+--   Access: Academic only (exams, attendance, view students/classes)
+--   NO transport or library management
 -- 
 -- Student:
 --   Username: student1
@@ -80,12 +119,14 @@ SELECT
     contact_no,
     created_at
 FROM users 
-WHERE user_id IN ('admin', 'teacher1', 'student1')
+WHERE user_id IN ('admin', 'office1', 'librarian1', 'teacher1', 'student1')
 ORDER BY 
     CASE role 
         WHEN 'Admin' THEN 1 
-        WHEN 'Teacher' THEN 2 
-        WHEN 'Student' THEN 3 
+        WHEN 'Office Manager' THEN 2 
+        WHEN 'Librarian' THEN 3
+        WHEN 'Teacher' THEN 4 
+        WHEN 'Student' THEN 5 
     END;
 
 -- ============================================================================

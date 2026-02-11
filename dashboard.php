@@ -41,8 +41,9 @@ require_once("includes/sidebar.php");
             ['label' => 'Student TC', 'link' => 'entry_student_tc.php', 'icon' => 'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-2 16l-4-4h8l-4 4zm0-12.5L13.5 9H10.5L12 5.5z']
         ];
         
-        // Add RBAC Management for Admin users
+        // Add admin-only modules
         if (RBAC::getUserRole() === 'Admin') {
+            $modules[] = ['label' => 'User Management', 'link' => 'user_management.php', 'icon' => 'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'];
             $modules[] = ['label' => 'RBAC Management', 'link' => 'rbac_management.php', 'icon' => 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z'];
         }
 

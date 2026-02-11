@@ -52,13 +52,9 @@ try {
 
 // =========================================================================
 // MASTER COMPATIBILITY LAYER
-// This translates legacy GitHub code functions to modern mysqli.
 // =========================================================================
 
 if (!function_exists('db_query')) {
-    /**
-     * Replaces legacy db_query() calls
-     */
     function db_query(string $sql): mixed {
         try {
             return mysqli_query(Database::connection(), $sql);
@@ -70,9 +66,6 @@ if (!function_exists('db_query')) {
 }
 
 if (!function_exists('db_fetch_array')) {
-    /**
-     * Replaces legacy db_fetch_array() calls
-     */
     function db_fetch_array($result): ?array {
         if (!$result) return null;
         return mysqli_fetch_array($result);
@@ -80,9 +73,6 @@ if (!function_exists('db_fetch_array')) {
 }
 
 if (!function_exists('db_num_rows')) {
-    /**
-     * Replaces legacy db_num_rows() calls
-     */
     function db_num_rows($result): int {
         if (!$result) return 0;
         return mysqli_num_rows($result);
@@ -90,15 +80,39 @@ if (!function_exists('db_num_rows')) {
 }
 
 if (!function_exists('db_error')) {
-    /**
-     * Replaces legacy db_error() calls
-     */
     function db_error(): string {
         return mysqli_error(Database::connection());
     }
 }
 
 // =========================================================================
+// RBAC GATEKEEPER FUNCTION
+// =========================================================================
+
+/**
+ * Checks if the current user has permission for a specific module action.
+ * Usage: if(!has_access('fees', 'view')) { ... }
+ */
+function has_access(string $module, string $action): bool {
+    $conn = Database::connection();
+    
+    // Retrieve role from session
+    $user_role = $_SESSION['role'] ?? 'Student'; 
+
+    // Admin Bypass
+    if ($user_role === 'Admin') {
+        return true;
+    }
+
+    $sql = "SELECT rp.id FROM role_permissions rp 
+            JOIN permissions p ON rp.permission_id = p.id 
+            WHERE rp.role = '$user_role' 
+            AND p.module = '$module' 
+            AND p.action = '$action'";
+    
+    $result = mysqli_query($conn, $sql);
+    return ($result && mysqli_num_rows($result) > 0);
+}
 
 /**
  * Access application configuration values

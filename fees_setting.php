@@ -1,6 +1,11 @@
 <?php
 
 declare(strict_types=1);
+require_once("includes/bootstrap.php");
+
+// RBAC: Check if user has permission to view fees settings
+RBAC::requirePermission('fees', 'view');
+
 include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 	<div class="page_title">

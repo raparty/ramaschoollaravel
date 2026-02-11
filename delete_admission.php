@@ -2,6 +2,9 @@
 declare(strict_types=1); 
 require_once("includes/bootstrap.php"); // Use bootstrap for session and DB integrity
 
+// RBAC: Check if user has permission to delete admissions
+RBAC::requirePermission('admission', 'delete');
+
 ob_start();
 
 // Get the ID from the URL 'sid' parameter used in student_detail.php

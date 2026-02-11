@@ -6,6 +6,10 @@ declare(strict_types=1);
  * Fixes: Professional Datepicker and User-Friendly Numeric Validation
  */
 require_once("includes/bootstrap.php");
+
+// RBAC: Check if user has permission to edit admissions
+RBAC::requirePermission('admission', 'edit');
+
 require_once("includes/header.php");
 require_once("includes/sidebar.php");
 

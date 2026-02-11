@@ -5,6 +5,10 @@ declare(strict_types=1);
  * ID 4.8: Exam Module Hub
  */
 require_once("includes/bootstrap.php");
+
+// RBAC: Check if user has permission to view exam settings
+RBAC::requirePermission('exam', 'view');
+
 require_once("includes/header.php");
 require_once("includes/sidebar.php");
 ?>

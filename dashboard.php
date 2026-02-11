@@ -40,6 +40,11 @@ require_once("includes/sidebar.php");
             ['label' => 'Library', 'link' => 'library_setting.php', 'icon' => 'M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z'],
             ['label' => 'Student TC', 'link' => 'entry_student_tc.php', 'icon' => 'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-2 16l-4-4h8l-4 4zm0-12.5L13.5 9H10.5L12 5.5z']
         ];
+        
+        // Add RBAC Management for Admin users
+        if (RBAC::getUserRole() === 'Admin') {
+            $modules[] = ['label' => 'RBAC Management', 'link' => 'rbac_management.php', 'icon' => 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z'];
+        }
 
         foreach ($modules as $mod): ?>
             <div class="fluent-card-wrapper">

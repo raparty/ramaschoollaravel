@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 require_once("includes/bootstrap.php");
+
+// RBAC: Check if user has permission to view school settings
+RBAC::requirePermission('school_setting', 'view');
+
 include_once("includes/header.php");
 include_once("includes/sidebar.php");
 ?>

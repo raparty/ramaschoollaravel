@@ -1,4 +1,10 @@
-<?php include_once("includes/header.php");?>
+<?php 
+require_once("includes/bootstrap.php");
+
+// RBAC: Check if user has permission to view transport
+RBAC::requirePermission('transport', 'view');
+
+include_once("includes/header.php");?>
 <?php include_once("includes/sidebar.php"); ?>
 <div class="page_title">
 	<h3>Transport Settings</h3>

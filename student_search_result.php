@@ -167,6 +167,8 @@ include_once("includes/header.php");?>
 						$i=1;
 						
 						// Sanitize all POST inputs to prevent SQL injection
+						// Note: db_escape() provides basic protection. For stronger security,
+						// consider migrating to prepared statements with parameterized queries
 						$safe_name = isset($_POST['name']) ? db_escape($_POST['name']) : '';
 						$safe_class = isset($_POST['class']) ? db_escape($_POST['class']) : '';
 						$safe_stream = isset($_POST['stream']) ? db_escape($_POST['stream']) : '';

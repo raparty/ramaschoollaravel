@@ -17,6 +17,9 @@
  * AJAX helper function for dynamic form updates
  * Used by: student pages, exam pages, transport pages, fees pages
  * Loads content from a URL and updates a target element
+ * 
+ * @param {string} url - The URL to fetch content from
+ * @returns {void}
  */
 function getForm(url) {
     // Default target element if not specified
@@ -53,6 +56,9 @@ function getForm(url) {
  * AJAX helper function for vehicle/route selection
  * Used by: transport pages
  * Similar to getForm but specifically for transport vehicle/route cascading
+ * 
+ * @param {string} url - The URL to fetch vehicle data from
+ * @returns {void}
  */
 function getVehicle(url) {
     const targetElement = document.getElementById('vehicle_list') || 
@@ -86,6 +92,9 @@ function getVehicle(url) {
  * AJAX helper function for registration number validation
  * Used by: fees pages, student entry pages
  * Checks if registration number exists and displays student info
+ * 
+ * @param {string} url - The URL to validate registration against
+ * @returns {void}
  */
 function getCheckreg(url) {
     const targetElement = document.getElementById('reg_result') || 
@@ -118,7 +127,13 @@ function getCheckreg(url) {
 /**
  * Generic AJAX content loader
  * Can be used as a replacement for inline event handlers
- * Usage: loadContent('ajax_file.php?param=value', 'target-element-id')
+ * 
+ * @param {string} url - The URL to fetch content from
+ * @param {string} targetId - The ID of the element to update with fetched content
+ * @returns {void}
+ * 
+ * @example
+ * loadContent('ajax_file.php?param=value', 'target-element-id')
  */
 function loadContent(url, targetId) {
     const targetElement = document.getElementById(targetId);
@@ -148,7 +163,15 @@ function loadContent(url, targetId) {
 
 /**
  * Modern event listener setup for cascading dropdowns
- * Usage: setupCascadingDropdown('class_id', 'section_dropdown', 'ajax_stream_code.php')
+ * Sets up a dropdown that loads content based on selection
+ * 
+ * @param {string} sourceId - The ID of the source dropdown element
+ * @param {string} targetId - The ID of the element to update with loaded content
+ * @param {string} ajaxFile - The AJAX file path to fetch content from
+ * @returns {void}
+ * 
+ * @example
+ * setupCascadingDropdown('class_id', 'section_dropdown', 'ajax_stream_code.php')
  */
 function setupCascadingDropdown(sourceId, targetId, ajaxFile) {
     const sourceElement = document.getElementById(sourceId);
@@ -159,7 +182,10 @@ function setupCascadingDropdown(sourceId, targetId, ajaxFile) {
     }
     
     sourceElement.addEventListener('change', function() {
-        const url = `${ajaxFile}?${sourceId}=${this.value}`;
+        // Properly encode both parameter name and value to prevent URL injection
+        const encodedParam = encodeURIComponent(sourceId);
+        const encodedValue = encodeURIComponent(this.value);
+        const url = `${ajaxFile}?${encodedParam}=${encodedValue}`;
         loadContent(url, targetId);
     });
 }

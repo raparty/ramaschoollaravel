@@ -121,13 +121,13 @@ else
                                     <div class="form_input" >
 										
                                         <div class="form_grid_4 alpha"  >
-											<input name="registration_no" data-action="check-reg" data-url="checkregno.php" type="text" style=" margin-left:-192px;" />										
+											<input name="registration_no" data-action="check-reg" data-url="checkregno.php" type="text" />										
 										</div>
                                         
-                                        <label class="field_title" style=" margin-left:110px; width:16%">
+                                        <label class="field_title" style="width:16%">
 OR <span style="color:#F00"> *</span>
 </label>
-                                        <div class="form_grid_4" style="margin-left:-25px;">
+                                        <div class="form_grid_4">
 											<a  href="fees_searchby_name.php" style="text-decoration:underline"><input type="button" name="search" value="search by name" class="btn_small btn_orange"></a>
 								</div>
 									

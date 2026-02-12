@@ -37,7 +37,7 @@ $total_items = (int)$count_row['total'];
                 <div class="widget_wrap">
                     <div class="widget_top">
                         <h6>Books Detail (Catalog)</h6>
-                        <div style="float:right; padding: 5px;">
+                        <div class="float-end" style=" padding: 5px;">
                             <a href="library_add_book.php" class="btn_small btn_blue">
                                 <span>+ Add Book Detail</span>
                             </a>

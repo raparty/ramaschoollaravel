@@ -121,7 +121,7 @@ else
                                     <div class="form_input" >
 										
                                         <div class="form_grid_4 alpha"  >
-											<input name="registration_no"   onBlur="getCheckreg('checkregno.php?registration_no='+this.value)" type="text" style=" margin-left:-192px;" />										
+											<input name="registration_no" data-action="check-reg" data-url="checkregno.php" type="text" style=" margin-left:-192px;" />										
 										</div>
                                         
                                         <label class="field_title" style=" margin-left:110px; width:16%">

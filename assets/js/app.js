@@ -189,3 +189,32 @@ function setupCascadingDropdown(sourceId, targetId, ajaxFile) {
         loadContent(url, targetId);
     });
 }
+
+/**
+ * Initialize data-attribute-based event handlers for security
+ * This replaces inline event handlers to prevent XSS
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle data-action="check-reg" for registration number validation
+    document.querySelectorAll('[data-action="check-reg"]').forEach(function(element) {
+        element.addEventListener('blur', function() {
+            const url = element.getAttribute('data-url');
+            const value = encodeURIComponent(this.value);
+            if (url && value) {
+                getCheckreg(url + '?registration_no=' + value);
+            }
+        });
+    });
+    
+    // Handle data-action="load-form" for cascading dropdowns
+    document.querySelectorAll('[data-action="load-form"]').forEach(function(element) {
+        element.addEventListener('change', function() {
+            const url = element.getAttribute('data-url');
+            const param = element.getAttribute('data-param');
+            const value = encodeURIComponent(this.value);
+            if (url && param && value) {
+                getForm(url + '?' + encodeURIComponent(param) + '=' + value);
+            }
+        });
+    });
+});

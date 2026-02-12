@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require_once("includes/bootstrap.php");
 
-// SECURITY: Only Admins can manage users
+// SECURITY: Admin-only access
 if (!has_access('dashboard', 'view') || ($_SESSION['role'] ?? '') !== 'Admin') {
     header("Location: dashboard.php");
     exit;
@@ -14,49 +14,50 @@ include_once("includes/sidebar.php");
 $conn = Database::connection();
 $msg = "";
 
-// 1. HANDLE USER DELETION
-if (isset($_GET['delete'])) {
-    $delete_id = mysqli_real_escape_string($conn, $_GET['delete']);
-    if ($delete_id === $_SESSION['user_id']) {
-        $msg = "<div class='alert alert-danger'>You cannot delete your own admin account.</div>";
-    } else {
-        mysqli_query($conn, "DELETE FROM users WHERE user_id = '$delete_id'");
-        $msg = "<div class='alert alert-success'>User $delete_id has been removed.</div>";
-    }
+// --- LOGIC SECTION ---
+
+// 1. Handle Role Creation
+if (isset($_POST['add_role'])) {
+    $role_name = mysqli_real_escape_string($conn, trim($_POST['role_name']));
+    mysqli_query($conn, "INSERT IGNORE INTO role_permissions (role, permission_id) SELECT '$role_name', id FROM permissions WHERE module='dashboard'");
+    $msg = "<div class='alert alert-success'>Role '$role_name' created successfully.</div>";
 }
 
-// 2. HANDLE ROLE & PASSWORD UPDATES
+// 2. Handle Permission Saving
+if (isset($_POST['save_permissions'])) {
+    $target_role = mysqli_real_escape_string($conn, $_POST['target_role']);
+    $selected_perms = $_POST['perms'] ?? [];
+    mysqli_query($conn, "DELETE FROM role_permissions WHERE role = '$target_role'");
+    foreach ($selected_perms as $p_id) {
+        $p_id = (int)$p_id;
+        mysqli_query($conn, "INSERT INTO role_permissions (role, permission_id) VALUES ('$target_role', $p_id)");
+    }
+    $msg = "<div class='alert alert-success'>Permissions updated for $target_role.</div>";
+}
+
+// 3. Handle User Update/Reset
 if (isset($_POST['update_user'])) {
     $uid = mysqli_real_escape_string($conn, $_POST['edit_user_id']);
     $new_role = mysqli_real_escape_string($conn, $_POST['new_role']);
     $new_pass = $_POST['new_password'] ?? '';
     
-    // Update Role
-    $sql = "UPDATE users SET role = '$new_role' WHERE user_id = '$uid'";
-    mysqli_query($conn, $sql);
-
-    // Update Password if provided
+    mysqli_query($conn, "UPDATE users SET role = '$new_role' WHERE user_id = '$uid'");
     if (!empty($new_pass)) {
-        $hashed_pass = password_hash($new_pass, PASSWORD_DEFAULT);
-        mysqli_query($conn, "UPDATE users SET password = '$hashed_pass' WHERE user_id = '$uid'");
-        $msg = "<div class='alert alert-success'>Account for $uid updated (Role & Password).</div>";
-    } else {
-        $msg = "<div class='alert alert-success'>Role for $uid updated to $new_role.</div>";
+        $hashed = password_hash($new_pass, PASSWORD_DEFAULT);
+        mysqli_query($conn, "UPDATE users SET password = '$hashed' WHERE user_id = '$uid'");
     }
+    $msg = "<div class='alert alert-success'>User $uid updated.</div>";
 }
 
-// 3. HANDLE NEW USER CREATION
-if (isset($_POST['create_user'])) {
-    $uid = mysqli_real_escape_string($conn, $_POST['user_id']);
-    $fullname = mysqli_real_escape_string($conn, $_POST['full_name']);
-    $role = mysqli_real_escape_string($conn, $_POST['role']);
-    $pass = password_hash($_POST['password'], PASSWORD_DEFAULT); 
-
-    $sql = "INSERT INTO users (user_id, password, role, full_name) VALUES ('$uid', '$pass', '$role', '$fullname')";
-    if (mysqli_query($conn, $sql)) {
-        $msg = "<div class='alert alert-success'>User $uid created successfully!</div>";
+// 4. Handle User Deletion
+if (isset($_GET['delete_user'])) {
+    $uid = mysqli_real_escape_string($conn, $_GET['delete_user']);
+    // Prevent self-deletion
+    if ($uid === $_SESSION['user_id']) {
+        $msg = "<div class='alert alert-danger'>Security Error: You cannot delete your own account.</div>";
     } else {
-        $msg = "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
+        mysqli_query($conn, "DELETE FROM users WHERE user_id = '$uid'");
+        $msg = "<div class='alert alert-success'>User $uid has been permanently removed.</div>";
     }
 }
 ?>
@@ -65,85 +66,112 @@ if (isset($_POST['create_user'])) {
     <div id="content">
         <div class="grid_container">
             <div class="grid_12">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h3 style="color:#0078D4; margin:0;">Enterprise User Management</h3>
-                    <button class="btn_small btn_blue" data-bs-toggle="collapse" data-bs-target="#addUserForm"><span>+ Add New User</span></button>
-                </div>
+                <h3 style="color:#0078D4; margin-bottom:20px;">Enterprise Access Control</h3>
                 <?php echo $msg; ?>
+                
+                <ul class="nav nav-tabs mb-4" id="rbacTabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#staff">Staff Accounts</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#roles">Roles & Permissions</button>
+                    </li>
+                </ul>
             </div>
 
-            <div class="grid_12 collapse" id="addUserForm">
-                <div class="widget_wrap azure-card">
-                    <div class="widget_top"><h6>Create Staff Credentials</h6></div>
-                    <div class="widget_content">
-                        <form action="" method="post" class="form_container left_label">
-                            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px; padding:20px;">
-                                <div>
-                                    <label>User ID (Login)</label>
-                                    <input name="user_id" type="text" class="form-control" required />
-                                </div>
-                                <div>
-                                    <label>Full Name</label>
-                                    <input name="full_name" type="text" class="form-control" required />
-                                </div>
-                                <div>
-                                    <label>Initial Password</label>
-                                    <input name="password" type="password" class="form-control" required />
-                                </div>
-                                <div>
-                                    <label>Access Role</label>
-                                    <select name="role" class="form-control" required>
-                                        <option value="Teacher">Teacher</option>
-                                        <option value="Office Manager">Office Manager</option>
-                                        <option value="Librarian">Librarian</option>
-                                        <option value="Admin">Admin</option>
-                                    </select>
-                                </div>
-                                <div style="display:flex; align-items:flex-end;">
-                                    <button type="submit" name="create_user" class="btn_small btn_blue"><span>Register User</span></button>
-                                </div>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="staff">
+                    <div class="grid_12">
+                        <div class="widget_wrap">
+                            <div class="widget_top"><h6>User Management Console</h6></div>
+                            <div class="widget_content">
+                                <table class="display data_tbl">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Full Name</th>
+                                            <th>Role</th>
+                                            <th style="text-align:right;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $u_res = mysqli_query($conn, "SELECT * FROM users ORDER BY full_name ASC");
+                                        while($u = mysqli_fetch_assoc($u_res)) {
+                                            echo "<tr>
+                                                <td><strong>{$u['user_id']}</strong></td>
+                                                <td>{$u['full_name']}</td>
+                                                <td><span class='badge bg-secondary'>{$u['role']}</span></td>
+                                                <td style='text-align:right;'>
+                                                    <button class='btn_small btn_gray' onclick=\"openEditModal('{$u['user_id']}', '{$u['role']}')\">Manage</button>
+                                                    <a href='?delete_user={$u['user_id']}#staff' class='btn_small btn_orange' onclick=\"return confirm('Are you sure? This will permanently delete {$u['user_id']}.')\">Delete</a>
+                                                </td>
+                                            </tr>";
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="grid_12">
-                <div class="widget_wrap">
-                    <div class="widget_top"><h6>Directory & Access Control</h6></div>
-                    <div class="widget_content">
-                        <table class="display data_tbl">
-                            <thead>
-                                <tr>
-                                    <th>User ID</th>
-                                    <th>Full Name</th>
-                                    <th>Assigned Role</th>
-                                    <th>Status</th>
-                                    <th style="text-align:right;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $res = mysqli_query($conn, "SELECT * FROM users ORDER BY full_name ASC");
-                                while ($u = mysqli_fetch_assoc($res)) {
-                                ?>
-                                <tr>
-                                    <td><strong><?php echo htmlspecialchars($u['user_id']); ?></strong></td>
-                                    <td><?php echo htmlspecialchars($u['full_name']); ?></td>
-                                    <td>
-                                        <span class="badge <?php echo $u['role'] === 'Admin' ? 'bg-primary' : 'bg-secondary'; ?>">
-                                            <?php echo $u['role']; ?>
-                                        </span>
-                                    </td>
-                                    <td><span style="color:green;">● Active</span></td>
-                                    <td style="text-align:right;">
-                                        <button class="btn_small btn_gray" onclick="openEditModal('<?php echo $u['user_id']; ?>', '<?php echo $u['role']; ?>')">Manage Account</button>
-                                        <a href="?delete=<?php echo $u['user_id']; ?>" class="btn_small btn_orange" onclick="return confirm('Delete user <?php echo $u['user_id']; ?>?')">Delete</a>
-                                    </td>
-                                </tr>
-                                <?php } ?>
-                            </tbody>
-                        </table>
+                <div class="tab-pane fade" id="roles">
+                    <div class="grid_4">
+                        <div class="widget_wrap">
+                            <div class="widget_top"><h6>Create Custom Role</h6></div>
+                            <div class="widget_content" style="padding:20px;">
+                                <form action="" method="post">
+                                    <label>Role Name (e.g. Office Admin)</label>
+                                    <input type="text" name="role_name" class="form-control mb-3" placeholder="Office Admin" required>
+                                    <button type="submit" name="add_role" class="btn btn-primary w-100">Add New Role</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid_8">
+                        <div class="widget_wrap">
+                            <div class="widget_top"><h6>Permission Matrix</h6></div>
+                            <div class="widget_content" style="padding:20px;">
+                                <form action="" method="post">
+                                    <select name="target_role" class="form-select mb-3" onchange="window.location.href='?role='+this.value+'#roles'">
+                                        <option value="">-- Choose Role to Configure --</option>
+                                        <?php
+                                        $roles_res = mysqli_query($conn, "SELECT DISTINCT role FROM role_permissions");
+                                        while($r = mysqli_fetch_assoc($roles_res)) {
+                                            $sel = (isset($_GET['role']) && $_GET['role'] == $r['role']) ? 'selected' : '';
+                                            echo "<option value='{$r['role']}' $sel>{$r['role']}</option>";
+                                        }
+                                        ?>
+                                    </select>
+
+                                    <?php if(isset($_GET['role'])): 
+                                        $current_role = mysqli_real_escape_string($conn, $_GET['role']);
+                                        $active_res = mysqli_query($conn, "SELECT permission_id FROM role_permissions WHERE role = '$current_role'");
+                                        $active_ids = [];
+                                        while($a = mysqli_fetch_assoc($active_res)) { $active_ids[] = (int)$a['permission_id']; }
+                                    ?>
+                                        <div style="max-height:400px; overflow-y:auto; border:1px solid #eee; padding:10px; margin-bottom:15px;">
+                                            <table class="table table-sm">
+                                                <?php
+                                                $all_p = mysqli_query($conn, "SELECT * FROM permissions ORDER BY module ASC");
+                                                while($p = mysqli_fetch_assoc($all_p)) {
+                                                    $checked = in_array((int)$p['id'], $active_ids) ? 'checked' : '';
+                                                    echo "<tr>
+                                                        <td><strong>".ucfirst($p['module'])."</strong></td>
+                                                        <td>".htmlspecialchars($p['description'])."</td>
+                                                        <td style='text-align:right;'><input type='checkbox' name='perms[]' value='{$p['id']}' $checked></td>
+                                                    </tr>";
+                                                }
+                                                ?>
+                                            </table>
+                                        </div>
+                                        <button type="submit" name="save_permissions" class="btn btn-success w-100">Save Access for <?php echo $current_role; ?></button>
+                                    <?php endif; ?>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,32 +182,27 @@ if (isset($_POST['create_user'])) {
 <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog">
         <form action="" method="post" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit User Account</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
             <div class="modal-body">
                 <input type="hidden" name="edit_user_id" id="edit_user_id">
-                <p>Modifying Account: <strong id="display_uid" style="color:#0078D4;"></strong></p>
-                <hr>
-                <div class="mb-3">
-                    <label class="form-label">Update Role</label>
+                <h6>Manage User: <span id="display_uid" style="color:#0078D4;"></span></h6>
+                <div class="mt-3">
+                    <label>Assigned Access Role</label>
                     <select name="new_role" id="edit_role" class="form-select">
-                        <option value="Admin">Admin</option>
-                        <option value="Office Manager">Office Manager</option>
-                        <option value="Librarian">Librarian</option>
-                        <option value="Teacher">Teacher</option>
-                        <option value="Student">Student</option>
+                        <?php
+                        $roles_list = mysqli_query($conn, "SELECT DISTINCT role FROM role_permissions");
+                        while($rl = mysqli_fetch_assoc($roles_list)) {
+                            echo "<option value='{$rl['role']}'>{$rl['role']}</option>";
+                        }
+                        ?>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Reset Password (Leave blank to keep current)</label>
-                    <input type="password" name="new_password" class="form-control" placeholder="Enter new password">
+                <div class="mt-3">
+                    <label>Reset Password (leave blank to keep current)</label>
+                    <input type="password" name="new_password" class="form-control" placeholder="New Password">
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" name="update_user" class="btn btn-primary">Save Changes</button>
+                <button type="submit" name="update_user" class="btn btn-primary">Update Account</button>
             </div>
         </form>
     </div>
@@ -190,8 +213,13 @@ function openEditModal(uid, role) {
     document.getElementById('edit_user_id').value = uid;
     document.getElementById('display_uid').innerText = uid;
     document.getElementById('edit_role').value = role;
-    var myModal = new bootstrap.Modal(document.getElementById('editModal'));
-    myModal.show();
+    new bootstrap.Modal(document.getElementById('editModal')).show();
+}
+
+// Ensure the Roles tab stays active when filtering permissions
+if (window.location.hash === '#roles') {
+    var triggerEl = document.querySelector('button[data-bs-target="#roles"]');
+    bootstrap.Tab.getInstance(triggerEl).show();
 }
 </script>
 

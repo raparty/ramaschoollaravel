@@ -14,20 +14,21 @@ class User extends Authenticatable
 
     /**
      * The table associated with the model.
+     * Note: Using 'admin' table from legacy database
      *
      * @var string
      */
-    protected $table = 'users';
+    protected $table = 'admin';
 
     /**
      * The attributes that are mass assignable.
+     * Note: Database uses admin_user and admin_password columns
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'full_name',
-        'password',
+        'admin_user',
+        'admin_password',
         'role',
     ];
 
@@ -37,7 +38,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'admin_password',
         'remember_token',
     ];
 
@@ -47,26 +48,28 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'password' => 'hashed',
+        'admin_password' => 'hashed',
     ];
 
     /**
      * Get the name of the unique identifier for the user.
+     * Note: Database uses 'admin_user' instead of 'email' or 'username'
      *
      * @return string
      */
     public function getAuthIdentifierName()
     {
-        return 'user_id';
+        return 'admin_user';
     }
 
     /**
      * Get the password for the user.
+     * Note: Database uses 'admin_password' instead of 'password'
      *
      * @return string
      */
     public function getAuthPassword()
     {
-        return $this->password;
+        return $this->admin_password;
     }
 }

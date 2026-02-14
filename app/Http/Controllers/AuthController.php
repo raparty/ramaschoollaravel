@@ -46,10 +46,10 @@ class AuthController extends Controller
         ]);
 
         // Prepare credentials for authentication
-        // Note: We use 'user_id' field instead of default 'email'
+        // Note: Database uses 'admin_user' and 'admin_password' fields
         $loginCredentials = [
-            'user_id' => $credentials['username'],
-            'password' => $credentials['password'],
+            'admin_user' => $credentials['username'],
+            'admin_password' => $credentials['password'],
         ];
 
         // Remember me functionality
@@ -62,8 +62,8 @@ class AuthController extends Controller
 
             // Log authentication for audit
             \Log::info('User logged in', [
-                'user_id' => Auth::user()->user_id,
-                'role' => Auth::user()->role,
+                'admin_user' => Auth::user()->admin_user,
+                'role' => Auth::user()->role ?? 'N/A',
                 'ip' => $request->ip(),
             ]);
 
@@ -85,8 +85,8 @@ class AuthController extends Controller
         // Log logout for audit
         if (Auth::check()) {
             \Log::info('User logged out', [
-                'user_id' => Auth::user()->user_id,
-                'role' => Auth::user()->role,
+                'admin_user' => Auth::user()->admin_user,
+                'role' => Auth::user()->role ?? 'N/A',
             ]);
         }
 

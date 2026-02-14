@@ -173,3 +173,33 @@ All database-related errors in the application should now be resolved. The Larav
 1. Fix model/database schema mismatches for all critical models
 2. Fix additional model/schema mismatches: BookCategory, StaffAttendance, Mark
 3. Fix StudentTransportFee model schema mismatch (month_id instead of receipt_no)
+
+---
+
+## SQL Scripts for Missing Tables
+
+For models that don't have corresponding database tables (future features), SQL CREATE TABLE statements have been provided:
+
+### File: `database/schema/missing-tables.sql`
+Contains complete SQL to create 5 missing tables:
+1. **exams** - For Exam model (examination schedules)
+2. **exam_subjects** - For ExamSubject model (subject-exam assignments)
+3. **results** - For Result model (compiled student results)
+4. **staff_salaries** - For Salary model (staff salary payments)
+5. **grades** - For Grade model (grading system configuration)
+
+### Documentation: `MISSING_TABLES_README.md`
+Comprehensive guide including:
+- Detailed table structures
+- Installation instructions (multiple methods)
+- Sample data for grades table
+- Testing procedures
+- Troubleshooting guide
+
+### How to Use
+Execute the SQL file to create all missing tables:
+```bash
+mysql -u username -p database_name < database/schema/missing-tables.sql
+```
+
+See `MISSING_TABLES_README.md` for complete instructions.

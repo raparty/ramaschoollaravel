@@ -66,7 +66,7 @@ class Admission extends Model
         'dob' => 'date',
         'admission_date' => 'date',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        
     ];
 
     /**

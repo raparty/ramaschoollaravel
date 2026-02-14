@@ -20,7 +20,7 @@ class AuthController extends Controller
      * Show the login form.
      * Converts: index.php (login view)
      */
-    public function showLogin()
+    public function showLoginForm()
     {
         // Redirect to dashboard if already authenticated
         if (Auth::check()) {

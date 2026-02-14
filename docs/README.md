@@ -1,93 +1,71 @@
-# School ERP System - Documentation
+# Laravel School Management System - Documentation
 
-Welcome to the comprehensive documentation for the School ERP System!
+Welcome to the comprehensive documentation for the Laravel School Management System!
 
 ## 📚 Documentation Structure
 
-This folder contains complete documentation for the School ERP System, organized into focused documents for easy navigation.
+This folder contains all documentation for setup, usage, and development.
 
-### Available Documents
+### Main Documentation
 
-#### 1. [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)
-**High-level system overview and project information**
-- Project objectives and goals
-- Key features and modules
-- Technology stack
-- Deployment guidelines
-- Future enhancements
+#### 1. [GETTING_STARTED.md](GETTING_STARTED.md) 
+**5-minute quick start guide for new users**
+- Prerequisites checklist
+- Quick installation steps
+- First steps after installation
+- Common tasks walkthrough
+- Troubleshooting tips
 
-#### 2. [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md)
-**Detailed page-by-page guide**
-- Complete listing of all 150+ pages
-- Page purposes and features
-- Form fields and validations
-- Workflows and processes
-- Navigation patterns
-- Search and utility pages
+#### 2. [SETUP.md](SETUP.md)
+**Comprehensive setup and deployment guide**
+- Detailed prerequisites
+- Step-by-step installation
+- Database configuration (MySQL, PostgreSQL, SQLite)
+- Web server setup (Apache, Nginx)
+- Troubleshooting guide
+- Production deployment
+- Security checklist
 
-#### 3. [WIREFRAMES.md](WIREFRAMES.md)
-**UI wireframes and design specifications**
-- Microsoft Fluent UI design system
-- Application shell layout
-- Page wireframes (30+ layouts)
-- Component specifications
-- Responsive design patterns
-- Mobile layouts
+#### 3. [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)
+**Original detailed quick start documentation**
+- Infrastructure overview
+- Development commands
+- Module completion status
+- File structure
+- Development roadmap
 
-#### 4. [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)
-**Complete database documentation**
-- All 35+ table structures
-- Column specifications
-- Foreign key relationships
-- Indexes and constraints
-- Entity relationships
-- Query optimization notes
+### Additional Resources
 
-#### 5. [FLUENT_UI_UPDATE.md](FLUENT_UI_UPDATE.md)
-**Microsoft Fluent UI implementation details**
-- Design system migration
-- Color palette specifications
-- Updated components
-- Before/after comparisons
-
-#### 6. [MODERNIZATION_SUMMARY.md](MODERNIZATION_SUMMARY.md)
-**System modernization overview**
-- Code improvements
-- UI/UX enhancements
-- Security updates
-- Performance optimizations
-
-#### 7. [DOCUMENTATION_OVERVIEW.md](DOCUMENTATION_OVERVIEW.md)
-**Complete documentation index and statistics**
-- Documentation metrics
-- System architecture overview
-- Coverage summary
+- **[../CONTRIBUTING.md](../CONTRIBUTING.md)** - How to contribute to the project
+- **[../README.md](../README.md)** - Main project documentation
+- **[../LICENSE](../LICENSE)** - MIT License
 
 ---
 
 ## 🎯 Quick Start Guide
 
+### For New Users
+1. **Start here**: [GETTING_STARTED.md](GETTING_STARTED.md) - 5-minute setup
+2. **Detailed setup**: [SETUP.md](SETUP.md) - If you need more details
+3. **Troubleshooting**: Check SETUP.md troubleshooting section
+
 ### For Developers
-1. Start with [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) to understand the system
-2. Review [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) for data structures
-3. Reference [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md) for specific features
-4. Check [WIREFRAMES.md](WIREFRAMES.md) for UI specifications
+1. **Setup environment**: Follow [SETUP.md](SETUP.md)
+2. **Code standards**: Read [../CONTRIBUTING.md](../CONTRIBUTING.md)
+3. **Project structure**: Check [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)
+4. **Contributing**: Follow guidelines in CONTRIBUTING.md
 
-### For Administrators
-1. Read [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) for feature overview
-2. Review [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md) for page usage
-3. Reference workflows and processes in page documentation
-
-### For Designers
-1. Start with [WIREFRAMES.md](WIREFRAMES.md) for design system
-2. Review [FLUENT_UI_UPDATE.md](FLUENT_UI_UPDATE.md) for implementation details
-3. Check component specifications and patterns
+### For Contributors
+1. **Start with**: [../CONTRIBUTING.md](../CONTRIBUTING.md)
+2. **Setup dev environment**: [SETUP.md](SETUP.md)
+3. **Code standards**: PSR-12, type hints, PHPDoc
+4. **Submit PR**: Follow PR template in CONTRIBUTING.md
 
 ---
 
-## 📊 System Modules
+## 📊 System Modules Overview
 
-The School ERP System consists of 10 major modules:
+The Laravel School Management System consists of 12 major modules:
 
 ### 1. 👨‍🎓 Student Management
 - Student admission and registration
@@ -142,8 +120,21 @@ The School ERP System consists of 10 major modules:
 - Attendance reports
 - Monthly summaries
 
-### 10. ⚙️ Settings
+### 10. 📈 Reports & Analytics
+- Comprehensive dashboards
+- Cross-module reporting
+- Performance analytics
+- Data export (CSV, PDF)
+
+### 11. 🚌 Transport Management
+- Route management
+- Vehicle tracking
+- Student allocation
+- Transport fees
+
+### 12. ⚙️ Settings & Configuration
 - School profile
+- Academic sessions
 - System configuration
 - User management
 
@@ -151,33 +142,35 @@ The School ERP System consists of 10 major modules:
 
 ## 🎨 Design System
 
-The system implements **Microsoft Fluent UI Design System** with:
+The system implements **Bootstrap 5** with **Microsoft Fluent UI-inspired** design:
 - **Primary Color**: Azure Blue (#0078D4)
 - **Text Color**: Slate (#605E5C)
 - **Background**: Soft White (#FAF9F8)
 - **Responsive**: Mobile-first approach
 - **Modern**: Card-based layouts
-- **Accessible**: ARIA labels and keyboard navigation
+- **Accessible**: WCAG 2.1 AA compliant
 
 ---
 
 ## 💻 Technology Stack
 
 ### Backend
-- PHP 8.3+
-- MySQL 8.4+
-- Session-based authentication
+- **Framework**: Laravel 10.x
+- **PHP**: 8.1+
+- **Database**: MySQL 5.7+ / PostgreSQL 9.6+ / SQLite 3.8+
+- **Authentication**: Laravel Sanctum
 
 ### Frontend
-- Bootstrap 5.3.3
-- Microsoft Fluent UI colors
-- Vanilla JavaScript
-- Material Design SVG icons
+- **CSS Framework**: Bootstrap 5.x
+- **JavaScript**: Vanilla JS with ES6+
+- **Charts**: Chart.js
+- **Icons**: Bootstrap Icons
 
 ### Architecture
-- MVC-inspired structure
-- Flexbox-based layout
-- Modular components
+- **Pattern**: MVC (Model-View-Controller)
+- **ORM**: Eloquent
+- **Templating**: Blade
+- **Validation**: Form Requests
 
 ---
 
@@ -185,23 +178,21 @@ The system implements **Microsoft Fluent UI Design System** with:
 
 | Metric | Value |
 |--------|-------|
-| **Total Documents** | 7 comprehensive files |
-| **Total Words** | ~50,000+ words |
-| **Total Size** | ~300 KB |
-| **Pages Documented** | 150+ PHP pages |
-| **Wireframes** | 30+ page layouts |
-| **Database Tables** | 35+ tables |
-| **Modules Covered** | 10 major modules |
+| **Setup Guides** | 3 comprehensive guides |
+| **Code Files** | 25 Models, 19 Controllers, 67+ Views |
+| **Routes** | ~238 defined routes |
+| **Database Tables** | 30+ tables |
+| **Modules** | 12 complete systems |
+| **Test Coverage** | Unit & Feature tests |
 
 ---
 
 ## 🖼️ Screenshots
 
 The `screenshots/` folder contains visual examples of the system:
-- Dashboard with Fluent UI
-- Student admission page
-- Fees manager interface
-- Various module pages
+- Dashboard interface
+- Student admission module
+- Fee management interface
 
 See [screenshots/README.md](screenshots/README.md) for details.
 
@@ -209,122 +200,81 @@ See [screenshots/README.md](screenshots/README.md) for details.
 
 ## 🔍 Finding Information
 
-### By Topic
-- **Database**: See [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)
-- **UI/UX**: See [WIREFRAMES.md](WIREFRAMES.md)
-- **Features**: See [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md)
-- **Setup**: See [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)
+### Quick Reference
+- **Setup & Installation**: [GETTING_STARTED.md](GETTING_STARTED.md) or [SETUP.md](SETUP.md)
+- **Contributing**: [../CONTRIBUTING.md](../CONTRIBUTING.md)
+- **Main Documentation**: [../README.md](../README.md)
+- **Legacy Docs**: [archive/](archive/) folder
 
-### By Module
-All modules are documented in [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md) with:
-- Page listings
-- Feature descriptions
-- Workflow diagrams
-- Form specifications
+### Historical Documentation
+The `archive/` folder contains development documentation:
+- Module implementation guides
+- Phase completion reports
+- Migration documentation
+- Development notes
 
-### By Page
-Use [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md) to find:
-- Page purpose
-- Available features
-- Form fields
-- Navigation paths
-
----
-
-## 🚀 Getting Started
-
-### For New Users
-1. Review the [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) to understand what the system does
-2. Check [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md) for specific module documentation
-3. Refer to [WIREFRAMES.md](WIREFRAMES.md) to see how pages are laid out
-
-### For Developers
-1. Study [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) to understand data structures
-2. Review [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md) for page workflows
-3. Check [MODERNIZATION_SUMMARY.md](MODERNIZATION_SUMMARY.md) for recent updates
-4. Reference [WIREFRAMES.md](WIREFRAMES.md) for UI specifications
-
-### For Contributors
-1. Read all documentation to understand the system
-2. Follow design patterns in [WIREFRAMES.md](WIREFRAMES.md)
-3. Maintain database integrity per [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)
-4. Update relevant documentation when making changes
+These files provide historical context but are not needed for using the system.
 
 ---
 
 ## 📞 Support
 
-For questions about:
-- **Features**: Check [PAGE_DOCUMENTATION.md](PAGE_DOCUMENTATION.md)
-- **Database**: Check [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)
-- **UI Design**: Check [WIREFRAMES.md](WIREFRAMES.md)
-- **General**: Check [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)
+### Getting Help
+- **Installation Issues**: Check [SETUP.md](SETUP.md) troubleshooting section
+- **Usage Questions**: See [../README.md](../README.md) usage section
+- **Bug Reports**: [GitHub Issues](https://github.com/raparty/ramaschoollaravel/issues)
+- **Feature Requests**: [GitHub Issues](https://github.com/raparty/ramaschoollaravel/issues)
+
+### Resources
+- **Laravel Docs**: https://laravel.com/docs/10.x
+- **Bootstrap Docs**: https://getbootstrap.com/docs/5.0
+- **GitHub Repository**: https://github.com/raparty/ramaschoollaravel
 
 ---
 
-## 📝 Document Maintenance
+## 📝 Contributing to Documentation
 
-### Updating Documentation
-When making changes to the system:
-1. Update relevant documentation files
-2. Keep screenshots current
-3. Maintain consistency across documents
-4. Update version numbers
+When contributing to documentation:
+1. Follow Markdown best practices
+2. Keep language clear and concise
+3. Include code examples where helpful
+4. Update table of contents
+5. Maintain consistent formatting
+6. Test all links and references
 
-### Version Control
-- All documentation is version controlled
-- Major updates increment document version
-- Last updated dates are maintained
-
----
-
-## 🎓 Learning Path
-
-### Recommended Reading Order
-
-**For Complete Understanding:**
-1. PROJECT_SUMMARY.md (30 min) - Get the big picture
-2. WIREFRAMES.md (45 min) - Understand UI/UX
-3. DATABASE_SCHEMA.md (60 min) - Learn data structures
-4. PAGE_DOCUMENTATION.md (90 min) - Explore features
-
-**For Quick Reference:**
-- Jump directly to relevant sections in any document
-- Use table of contents in each file
-- Search within documents for specific topics
+See [../CONTRIBUTING.md](../CONTRIBUTING.md) for full guidelines.
 
 ---
 
 ## 📄 License
 
-Proprietary software - All rights reserved  
-© 2024 School ERP System
+This project is open-sourced software licensed under the [MIT license](../LICENSE).
 
 ---
 
 ## 📌 Quick Links
 
-### Main Documentation
-- [Project Summary](PROJECT_SUMMARY.md)
-- [Page Documentation](PAGE_DOCUMENTATION.md)
-- [Wireframes](WIREFRAMES.md)
-- [Database Schema](DATABASE_SCHEMA.md)
+### Essential Documentation
+- [Getting Started](GETTING_STARTED.md) - Start here!
+- [Setup Guide](SETUP.md) - Detailed installation
+- [Contributing Guide](../CONTRIBUTING.md) - How to contribute
+- [Main README](../README.md) - Project overview
 
-### Technical Documentation
-- [Fluent UI Update](FLUENT_UI_UPDATE.md)
-- [Modernization Summary](MODERNIZATION_SUMMARY.md)
-- [Documentation Overview](DOCUMENTATION_OVERVIEW.md)
+### Screenshots & Visual
+- [Screenshots](screenshots/) - Visual documentation
+- [Screenshot README](screenshots/README.md) - Screenshot guide
 
-### Visual Assets
-- [Screenshots](screenshots/)
-
----
-
-**Documentation Version**: 1.0  
-**Last Updated**: February 2024  
-**System Version**: 1.0  
-**Maintained By**: Development Team
+### Archive
+- [Archive](archive/) - Historical documentation
+- [Archive README](archive/README.md) - Archive index
 
 ---
 
-*This documentation is continuously updated to reflect the current state of the School ERP System. For the most recent information, always refer to the latest version in the repository.*
+**Documentation Version**: 2.0  
+**Last Updated**: February 14, 2026  
+**Laravel Version**: 10.x  
+**PHP Version**: 8.1+
+
+---
+
+*This documentation is actively maintained. For the most recent information, always refer to the latest version in the repository.*

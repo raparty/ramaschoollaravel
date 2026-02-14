@@ -9,3 +9,6 @@ thumbs.db
 
 # Ignore session data
 /var/lib/php/sessions/*
+
+# Laravel installation directory (work in progress)
+/laravel-app/

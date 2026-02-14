@@ -14,10 +14,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * 
  * @property int $id
  * @property string $registration_no
- * @property string $receipt_no
  * @property float $fees_amount
- * @property \Carbon\Carbon $payment_date
- * @property string|null $session
+ * @property int $month_id
+ * @property string $session
+ * @property date $payment_date
  */
 class StudentTransportFee extends Model
 {
@@ -38,10 +38,10 @@ class StudentTransportFee extends Model
      */
     protected $fillable = [
         'registration_no',
-        'receipt_no',
         'fees_amount',
-        'payment_date',
+        'month_id',
         'session',
+        'payment_date',
     ];
 
     /**
@@ -49,7 +49,8 @@ class StudentTransportFee extends Model
      */
     protected $casts = [
         'fees_amount' => 'decimal:2',
-        'payment_date' => 'datetime',
+        'payment_date' => 'date',
+        'month_id' => 'integer',
     ];
 
     /**
@@ -83,17 +84,13 @@ class StudentTransportFee extends Model
     {
         return $query->orderBy('payment_date', 'desc');
     }
-
+    
     /**
-     * Generate unique receipt number.
-     * Format: TFEES-XXXX (e.g., TFEES-1001)
+     * Scope: Filter by month.
      */
-    public static function generateReceiptNo(): string
+    public function scopeForMonth($query, int $monthId)
     {
-        $latestFee = static::orderBy('id', 'desc')->first();
-        $nextId = $latestFee ? $latestFee->id + 1 : 1;
-        
-        return 'TFEES-' . str_pad((string)($nextId + 1000), 4, '0', STR_PAD_LEFT);
+        return $query->where('month_id', $monthId);
     }
 
     /**

@@ -23,7 +23,12 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      * Note: Database uses admin_user and admin_password columns
-     * Security: admin_password and role excluded to prevent mass assignment attacks
+     * 
+     * Security: 
+     * - admin_password excluded to prevent password tampering via mass assignment
+     * - role excluded to prevent privilege escalation attacks
+     * - These fields exist in database but must be set explicitly, not via mass assignment
+     * - Additional profile fields can be added here as needed (e.g., name, email, etc.)
      *
      * @var array<int, string>
      */

@@ -36,10 +36,14 @@ Route::middleware(['auth'])->group(function () {
 
     // Fee Management (Phase 4)
     Route::resource('fee-packages', FeePackageController::class);
-    Route::resource('fees', FeeController::class);
-    Route::post('/fees/{fee}/collect', [FeeController::class, 'collectFee'])->name('fees.collect');
-    Route::get('/fees/receipt/{fee}', [FeeController::class, 'printReceipt'])->name('fees.receipt');
-    Route::get('/fees/pending', [FeeController::class, 'pendingFees'])->name('fees.pending');
+    
+    // Fee Collection Routes
+    Route::get('/fees/search', [FeeController::class, 'search'])->name('fees.search');
+    Route::get('/fees/collect', [FeeController::class, 'collect'])->name('fees.collect');
+    Route::post('/fees/store', [FeeController::class, 'store'])->name('fees.store');
+    Route::get('/fees/receipt', [FeeController::class, 'receipt'])->name('fees.receipt');
+    Route::get('/fees/pending', [FeeController::class, 'pending'])->name('fees.pending');
+    Route::get('/fees/search-students', [FeeController::class, 'searchStudents'])->name('fees.search-students');
     
     // TODO: Add Library routes (Phase 5)
     // TODO: Add Staff routes (Phase 6)

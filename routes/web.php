@@ -10,6 +10,9 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SalaryController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\MarkController;
+use App\Http\Controllers\ResultController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,7 +84,48 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/staff/{staff}/history', [SalaryController::class, 'history'])->name('staff-history');
     });
     
-    // TODO: Add Exam routes (Phase 7)
+    // Examination Module (Phase 7 / Phase B Week 6-8)
+    Route::prefix('exams')->name('exams.')->group(function () {
+        // Exam Management
+        Route::get('/', [ExamController::class, 'index'])->name('index');
+        Route::get('/create', [ExamController::class, 'create'])->name('create');
+        Route::post('/', [ExamController::class, 'store'])->name('store');
+        Route::get('/{exam}', [ExamController::class, 'show'])->name('show');
+        Route::get('/{exam}/edit', [ExamController::class, 'edit'])->name('edit');
+        Route::put('/{exam}', [ExamController::class, 'update'])->name('update');
+        Route::delete('/{exam}', [ExamController::class, 'destroy'])->name('destroy');
+        
+        // Subject Assignment
+        Route::get('/{exam}/subjects', [ExamController::class, 'assignSubjects'])->name('subjects');
+        Route::post('/{exam}/subjects', [ExamController::class, 'storeSubjects'])->name('subjects.store');
+        
+        // Timetable
+        Route::get('/{exam}/timetable', [ExamController::class, 'timetable'])->name('timetable');
+        
+        // Publish/Unpublish
+        Route::post('/{exam}/toggle-publish', [ExamController::class, 'togglePublish'])->name('toggle-publish');
+    });
+    
+    // Mark Entry
+    Route::prefix('marks')->name('marks.')->group(function () {
+        Route::get('/', [MarkController::class, 'index'])->name('index');
+        Route::get('/entry', [MarkController::class, 'entryForm'])->name('entry');
+        Route::post('/store', [MarkController::class, 'store'])->name('store');
+        Route::get('/student', [MarkController::class, 'studentMarks'])->name('student');
+        Route::get('/subject/{examSubject}', [MarkController::class, 'subjectMarks'])->name('subject');
+        Route::get('/search-students', [MarkController::class, 'searchStudents'])->name('search-students');
+    });
+    
+    // Results
+    Route::prefix('results')->name('results.')->group(function () {
+        Route::get('/', [ResultController::class, 'index'])->name('index');
+        Route::get('/generate', [ResultController::class, 'generateForm'])->name('generate');
+        Route::post('/generate', [ResultController::class, 'generate'])->name('generate.store');
+        Route::get('/{result}', [ResultController::class, 'view'])->name('view');
+        Route::get('/class/results', [ResultController::class, 'classResults'])->name('class');
+        Route::post('/{result}/toggle-publish', [ResultController::class, 'togglePublish'])->name('toggle-publish');
+    });
+    
     // TODO: Add Transport routes (Phase 8)
     // TODO: Add Accounts routes (Phase 9)
     // TODO: Add Attendance routes (Phase 10)

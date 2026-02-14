@@ -20,6 +20,7 @@ A comprehensive, modern school management system built with Laravel 10, featurin
 - [Usage](#-usage)
 - [Module Overview](#-module-overview)
 - [Architecture](#-architecture)
+- [Documentation](#-documentation)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -167,6 +168,8 @@ A comprehensive, modern school management system built with Laravel 10, featurin
   - BCMath PHP Extension
 
 ## 🚀 Installation
+
+> **📖 For detailed setup instructions including troubleshooting and production deployment, see [docs/SETUP.md](docs/SETUP.md)**
 
 ### Step 1: Clone the Repository
 
@@ -569,9 +572,26 @@ For complete API documentation, run:
 php artisan route:list
 ```
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the `/docs` folder:
+
+- **[Detailed Setup Guide](docs/SETUP.md)** - Complete installation and configuration instructions
+- **[Quick Start Guide](docs/QUICK_START_GUIDE.md)** - Get started quickly
+- **[Contributing Guidelines](CONTRIBUTING.md)** - How to contribute to the project
+- **[Archive Documentation](docs/archive/)** - Historical development documentation
+
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on:
+
+- Code of conduct
+- Development setup
+- Coding standards (PSR-12)
+- Pull request process
+- Testing requirements
+
+Quick steps:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
@@ -579,13 +599,7 @@ We welcome contributions! Please follow these steps:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-### Development Guidelines
-
-- Follow PSR-12 coding standards
-- Write comprehensive PHPDoc comments
-- Include type hints for all parameters and return types
-- Add tests for new features
-- Update documentation as needed
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## 🐛 Bug Reports
 

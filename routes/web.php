@@ -13,6 +13,8 @@ use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\ResultController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,8 +128,38 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{result}/toggle-publish', [ResultController::class, 'togglePublish'])->name('toggle-publish');
     });
     
-    // TODO: Add Transport routes (Phase 8)
-    // TODO: Add Accounts routes (Phase 9)
-    // TODO: Add Attendance routes (Phase 10)
-    // TODO: Add Classes/Subjects/Sections routes (Phase 11)
+    // Attendance Module (Phase C)
+    Route::prefix('attendance')->name('attendance.')->group(function () {
+        // Attendance Dashboard
+        Route::get('/', [AttendanceController::class, 'index'])->name('index');
+        
+        // Mark Attendance
+        Route::get('/register', [AttendanceController::class, 'register'])->name('register');
+        Route::post('/store', [AttendanceController::class, 'store'])->name('store');
+        
+        // Edit Attendance
+        Route::get('/edit', [AttendanceController::class, 'edit'])->name('edit');
+        Route::put('/update', [AttendanceController::class, 'update'])->name('update');
+        
+        // View Attendance
+        Route::get('/student', [AttendanceController::class, 'studentAttendance'])->name('student');
+        Route::get('/class', [AttendanceController::class, 'classAttendance'])->name('class');
+        
+        // Search
+        Route::get('/search-students', [AttendanceController::class, 'searchStudents'])->name('search-students');
+    });
+    
+    // Attendance Reports
+    Route::prefix('reports/attendance')->name('reports.attendance.')->group(function () {
+        Route::get('/', [AttendanceReportController::class, 'index'])->name('index');
+        Route::post('/generate', [AttendanceReportController::class, 'generate'])->name('generate');
+        Route::get('/student', [AttendanceReportController::class, 'studentReport'])->name('student');
+        Route::get('/class', [AttendanceReportController::class, 'classReport'])->name('class');
+        Route::get('/monthly', [AttendanceReportController::class, 'monthlyReport'])->name('monthly');
+        Route::get('/daterange', [AttendanceReportController::class, 'dateRangeReport'])->name('daterange');
+    });
+    
+    // TODO: Add Transport routes (Phase C+1)
+    // TODO: Add Accounts routes (Phase C+2)
+    // TODO: Add Classes/Subjects/Sections routes (Phase C+3)
 });

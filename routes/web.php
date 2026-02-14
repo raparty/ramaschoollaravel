@@ -8,6 +8,8 @@ use App\Http\Controllers\FeePackageController;
 use App\Http\Controllers\FeeController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\BookIssueController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\SalaryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,7 +66,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/search-students', [BookIssueController::class, 'searchStudents'])->name('search-students');
     });
     
-    // TODO: Add Staff routes (Phase 6)
+    // Staff Management (Phase 6 / Phase B Week 3-5)
+    Route::resource('staff', StaffController::class);
+    Route::get('/staff-search', [StaffController::class, 'search'])->name('staff.search');
+    
+    // Salary Management
+    Route::prefix('salaries')->name('salaries.')->group(function () {
+        Route::get('/', [SalaryController::class, 'index'])->name('index');
+        Route::get('/process', [SalaryController::class, 'process'])->name('process');
+        Route::post('/store', [SalaryController::class, 'store'])->name('store');
+        Route::post('/generate-bulk', [SalaryController::class, 'generateBulk'])->name('generate-bulk');
+        Route::post('/{salary}/mark-paid', [SalaryController::class, 'markAsPaid'])->name('mark-paid');
+        Route::get('/{salary}/slip', [SalaryController::class, 'slip'])->name('slip');
+        Route::get('/staff/{staff}/history', [SalaryController::class, 'history'])->name('staff-history');
+    });
+    
     // TODO: Add Exam routes (Phase 7)
     // TODO: Add Transport routes (Phase 8)
     // TODO: Add Accounts routes (Phase 9)

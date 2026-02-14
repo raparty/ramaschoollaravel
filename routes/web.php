@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\FeePackageController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\LibraryController;
+use App\Http\Controllers\BookIssueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +47,23 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/fees/pending', [FeeController::class, 'pending'])->name('fees.pending');
     Route::get('/fees/search-students', [FeeController::class, 'searchStudents'])->name('fees.search-students');
     
-    // TODO: Add Library routes (Phase 5)
+    // Library Management (Phase 5 / Phase B Week 1-2)
+    Route::prefix('library')->name('library.')->group(function () {
+        // Book Management
+        Route::resource('books', LibraryController::class);
+        Route::get('/books-search', [LibraryController::class, 'search'])->name('books.search');
+        
+        // Book Issue/Return
+        Route::get('/issue', [BookIssueController::class, 'issueForm'])->name('issue.create');
+        Route::post('/issue', [BookIssueController::class, 'issueBook'])->name('issue.store');
+        Route::get('/return', [BookIssueController::class, 'returnForm'])->name('issue.return');
+        Route::post('/return', [BookIssueController::class, 'returnBook'])->name('issue.process-return');
+        Route::get('/history', [BookIssueController::class, 'studentHistory'])->name('issue.history');
+        Route::get('/overdue', [BookIssueController::class, 'overdueList'])->name('issue.overdue');
+        Route::post('/collect-fine', [BookIssueController::class, 'collectFine'])->name('issue.collect-fine');
+        Route::get('/search-students', [BookIssueController::class, 'searchStudents'])->name('search-students');
+    });
+    
     // TODO: Add Staff routes (Phase 6)
     // TODO: Add Exam routes (Phase 7)
     // TODO: Add Transport routes (Phase 8)

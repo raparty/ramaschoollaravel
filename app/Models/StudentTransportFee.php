@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * 
  * @property int $id
  * @property string $registration_no
- * @property string $reciept_no
+ * @property string $receipt_no
  * @property float $fees_amount
  * @property \Carbon\Carbon $payment_date
  * @property string|null $session
@@ -38,7 +38,7 @@ class StudentTransportFee extends Model
      */
     protected $fillable = [
         'registration_no',
-        'reciept_no',
+        'receipt_no',
         'fees_amount',
         'payment_date',
         'session',

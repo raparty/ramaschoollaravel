@@ -86,7 +86,7 @@ class FeeController extends Controller
             $validated = $request->validated();
 
             // Generate unique receipt number
-            $validated['reciept_no'] = StudentFee::generateReceiptNo();
+            $validated['receipt_no'] = StudentFee::generateReceiptNo();
             $validated['payment_date'] = now();
             $validated['session'] = session('academic_session', date('Y'));
 
@@ -96,8 +96,8 @@ class FeeController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('fees.receipt', ['receiptNo' => $fee->reciept_no])
-                ->with('success', 'Fee payment recorded successfully! Receipt No: ' . $fee->reciept_no);
+                ->route('fees.receipt', ['receiptNo' => $fee->receipt_no])
+                ->with('success', 'Fee payment recorded successfully! Receipt No: ' . $fee->receipt_no);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -128,7 +128,7 @@ class FeeController extends Controller
 
         // Get fee record
         $fee = StudentFee::with(['student.class', 'term'])
-            ->where('reciept_no', $receiptNo)
+            ->where('receipt_no', $receiptNo)
             ->firstOrFail();
 
         // Calculate totals for student
@@ -151,7 +151,7 @@ class FeeController extends Controller
         $receiptNo = $request->get('receiptNo');
         
         $fee = StudentFee::with(['student.class', 'term'])
-            ->where('reciept_no', $receiptNo)
+            ->where('receipt_no', $receiptNo)
             ->firstOrFail();
 
         // Calculate totals

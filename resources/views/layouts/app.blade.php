@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'School ERP System')</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --app-primary: #0078d4;
+            --app-primary-dark: #005a9e;
+            --app-border: #e1e4e8;
+            --app-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            --app-shadow-lifted: 0 4px 8px rgba(0,0,0,0.15);
+            --fluent-slate: #323130;
+        }
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: var(--app-primary) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+        }
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: white;
+            border-right: 1px solid var(--app-border);
+            padding: 20px 0;
+        }
+        .sidebar .nav-link {
+            color: var(--fluent-slate);
+            padding: 12px 20px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: #f0f0f0;
+            border-left-color: var(--app-primary);
+            color: var(--app-primary);
+        }
+        .main-content {
+            padding: 30px;
+        }
+        .card {
+            border: 1px solid var(--app-border);
+            box-shadow: var(--app-shadow);
+            border-radius: 4px;
+        }
+        .btn-primary {
+            background-color: var(--app-primary);
+            border-color: var(--app-primary);
+        }
+        .btn-primary:hover {
+            background-color: var(--app-primary-dark);
+            border-color: var(--app-primary-dark);
+        }
+    </style>
+    @stack('styles')
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ route('dashboard') }}">School ERP System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    @auth
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                {{ Auth::user()->name ?? 'Admin' }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#">Profile</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @endauth
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">📊 Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admissions.*') ? 'active' : '' }}" href="{{ route('admissions.index') }}">👨‍🎓 Students</a></li>
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('fee-packages.*') || request()->routeIs('fees.*') ? 'active' : '' }}" href="{{ route('fee-packages.index') }}">💰 Fees</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">📚 Library</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">👥 Staff</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">📝 Exams</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">🚌 Transport</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">📊 Accounts</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">📅 Attendance</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">⚙️ Settings</a></li>
+                </ul>
+            </nav>
+            <main class="col-md-10 main-content">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @yield('content')
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
+</body>
+</html>

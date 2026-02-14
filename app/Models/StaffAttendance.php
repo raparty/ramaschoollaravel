@@ -12,13 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id
  * @property int $staff_id Staff ID
- * @property string $date Attendance date
+ * @property date $att_date Attendance date
  * @property string $status Status (present/absent/leave/half-day)
- * @property string|null $in_time Check-in time
- * @property string|null $out_time Check-out time
- * @property string|null $notes Notes/remarks
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  */
 class StaffAttendance extends Model
 {
@@ -38,11 +33,8 @@ class StaffAttendance extends Model
      */
     protected $fillable = [
         'staff_id',
-        'date',
+        'att_date',
         'status',
-        'in_time',
-        'out_time',
-        'notes',
     ];
 
     /**
@@ -51,10 +43,15 @@ class StaffAttendance extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'date' => 'date',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'att_date' => 'date',
     ];
+    
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
     /**
      * Get the staff member for this attendance record.
@@ -109,7 +106,7 @@ class StaffAttendance extends Model
      */
     public function scopeDateRange($query, string $startDate, string $endDate)
     {
-        return $query->whereBetween('date', [$startDate, $endDate]);
+        return $query->whereBetween('att_date', [$startDate, $endDate]);
     }
 
     /**
@@ -121,7 +118,7 @@ class StaffAttendance extends Model
      */
     public function scopeForDate($query, string $date)
     {
-        return $query->whereDate('date', $date);
+        return $query->whereDate('att_date', $date);
     }
 
     /**
@@ -168,20 +165,5 @@ class StaffAttendance extends Model
             'half-day' => 'badge bg-info',
             default => 'badge bg-secondary',
         };
-    }
-
-    /**
-     * Get the duration of attendance (hours).
-     *
-     * @return float|null
-     */
-    public function getDurationAttribute(): ?float
-    {
-        if ($this->in_time && $this->out_time) {
-            $inTime = strtotime($this->in_time);
-            $outTime = strtotime($this->out_time);
-            return round(($outTime - $inTime) / 3600, 2);
-        }
-        return null;
     }
 }

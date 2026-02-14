@@ -11,10 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * 
  * Represents book categories in the library
  * 
- * @property int $id
+ * @property int $category_id
  * @property string $category_name
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
  */
 class BookCategory extends Model
 {
@@ -23,7 +21,12 @@ class BookCategory extends Model
     /**
      * The table associated with the model.
      */
-    protected $table = 'book_category';
+    protected $table = 'library_categories';
+    
+    /**
+     * The primary key for the model.
+     */
+    protected $primaryKey = 'category_id';
 
     /**
      * The attributes that are mass assignable.
@@ -31,13 +34,18 @@ class BookCategory extends Model
     protected $fillable = [
         'category_name',
     ];
+    
+    /**
+     * Indicates if the model should be timestamped.
+     */
+    public $timestamps = false;
 
     /**
      * Get all books in this category.
      */
     public function books(): HasMany
     {
-        return $this->hasMany(Book::class, 'book_cat_id');
+        return $this->hasMany(Book::class, 'book_category_id', 'category_id');
     }
 
     /**

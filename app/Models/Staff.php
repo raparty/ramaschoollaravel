@@ -4,41 +4,33 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Staff Model
  * 
  * Manages staff/employee records including teachers and non-teaching staff
+ * Maps to staff_employee table in database
  * 
  * @property int $id
- * @property string $staff_id Staff unique identifier
+ * @property string $employee_id Staff unique identifier
  * @property string $name Full name
- * @property string $email Email address
- * @property string|null $phone Phone number
- * @property string|null $photo Photo path
- * @property int $department_id Department ID
- * @property int $position_id Position/Designation ID
- * @property string|null $qualification Qualification details
- * @property string|null $address Address
- * @property string|null $date_of_birth Date of birth
- * @property string $joining_date Joining date
- * @property float $basic_salary Basic monthly salary
- * @property string $status Status (active/inactive)
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int $dept_id Department ID
+ * @property int $cat_id Category ID
+ * @property int $pos_id Position/Designation ID
+ * @property int $qualification_id Qualification ID
+ * @property float $salary Monthly salary
+ * @property string|null $joining_date Joining date
  */
 class Staff extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'staff';
+    protected $table = 'staff_employee';
 
     /**
      * The attributes that are mass assignable.
@@ -46,19 +38,14 @@ class Staff extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'staff_id',
+        'employee_id',
         'name',
-        'email',
-        'phone',
-        'photo',
-        'department_id',
-        'position_id',
-        'qualification',
-        'address',
-        'date_of_birth',
+        'dept_id',
+        'cat_id',
+        'pos_id',
+        'qualification_id',
+        'salary',
         'joining_date',
-        'basic_salary',
-        'status',
     ];
 
     /**
@@ -67,13 +54,16 @@ class Staff extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'date_of_birth' => 'date',
         'joining_date' => 'date',
-        'basic_salary' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'salary' => 'decimal:2',
     ];
+    
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
     /**
      * Get the department that the staff belongs to.
@@ -82,7 +72,7 @@ class Staff extends Model
      */
     public function department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'dept_id');
     }
 
     /**
@@ -92,7 +82,7 @@ class Staff extends Model
      */
     public function position()
     {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(Position::class, 'pos_id');
     }
 
     /**
@@ -115,27 +105,7 @@ class Staff extends Model
         return $this->hasMany(StaffAttendance::class);
     }
 
-    /**
-     * Scope a query to only include active staff.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active');
-    }
 
-    /**
-     * Scope a query to only include inactive staff.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeInactive($query)
-    {
-        return $query->where('status', 'inactive');
-    }
 
     /**
      * Scope a query to filter by department.
@@ -146,11 +116,11 @@ class Staff extends Model
      */
     public function scopeByDepartment($query, int $departmentId)
     {
-        return $query->where('department_id', $departmentId);
+        return $query->where('dept_id', $departmentId);
     }
 
     /**
-     * Scope a query to search staff by name, email, or staff_id.
+     * Scope a query to search staff by name or employee_id.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string $search
@@ -160,8 +130,7 @@ class Staff extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%")
-              ->orWhere('staff_id', 'like', "%{$search}%");
+              ->orWhere('employee_id', 'like', "%{$search}%");
         });
     }
 
@@ -176,44 +145,12 @@ class Staff extends Model
     }
 
     /**
-     * Get the staff's photo URL or default.
-     *
-     * @return string
-     */
-    public function getPhotoUrlAttribute(): string
-    {
-        return $this->photo 
-            ? asset('storage/' . $this->photo) 
-            : asset('images/default-avatar.png');
-    }
-
-    /**
      * Get the staff's years of service.
      *
      * @return int
      */
     public function getYearsOfServiceAttribute(): int
     {
-        return $this->joining_date->diffInYears(now());
-    }
-
-    /**
-     * Check if staff is active.
-     *
-     * @return bool
-     */
-    public function isActive(): bool
-    {
-        return $this->status === 'active';
-    }
-
-    /**
-     * Check if staff is inactive.
-     *
-     * @return bool
-     */
-    public function isInactive(): bool
-    {
-        return $this->status === 'inactive';
+        return $this->joining_date ? $this->joining_date->diffInYears(now()) : 0;
     }
 }

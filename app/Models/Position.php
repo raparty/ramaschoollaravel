@@ -9,15 +9,10 @@ use Illuminate\Database\Eloquent\Model;
  * Position Model
  * 
  * Manages job positions/designations (Teacher, Principal, Clerk, etc.)
+ * Maps to staff_positions table in database
  * 
  * @property int $id
- * @property string $title Position title
- * @property int|null $department_id Department ID
- * @property string|null $description Position description
- * @property float|null $min_salary Minimum salary range
- * @property float|null $max_salary Maximum salary range
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $staff_position Position title
  */
 class Position extends Model
 {
@@ -28,7 +23,7 @@ class Position extends Model
      *
      * @var string
      */
-    protected $table = 'positions';
+    protected $table = 'staff_positions';
 
     /**
      * The attributes that are mass assignable.
@@ -36,34 +31,15 @@ class Position extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'title',
-        'department_id',
-        'description',
-        'min_salary',
-        'max_salary',
+        'staff_position',
     ];
 
     /**
-     * The attributes that should be cast.
+     * Indicates if the model should be timestamped.
      *
-     * @var array<string, string>
+     * @var bool
      */
-    protected $casts = [
-        'min_salary' => 'decimal:2',
-        'max_salary' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
-    /**
-     * Get the department this position belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function department()
-    {
-        return $this->belongsTo(Department::class);
-    }
+    public $timestamps = false;
 
     /**
      * Get all staff with this position.
@@ -72,29 +48,14 @@ class Position extends Model
      */
     public function staff()
     {
-        return $this->hasMany(Staff::class);
+        return $this->hasMany(Staff::class, 'pos_id');
     }
 
     /**
-     * Get the salary range as a formatted string.
-     *
-     * @return string
+     * Get the position name.
      */
-    public function getSalaryRangeAttribute(): string
+    public function getNameAttribute(): string
     {
-        if ($this->min_salary && $this->max_salary) {
-            return "₹" . number_format($this->min_salary, 2) . " - ₹" . number_format($this->max_salary, 2);
-        }
-        return 'Not specified';
-    }
-
-    /**
-     * Get the count of staff in this position.
-     *
-     * @return int
-     */
-    public function getStaffCountAttribute(): int
-    {
-        return $this->staff()->count();
+        return $this->staff_position;
     }
 }

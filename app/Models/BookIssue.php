@@ -11,14 +11,15 @@ use Carbon\Carbon;
  * Book Issue Model
  * 
  * Represents book issues to students
+ * Maps to student_books_details table in database
  * 
  * @property int $id
  * @property string $registration_no
- * @property int $book_id
- * @property string $issue_date
- * @property string $return_date
- * @property string $due_date
- * @property string $issue_by
+ * @property string $book_number
+ * @property date $issue_date
+ * @property date|null $return_date
+ * @property string $booking_status
+ * @property string $session
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
@@ -29,19 +30,24 @@ class BookIssue extends Model
     /**
      * The table associated with the model.
      */
-    protected $table = 'student_books';
+    protected $table = 'student_books_details';
 
     /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
         'registration_no',
-        'book_id',
+        'book_number',
         'issue_date',
         'return_date',
-        'due_date',
-        'issue_by',
+        'booking_status',
+        'session',
     ];
+    
+    /**
+     * Indicates if the model should be timestamped.
+     */
+    public $timestamps = false;
 
     /**
      * The attributes that should be cast.
@@ -57,7 +63,7 @@ class BookIssue extends Model
      */
     public function student(): BelongsTo
     {
-        return $this->belongsTo(Admission::class, 'registration_no', 'registration_no');
+        return $this->belongsTo(Admission::class, 'registration_no', 'reg_no');
     }
 
     /**
@@ -65,39 +71,23 @@ class BookIssue extends Model
      */
     public function book(): BelongsTo
     {
-        return $this->belongsTo(Book::class, 'book_id');
+        return $this->belongsTo(Book::class, 'book_number', 'book_number');
     }
 
     /**
-     * Check if book is overdue.
+     * Check if book is still issued.
      */
-    public function isOverdue(): bool
+    public function isIssued(): bool
     {
-        if ($this->return_date) {
-            return false; // Already returned
-        }
-
-        return Carbon::parse($this->due_date)->isPast();
+        return $this->booking_status === '1' && is_null($this->return_date);
     }
-
+    
     /**
-     * Get number of days overdue.
+     * Check if book is returned.
      */
-    public function getDaysOverdueAttribute(): int
+    public function isReturned(): bool
     {
-        if (!$this->isOverdue()) {
-            return 0;
-        }
-
-        return Carbon::parse($this->due_date)->diffInDays(Carbon::now());
-    }
-
-    /**
-     * Calculate fine amount (Rs. 5 per day).
-     */
-    public function calculateFine(float $finePerDay = 5.00): float
-    {
-        return $this->days_overdue * $finePerDay;
+        return $this->booking_status === '0' || !is_null($this->return_date);
     }
 
     /**
@@ -105,7 +95,7 @@ class BookIssue extends Model
      */
     public function scopeActive($query)
     {
-        return $query->whereNull('return_date');
+        return $query->where('booking_status', '1')->whereNull('return_date');
     }
 
     /**
@@ -113,16 +103,7 @@ class BookIssue extends Model
      */
     public function scopeReturned($query)
     {
-        return $query->whereNotNull('return_date');
-    }
-
-    /**
-     * Scope: Overdue issues.
-     */
-    public function scopeOverdue($query)
-    {
-        return $query->whereNull('return_date')
-            ->where('due_date', '<', Carbon::now());
+        return $query->where('booking_status', '0')->orWhereNotNull('return_date');
     }
 
     /**
@@ -131,6 +112,14 @@ class BookIssue extends Model
     public function scopeForStudent($query, string $regNo)
     {
         return $query->where('registration_no', $regNo);
+    }
+    
+    /**
+     * Scope: For specific session.
+     */
+    public function scopeForSession($query, string $session)
+    {
+        return $query->where('session', $session);
     }
 
     /**

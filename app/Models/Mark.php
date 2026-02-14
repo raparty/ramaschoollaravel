@@ -12,14 +12,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Represents marks obtained by a student in an exam subject
  * 
  * @property int $id
- * @property int $student_id Related student (admission) ID
- * @property int $exam_subject_id Related exam subject ID
- * @property float $theory_marks Theory marks obtained
- * @property float $practical_marks Practical marks obtained
- * @property boolean $is_absent Whether student was absent
- * @property string|null $remarks Teacher remarks
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property string $student_id User ID of the student
+ * @property string $subject_name Subject name
+ * @property string $exam_type Exam type (Unit Test/Mid-Term/Final)
+ * @property int $marks_obtained Marks obtained
+ * @property int $total_marks Total marks (default 100)
+ * @property string $academic_year Academic year
  */
 class Mark extends Model
 {
@@ -32,11 +30,11 @@ class Mark extends Model
      */
     protected $fillable = [
         'student_id',
-        'exam_subject_id',
-        'theory_marks',
-        'practical_marks',
-        'is_absent',
-        'remarks',
+        'subject_name',
+        'exam_type',
+        'marks_obtained',
+        'total_marks',
+        'academic_year',
     ];
 
     /**
@@ -45,120 +43,70 @@ class Mark extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'student_id' => 'integer',
-        'exam_subject_id' => 'integer',
-        'theory_marks' => 'float',
-        'practical_marks' => 'float',
-        'is_absent' => 'boolean',
+        'marks_obtained' => 'integer',
+        'total_marks' => 'integer',
     ];
+    
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
     /**
-     * Get the student that this mark belongs to.
+     * Get the student (user) that this mark belongs to.
      */
     public function student(): BelongsTo
     {
-        return $this->belongsTo(Admission::class, 'student_id');
+        return $this->belongsTo(User::class, 'student_id', 'user_id');
     }
 
     /**
-     * Get the exam subject that this mark belongs to.
+     * Get percentage.
      */
-    public function examSubject(): BelongsTo
+    public function getPercentageAttribute(): float
     {
-        return $this->belongsTo(ExamSubject::class);
+        return $this->total_marks > 0 ? ($this->marks_obtained / $this->total_marks) * 100 : 0;
     }
 
     /**
-     * Get total marks obtained (theory + practical).
+     * Check if student passed (assuming 40% pass mark).
      */
-    public function getTotalMarksAttribute(): float
+    public function isPassed(float $passPercentage = 40.0): bool
     {
-        if ($this->is_absent) {
-            return 0;
-        }
-        
-        return $this->theory_marks + $this->practical_marks;
-    }
-
-    /**
-     * Get marks display (shows 'AB' if absent).
-     */
-    public function getMarksDisplayAttribute(): string
-    {
-        if ($this->is_absent) {
-            return 'AB';
-        }
-        
-        return (string) $this->total_marks;
-    }
-
-    /**
-     * Check if student passed this subject.
-     */
-    public function isPassed(): bool
-    {
-        if ($this->is_absent) {
-            return false;
-        }
-        
-        return $this->total_marks >= $this->examSubject->pass_marks;
-    }
-
-    /**
-     * Get status badge class.
-     */
-    public function getStatusBadgeAttribute(): string
-    {
-        if ($this->is_absent) {
-            return 'secondary';
-        }
-        
-        return $this->isPassed() ? 'success' : 'danger';
-    }
-
-    /**
-     * Get status text.
-     */
-    public function getStatusTextAttribute(): string
-    {
-        if ($this->is_absent) {
-            return 'Absent';
-        }
-        
-        return $this->isPassed() ? 'Pass' : 'Fail';
+        return $this->percentage >= $passPercentage;
     }
 
     /**
      * Scope to get marks for a specific student.
      */
-    public function scopeForStudent($query, int $studentId)
+    public function scopeForStudent($query, string $studentId)
     {
         return $query->where('student_id', $studentId);
     }
 
     /**
-     * Scope to get marks for a specific exam.
+     * Scope to get marks for a specific exam type.
      */
-    public function scopeForExam($query, int $examId)
+    public function scopeForExamType($query, string $examType)
     {
-        return $query->whereHas('examSubject', function ($q) use ($examId) {
-            $q->where('exam_id', $examId);
-        });
+        return $query->where('exam_type', $examType);
     }
-
+    
     /**
-     * Scope to get absent marks.
+     * Scope to get marks for a specific academic year.
      */
-    public function scopeAbsent($query)
+    public function scopeForAcademicYear($query, string $year)
     {
-        return $query->where('is_absent', true);
+        return $query->where('academic_year', $year);
     }
-
+    
     /**
-     * Scope to get present marks.
+     * Scope to get marks for a specific subject.
      */
-    public function scopePresent($query)
+    public function scopeForSubject($query, string $subjectName)
     {
-        return $query->where('is_absent', false);
+        return $query->where('subject_name', $subjectName);
     }
 }

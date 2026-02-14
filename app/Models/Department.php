@@ -9,13 +9,10 @@ use Illuminate\Database\Eloquent\Model;
  * Department Model
  * 
  * Manages school departments (Academic, Administration, etc.)
+ * Maps to staff_departments table in database
  * 
  * @property int $id
- * @property string $name Department name
- * @property string|null $description Department description
- * @property int|null $hod_id Head of Department staff ID
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $dept_name Department name
  */
 class Department extends Model
 {
@@ -26,7 +23,7 @@ class Department extends Model
      *
      * @var string
      */
-    protected $table = 'departments';
+    protected $table = 'staff_departments';
 
     /**
      * The attributes that are mass assignable.
@@ -34,20 +31,15 @@ class Department extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'description',
-        'hod_id',
+        'dept_name',
     ];
 
     /**
-     * The attributes that should be cast.
+     * Indicates if the model should be timestamped.
      *
-     * @var array<string, string>
+     * @var bool
      */
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
+    public $timestamps = false;
 
     /**
      * Get all staff in this department.
@@ -56,46 +48,14 @@ class Department extends Model
      */
     public function staff()
     {
-        return $this->hasMany(Staff::class);
+        return $this->hasMany(Staff::class, 'dept_id');
     }
 
     /**
-     * Get the head of department.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Get the department name.
      */
-    public function hod()
+    public function getNameAttribute(): string
     {
-        return $this->belongsTo(Staff::class, 'hod_id');
-    }
-
-    /**
-     * Get all positions in this department.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function positions()
-    {
-        return $this->hasMany(Position::class);
-    }
-
-    /**
-     * Get the count of active staff in department.
-     *
-     * @return int
-     */
-    public function getActiveStaffCountAttribute(): int
-    {
-        return $this->staff()->active()->count();
-    }
-
-    /**
-     * Get the total staff count.
-     *
-     * @return int
-     */
-    public function getTotalStaffAttribute(): int
-    {
-        return $this->staff()->count();
+        return $this->dept_name;
     }
 }

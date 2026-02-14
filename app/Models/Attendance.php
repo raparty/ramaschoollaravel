@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
 /**
  * Attendance Model
  * 
- * Manages daily student attendance records
+ * Manages daily user attendance records
+ * Maps to attendance table in database with user_id references
  */
 class Attendance extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -23,13 +23,10 @@ class Attendance extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'admission_id',
-        'date',
+        'user_id',
         'status',
-        'in_time',
-        'out_time',
-        'remarks',
-        'recorded_by',
+        'attendance_date',
+        'marked_by',
     ];
 
     /**
@@ -38,28 +35,31 @@ class Attendance extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'date' => 'date',
-        'in_time' => 'datetime',
-        'out_time' => 'datetime',
+        'attendance_date' => 'date',
     ];
+    
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
     /**
      * Available attendance statuses
      */
-    const STATUS_PRESENT = 'present';
-    const STATUS_ABSENT = 'absent';
-    const STATUS_LATE = 'late';
-    const STATUS_HALF_DAY = 'half_day';
-    const STATUS_LEAVE = 'leave';
+    const STATUS_PRESENT = 'Present';
+    const STATUS_ABSENT = 'Absent';
+    const STATUS_LATE = 'Late';
 
     /**
-     * Get the student (admission) that owns the attendance.
+     * Get the user (student) that owns the attendance.
      *
      * @return BelongsTo
      */
-    public function student(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Admission::class, 'admission_id');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
     /**
@@ -69,7 +69,7 @@ class Attendance extends Model
      */
     public function recorder(): BelongsTo
     {
-        return $this->belongsTo(Staff::class, 'recorded_by');
+        return $this->belongsTo(User::class, 'marked_by', 'user_id');
     }
 
     /**
@@ -81,19 +81,19 @@ class Attendance extends Model
      */
     public function scopeForDate($query, string $date)
     {
-        return $query->whereDate('date', $date);
+        return $query->whereDate('attendance_date', $date);
     }
 
     /**
-     * Scope a query to only include attendance for a specific student.
+     * Scope a query to only include attendance for a specific user.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  int  $studentId
+     * @param  string  $userId
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeForStudent($query, int $studentId)
+    public function scopeForUser($query, string $userId)
     {
-        return $query->where('admission_id', $studentId);
+        return $query->where('user_id', $userId);
     }
 
     /**
@@ -105,8 +105,8 @@ class Attendance extends Model
      */
     public function scopeForClass($query, int $classId)
     {
-        return $query->whereHas('student', function ($q) use ($classId) {
-            $q->where('class_id', $classId);
+        return $query->whereHas('user', function ($q) use ($classId) {
+            $q->where('class_section', $classId);
         });
     }
 
@@ -151,7 +151,7 @@ class Attendance extends Model
      */
     public function scopeOnLeave($query)
     {
-        return $query->where('status', self::STATUS_LEAVE);
+        return $query->where('status', self::STATUS_LATE);
     }
 
     /**
@@ -164,7 +164,7 @@ class Attendance extends Model
      */
     public function scopeDateRange($query, string $startDate, string $endDate)
     {
-        return $query->whereBetween('date', [$startDate, $endDate]);
+        return $query->whereBetween('attendance_date', [$startDate, $endDate]);
     }
 
     /**
@@ -178,8 +178,6 @@ class Attendance extends Model
             self::STATUS_PRESENT => 'bg-success',
             self::STATUS_ABSENT => 'bg-danger',
             self::STATUS_LATE => 'bg-warning',
-            self::STATUS_HALF_DAY => 'bg-info',
-            self::STATUS_LEAVE => 'bg-secondary',
             default => 'bg-secondary',
         };
     }
@@ -195,48 +193,18 @@ class Attendance extends Model
             self::STATUS_PRESENT => 'Present',
             self::STATUS_ABSENT => 'Absent',
             self::STATUS_LATE => 'Late',
-            self::STATUS_HALF_DAY => 'Half Day',
-            self::STATUS_LEAVE => 'Leave',
             default => ucfirst($this->status),
         };
     }
 
     /**
-     * Get attendance duration in minutes.
-     *
-     * @return int|null
-     */
-    public function getDurationAttribute(): ?int
-    {
-        if ($this->in_time && $this->out_time) {
-            return $this->in_time->diffInMinutes($this->out_time);
-        }
-        return null;
-    }
-
-    /**
-     * Get formatted duration.
-     *
-     * @return string|null
-     */
-    public function getFormattedDurationAttribute(): ?string
-    {
-        if ($this->duration) {
-            $hours = floor($this->duration / 60);
-            $minutes = $this->duration % 60;
-            return sprintf('%dh %dm', $hours, $minutes);
-        }
-        return null;
-    }
-
-    /**
-     * Check if student was present (present or late).
+     * Check if user was present (present or late).
      *
      * @return bool
      */
     public function isPresent(): bool
     {
-        return in_array($this->status, [self::STATUS_PRESENT, self::STATUS_LATE, self::STATUS_HALF_DAY]);
+        return in_array($this->status, [self::STATUS_PRESENT, self::STATUS_LATE]);
     }
 
     /**

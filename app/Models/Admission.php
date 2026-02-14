@@ -98,7 +98,7 @@ class Admission extends Model
      */
     public function libraryBooks(): HasMany
     {
-        return $this->hasMany(LibraryStudentBook::class, 'registration_no', 'reg_no');
+        return $this->hasMany(BookIssue::class, 'registration_no', 'reg_no');
     }
 
     /**

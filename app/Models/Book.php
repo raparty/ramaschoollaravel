@@ -11,16 +11,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Book Model
  * 
  * Represents books in the library system
+ * Maps to book_manager table in database
  * 
- * @property int $id
+ * @property int $book_id
+ * @property int $book_category_id
+ * @property string $book_number
  * @property string $book_name
- * @property string $book_no
- * @property string $author_name
- * @property int $book_cat_id
- * @property int $no_of_copies
- * @property string $book_edition
- * @property string $book_price
- * @property string $publisher
+ * @property string|null $book_author
+ * @property string|null $book_description
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
@@ -31,36 +29,35 @@ class Book extends Model
     /**
      * The table associated with the model.
      */
-    protected $table = 'books';
+    protected $table = 'book_manager';
+    
+    /**
+     * The primary key for the model.
+     */
+    protected $primaryKey = 'book_id';
 
     /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
+        'book_category_id',
+        'book_number',
         'book_name',
-        'book_no',
-        'author_name',
-        'book_cat_id',
-        'no_of_copies',
-        'book_edition',
-        'book_price',
-        'publisher',
+        'book_author',
+        'book_description',
     ];
-
+    
     /**
-     * The attributes that should be cast.
+     * Indicates if the model should be timestamped.
      */
-    protected $casts = [
-        'book_price' => 'decimal:2',
-        'no_of_copies' => 'integer',
-    ];
+    public $timestamps = false;
 
     /**
      * Get the category that owns the book.
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(BookCategory::class, 'book_cat_id');
+        return $this->belongsTo(BookCategory::class, 'book_category_id');
     }
 
     /**
@@ -68,7 +65,7 @@ class Book extends Model
      */
     public function issues(): HasMany
     {
-        return $this->hasMany(BookIssue::class, 'book_id');
+        return $this->hasMany(BookIssue::class, 'book_number', 'book_number');
     }
 
     /**
@@ -76,25 +73,8 @@ class Book extends Model
      */
     public function activeIssues(): HasMany
     {
-        return $this->hasMany(BookIssue::class, 'book_id')
+        return $this->hasMany(BookIssue::class, 'book_number', 'book_number')
             ->whereNull('return_date');
-    }
-
-    /**
-     * Get available copies count.
-     */
-    public function getAvailableCopiesAttribute(): int
-    {
-        $issuedCount = $this->activeIssues()->count();
-        return max(0, $this->no_of_copies - $issuedCount);
-    }
-
-    /**
-     * Check if book is available for issue.
-     */
-    public function isAvailable(): bool
-    {
-        return $this->available_copies > 0;
     }
 
     /**
@@ -108,8 +88,8 @@ class Book extends Model
 
         return $query->where(function ($q) use ($search) {
             $q->where('book_name', 'LIKE', "%{$search}%")
-              ->orWhere('author_name', 'LIKE', "%{$search}%")
-              ->orWhere('book_no', 'LIKE', "%{$search}%");
+              ->orWhere('book_author', 'LIKE', "%{$search}%")
+              ->orWhere('book_number', 'LIKE', "%{$search}%");
         });
     }
 
@@ -122,26 +102,6 @@ class Book extends Model
             return $query;
         }
 
-        return $query->where('book_cat_id', $categoryId);
-    }
-
-    /**
-     * Scope: Only available books.
-     */
-    public function scopeAvailable($query)
-    {
-        return $query->whereRaw('no_of_copies > (
-            SELECT COUNT(*) FROM student_books 
-            WHERE student_books.book_id = books.id 
-            AND student_books.return_date IS NULL
-        )');
-    }
-
-    /**
-     * Get formatted price.
-     */
-    public function getFormattedPriceAttribute(): string
-    {
-        return '₹' . number_format($this->book_price, 2);
+        return $query->where('book_category_id', $categoryId);
     }
 }

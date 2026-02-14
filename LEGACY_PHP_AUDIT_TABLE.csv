@@ -1,0 +1,278 @@
+Legacy File,Module,Converted?,Laravel Controller,Blade View,Route Exists?,Status,Priority,Notes
+index.php,Authentication,YES,AuthController@showLoginForm,resources/views/auth/login.blade.php,YES,FUNCTIONAL,DONE,Complete authentication system
+login_process.php,Authentication,YES,AuthController@login,N/A (POST handler),YES,FUNCTIONAL,DONE,Password hashing implemented
+logout.php,Authentication,YES,AuthController@logout,N/A (POST handler),YES,FUNCTIONAL,DONE,Session cleanup
+session.php,Authentication,YES,Middleware: auth,N/A,YES,FUNCTIONAL,DONE,Replaced by Laravel middleware
+add_admission.php,Students,PARTIAL,AdmissionController@create,MISSING,YES,VIEW NEEDED,HIGH,Backend complete but no view
+admission_process.php,Students,YES,AdmissionController@store,N/A (POST handler),YES,FUNCTIONAL,HIGH,Form submission handler
+student_detail.php,Students,PARTIAL,AdmissionController@index,MISSING,YES,VIEW NEEDED,HIGH,Need list view
+view_student_detail.php,Students,PARTIAL,AdmissionController@show,MISSING,YES,VIEW NEEDED,HIGH,Need detail view
+edit_admission.php,Students,PARTIAL,AdmissionController@edit,MISSING,YES,VIEW NEEDED,HIGH,Need edit form view
+process_edit_admission.php,Students,YES,AdmissionController@update,N/A (PUT handler),YES,FUNCTIONAL,HIGH,Update handler
+delete_admission.php,Students,YES,AdmissionController@destroy,N/A (DELETE handler),YES,FUNCTIONAL,HIGH,Delete handler
+searchby_name.php,Students,PARTIAL,AdmissionController@search,MISSING,YES,VIEW NEEDED,HIGH,Need search results view
+checkregno.php,Students,YES,AdmissionController@checkRegNo,N/A (AJAX),YES,FUNCTIONAL,HIGH,AJAX validation
+add_fees_package.php,Fees,PARTIAL,FeePackageController@create,MISSING,YES,VIEW NEEDED,HIGH,Need create form
+fees_package.php,Fees,PARTIAL,FeePackageController@index,MISSING,YES,VIEW NEEDED,HIGH,Need list view
+edit_fees_package.php,Fees,PARTIAL,FeePackageController@edit,MISSING,YES,VIEW NEEDED,HIGH,Need edit form
+delete_fees_package.php,Fees,YES,FeePackageController@destroy,N/A (DELETE),YES,FUNCTIONAL,HIGH,Delete handler
+add_student_fees.php,Fees,PARTIAL,FeeController@create,MISSING,YES,VIEW NEEDED,HIGH,Need fee collection form
+fees_reciept.php,Fees,PARTIAL,FeeController@printReceipt,MISSING,YES,VIEW+PDF NEEDED,HIGH,Need receipt template
+fees_searchby_name.php,Fees,PARTIAL,FeeController@search,MISSING,YES,VIEW NEEDED,HIGH,Need search view
+student_pending_fees_detail.php,Fees,PARTIAL,FeeController@pendingFees,MISSING,YES,VIEW NEEDED,HIGH,Need pending fees view
+fees_reciept_byterm.php,Fees,PARTIAL,FeeController@receiptByTerm,MISSING,PARTIAL,ROUTE+VIEW NEEDED,HIGH,Incomplete implementation
+add_term.php,Fees,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Term management missing
+edit_term.php,Fees,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Term management missing
+delete_term.php,Fees,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Term management missing
+term_manager.php,Fees,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Term management missing
+dashboard.php,Dashboard,PARTIAL,DashboardController@index,MISSING,YES,VIEW NEEDED,HIGH,Central navigation hub
+library.php,Library,NO,Stub only,MISSING,NO,NOT FUNCTIONAL,HIGH,Only models exist
+library_add_book.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Book management
+library_add_book_category.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Category management
+library_book_manager.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Book CRUD
+library_book_category.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Category listing
+library_edit_book.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Book editing
+library_delete_book.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Book deletion
+library_edit_book_category.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Category editing
+library_delete_book_category.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Category deletion
+library_add_student_books.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Book issue functionality
+library_student_books_manager.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Issue management
+library_return_student_books.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Book return
+library_process_return.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Return processing
+library_add_fine.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Fine management
+library_fine_manager.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Fine tracking
+library_fines_hub.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Fine collection
+library_student_fine_entry.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Fine entry
+library_edit_student_books.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Issue editing
+library_delete_student_books.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Issue deletion
+library_edit_fine.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,LOW,Fine editing
+library_delete_fine.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,LOW,Fine deletion
+library_student_searchby_name.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Search functionality
+library_setting.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,LOW,Library settings
+library_return_student_books_page.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Return page
+library_entry_add_student_books.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Issue entry
+library_entry1_add_student_books.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Alternative issue entry
+library_entry_student_return_books.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,HIGH,Return entry
+library_student_returnbook_searchby_name.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,MEDIUM,Return search
+library_edit_student_fine_detail.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,LOW,Fine detail editing
+library_edit_student_fine_detail1.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,LOW,Alternative fine editing
+library_delete_student_fine_detail.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,LOW,Fine detail deletion
+library_delete_student_fine_detail1.php,Library,NO,Not implemented,MISSING,NO,NOT CONVERTED,LOW,Alternative fine deletion
+add_new_staff_detail.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Staff CRUD needed
+edit_staf_employee_detail.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Typo in filename
+view_staff.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Staff listing
+view_staff_employee.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Employee details
+delete_staff.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Staff deletion
+staff_category.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Category management
+staff_department.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Department management
+staff_position.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Position management
+staff_qualification.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Qualification management
+add_staff_category.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Add category
+add_staff_department.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Add department
+add_staff_position.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Add position
+add_staff_qualification.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Add qualification
+edit_staff_category.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit category
+edit_staff_department.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit department
+edit_staff_position.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit position
+edit_staff_qualification.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit qualification
+delete_staff_category.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete category
+delete_staff_department.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete department
+delete_staff_position.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete position
+delete_staff_qualification.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete qualification
+view_staff_category.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,View categories
+view_staff_department.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,View departments
+view_staff_position.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,View positions
+view_staff_qualification.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,View qualifications
+employee_profile.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Employee profile view
+staff_setting.php,Staff,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Staff settings page
+exam_add_maximum_marks.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Maximum marks setup
+exam_edit_maximum_marks.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Edit max marks
+exam_show_maximum_marks.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,View max marks
+exam_marks_add_student.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Mark entry
+exam_show_student_marks.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,View student marks
+exam_time_table_detail.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Timetable management
+exam_edit_time_table.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Edit timetable
+exam_date.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Exam date management
+exam_result.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Result generation
+exam_final_marksheet.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Final marksheet
+exam_marksheet_searchby_name.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Marksheet search
+exam_marksheet_student_selector.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Student selector
+exam_select_exam_term.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Term selection
+exam_searchby_name.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Search exams
+entry_exam_marksheet.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Marksheet entry
+entry_exam_marksheet1.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Alternative marksheet entry
+entry_exam_add_student_marks.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Add marks entry
+entry_add_max_marks.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Max marks entry
+exam_setting.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Exam settings
+marksheet.php,Exams,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,General marksheet
+transport_add_route.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Route management
+transport_add_vechile.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Vehicle management (typo in filename)
+transport_add_student.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Student transport assignment
+transport_edit_vehicle.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Edit vehicle
+transport_edit_student.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Edit student transport
+transport_route_detail.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Route details
+transport_route_edit.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Edit route
+transport_vechile_detail.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Vehicle details
+transport_student_detail.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Student transport details
+transport_fees_reciept.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Transport fee receipt
+transport_fees_reciept_byterm.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Receipt by term
+transport_fees_searchby_name.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Search transport fees
+transport_student_fee_detail.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Student fee details
+transport_student_pending_fees_detail.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Pending fees
+add_student_transport_fees.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Add transport fees
+edit_student_transport_fees.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Edit transport fees
+delete_student_transport_fees.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Delete transport fees
+transport_searchby_name.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Search transport
+transport_fees_result.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fee results
+transport_student_result.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Student results
+entry_transport_add_student.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Entry for adding student
+entry_add_student_transport_fees.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Entry for transport fees
+entry_transport_fees_reciept.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fee receipt entry
+entry_transport_fees_reciept1.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Alternative receipt entry
+entry_student_transport_fees.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Student fee entry
+student_transport_fees.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Transport fees page
+student_transport_fees_reports.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Transport fee reports
+student_transport_pending_fees_pagination.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Pending fees pagination
+transport_setting.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Transport settings
+vehicle_ajax.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Vehicle AJAX handler
+transport.php,Transport,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Main transport page
+account_category_manager.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Category management
+add_account_category_manager.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Add category
+edit_account_category_manager.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Edit category
+delete_account_category_manager.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Delete category
+add_income.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Add income
+edit_income.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Edit income
+delete_income.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Delete income
+income_manager.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Income management
+add_expense.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Add expense
+edit_expense.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Edit expense
+delete_expense.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Delete expense
+expense_manager.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Expense management
+account_report.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Account reports
+entry_account_report.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Report entry
+daily_report.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Daily financial report
+print_daily_report.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Print daily report
+income_exp_pagination.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Income/expense pagination
+account_setting.php,Accounts,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Account settings
+Attendance.php,Attendance,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Main attendance page
+attendance_register.php,Attendance,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Attendance marking
+attendance_report.php,Attendance,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Attendance reports
+add_class.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Add class
+class.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Class listing
+edit_class.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit class
+delete_class.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete class
+add_section.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Add section
+section.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Section listing
+edit_section.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit section
+delete_section.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete section
+add_stream.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Add stream
+stream.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Stream listing
+stream_module.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Stream module
+edit_stream.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit stream
+delete_stream.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete stream
+add_subject.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Add subject
+subject.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Subject listing
+subject_module.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Subject module
+edit_subject.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit subject
+delete_subject.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete subject
+add_allocate_section.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Allocate section
+allocate_section.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Section allocation
+edit_allocate_section.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit allocation
+delete_allocate_section.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete allocation
+add_allocate_stream.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Allocate stream
+allocate_stream.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Stream allocation
+edit_allocate_stream.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit stream allocation
+delete_allocate_stream.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete stream allocation
+add_allocate_subject.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Allocate subject
+allocate_subject.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Subject allocation
+edit_allocate_subject.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit subject allocation
+delete_allocate_subject.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete subject allocation
+ajax_stream_code.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Stream AJAX
+ajax_stream_code1.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Stream AJAX variant
+ajax_stream_code2.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Stream AJAX variant
+ajaxcode.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,General AJAX handler
+ajax_fees_code.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Fees AJAX
+ajax_transport_fees_code.php,Classes,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Transport fees AJAX
+school_detail.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,School details
+add_school_detail.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Add school details
+edit_school_detail.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit school details
+delete_school_detail.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete school details
+school_setting.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,School settings
+category.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Category page
+add_category.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Add category
+sub_category.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Subcategory page
+add_sub_category.php,Settings,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Add subcategory
+rte_admission.php,RTE,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,RTE admissions
+rte_student_detail.php,RTE,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,RTE student details
+rte_edit_admission.php,RTE,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Edit RTE admission
+rte_delete_admission.php,RTE,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Delete RTE admission
+rte_checkregno.php,RTE,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Check RTE regno
+rte_view_student_detail.php,RTE,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,View RTE student
+rte_student_detail_pagination.php,RTE,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,RTE pagination
+rte_student_search_result.php,RTE,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,RTE search results
+student_tc.php,TC,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Transfer certificate
+student_tc_backup.php,TC,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,TC backup
+student_tc_show.php,TC,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Show TC
+entry_student_tc.php,TC,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,TC entry form
+student_tc_search_by_name.php,TC,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Search TC
+change_password.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Password change
+user_manager.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,User management
+student_detail_2.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Alternative student detail
+student_detail_pagination.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Student pagination
+student_search_result.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Student search results
+student_fees_reports.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fee reports
+student_fees_reports_pagination.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Fee reports pagination
+student_fine_detail.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fine details
+student_fine_detail1.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Alternative fine details
+student_fine_detail_seach_by_name.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fine search
+student_pending_fees_pagination.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Pending fees pagination
+student_pending_fees_pagination_fix.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Pending fees fix
+entry_student_fees.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fee entry
+entry_fees_reciept.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Receipt entry
+entry_fees_reciept1.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Alternative receipt entry
+entry_student_fine_detail.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fine entry
+entry_student_pending_fees.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Pending fees entry
+fees_manager.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fee manager
+fees_manager11.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Fee manager variant
+fees_manager_pagination.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Fee manager pagination
+fees_search_result.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Fee search results
+fees_setting.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Fee settings
+admission.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,HIGH,Main admission page
+demo.php,Demo,NO,N/A,N/A,NO,DELETE SAFE,DELETE,Demo file - safe to delete
+demo_dashboard.php,Demo,NO,N/A,N/A,NO,DELETE SAFE,DELETE,Demo dashboard - safe to delete
+test_db.php,Test,NO,N/A,N/A,NO,DELETE SAFE,DELETE,Database test - safe to delete
+db_audit.php,Audit,NO,N/A,N/A,NO,DELETE SAFE,DELETE,One-time audit tool
+code_audit.php,Audit,NO,N/A,N/A,NO,DELETE SAFE,DELETE,One-time code audit
+export_schema.php,Utilities,NO,N/A,N/A,NO,DELETE SAFE,DELETE,One-time export tool
+resister.php,Utilities,NO,N/A,N/A,NO,DELETE SAFE,LOW,Typo - likely unused
+qualification.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Qualification page
+cp_dt_03.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Unknown utility
+form-elements.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Form elements page
+form-grid.php,Utilities,NO,Not Created,N/A,NO,NOT CONVERTED,LOW,Form grid page
+pagination.php,Utilities,REPLACED,Use Laravel pagination,N/A,REPLACED,REPLACED,DONE,Use Laravel built-in pagination
+checkbookno.php,Library,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Book number validation
+fees_reciept_searchby_name.php,Fees,PARTIAL,FeeController,MISSING,PARTIAL,VIEW NEEDED,MEDIUM,Receipt search
+edit_student_fees.php,Fees,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Edit student fees
+edit_student_fees11.php,Fees,NO,Not Created,N/A,NO,DELETE SAFE,DELETE,Duplicate file
+delete_student_fees.php,Fees,NO,Not Created,N/A,NO,NOT CONVERTED,MEDIUM,Delete student fees
+includes/config.php,Infrastructure,REPLACED,.env & config/,N/A,YES,REPLACED,DONE,Use Laravel config
+includes/database.php,Infrastructure,REPLACED,Laravel DB,N/A,YES,REPLACED,DONE,Use Laravel database
+includes/bootstrap.php,Infrastructure,REPLACED,Laravel bootstrap,N/A,YES,REPLACED,DONE,Use Laravel bootstrap
+includes/legacy_mysql.php,Infrastructure,REPLACED,Eloquent ORM,N/A,YES,REPLACED,DONE,Use Eloquent
+includes/header.php,Infrastructure,PARTIAL,layouts/app.blade.php,PARTIAL,PARTIAL,NEEDS COMPLETION,HIGH,Layout needs work
+includes/sidebar.php,Infrastructure,PARTIAL,Component needed,PARTIAL,PARTIAL,NEEDS COMPLETION,HIGH,Sidebar component needed
+includes/footer.php,Infrastructure,PARTIAL,layouts/app.blade.php,PARTIAL,PARTIAL,NEEDS COMPLETION,MEDIUM,Footer in layout
+includes/pagination_helper.php,Infrastructure,REPLACED,Laravel pagination,N/A,YES,REPLACED,DONE,Use Laravel pagination
+includes/dashboard.php,Infrastructure,PARTIAL,DashboardController,MISSING,PARTIAL,NEEDS COMPLETION,HIGH,Dashboard view needed
+includes/account_setting_sidebar.php,Infrastructure,NO,Component needed,N/A,NO,NOT CONVERTED,LOW,Settings sidebar
+includes/exam_setting_sidebar.php,Infrastructure,NO,Component needed,N/A,NO,NOT CONVERTED,LOW,Exam sidebar
+includes/fees_setting_sidebar.php,Infrastructure,NO,Component needed,N/A,NO,NOT CONVERTED,LOW,Fees sidebar
+includes/library_setting_sidebar.php,Infrastructure,NO,Component needed,N/A,NO,NOT CONVERTED,LOW,Library sidebar
+includes/school_setting_sidebar.php,Infrastructure,NO,Component needed,N/A,NO,NOT CONVERTED,LOW,School sidebar
+includes/staff_setting_sidebar.php,Infrastructure,NO,Component needed,N/A,NO,NOT CONVERTED,LOW,Staff sidebar
+includes/transport_setting_sidebar.php,Infrastructure,NO,Component needed,N/A,NO,NOT CONVERTED,LOW,Transport sidebar
+css/add_student_fees.php,CSS,NO,Use CSS files,N/A,NO,INCORRECT FILE,DELETE,PHP in CSS folder - error
+css/add_term.php,CSS,NO,Use CSS files,N/A,NO,INCORRECT FILE,DELETE,PHP in CSS folder - error
+css/fees_searchby_name.php,CSS,NO,Use CSS files,N/A,NO,INCORRECT FILE,DELETE,PHP in CSS folder - error
+config/config.inc.php,Config,REPLACED,.env & config/,N/A,YES,REPLACED,DONE,Use Laravel config
+db_connect.php,Database,REPLACED,Laravel database.php,N/A,YES,REPLACED,DONE,Use Laravel DB

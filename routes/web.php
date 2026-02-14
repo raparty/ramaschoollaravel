@@ -6,6 +6,19 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\FeePackageController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\LibraryController;
+use App\Http\Controllers\BookIssueController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\SalaryController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\MarkController;
+use App\Http\Controllers\ResultController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\AccountCategoryController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\AccountReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,16 +49,138 @@ Route::middleware(['auth'])->group(function () {
 
     // Fee Management (Phase 4)
     Route::resource('fee-packages', FeePackageController::class);
-    Route::resource('fees', FeeController::class);
-    Route::post('/fees/{fee}/collect', [FeeController::class, 'collectFee'])->name('fees.collect');
-    Route::get('/fees/receipt/{fee}', [FeeController::class, 'printReceipt'])->name('fees.receipt');
-    Route::get('/fees/pending', [FeeController::class, 'pendingFees'])->name('fees.pending');
     
-    // TODO: Add Library routes (Phase 5)
-    // TODO: Add Staff routes (Phase 6)
-    // TODO: Add Exam routes (Phase 7)
-    // TODO: Add Transport routes (Phase 8)
-    // TODO: Add Accounts routes (Phase 9)
-    // TODO: Add Attendance routes (Phase 10)
-    // TODO: Add Classes/Subjects/Sections routes (Phase 11)
+    // Fee Collection Routes
+    Route::get('/fees/search', [FeeController::class, 'search'])->name('fees.search');
+    Route::get('/fees/collect', [FeeController::class, 'collect'])->name('fees.collect');
+    Route::post('/fees/store', [FeeController::class, 'store'])->name('fees.store');
+    Route::get('/fees/receipt', [FeeController::class, 'receipt'])->name('fees.receipt');
+    Route::get('/fees/pending', [FeeController::class, 'pending'])->name('fees.pending');
+    Route::get('/fees/search-students', [FeeController::class, 'searchStudents'])->name('fees.search-students');
+    
+    // Library Management (Phase 5 / Phase B Week 1-2)
+    Route::prefix('library')->name('library.')->group(function () {
+        // Book Management
+        Route::resource('books', LibraryController::class);
+        Route::get('/books-search', [LibraryController::class, 'search'])->name('books.search');
+        
+        // Book Issue/Return
+        Route::get('/issue', [BookIssueController::class, 'issueForm'])->name('issue.create');
+        Route::post('/issue', [BookIssueController::class, 'issueBook'])->name('issue.store');
+        Route::get('/return', [BookIssueController::class, 'returnForm'])->name('issue.return');
+        Route::post('/return', [BookIssueController::class, 'returnBook'])->name('issue.process-return');
+        Route::get('/history', [BookIssueController::class, 'studentHistory'])->name('issue.history');
+        Route::get('/overdue', [BookIssueController::class, 'overdueList'])->name('issue.overdue');
+        Route::post('/collect-fine', [BookIssueController::class, 'collectFine'])->name('issue.collect-fine');
+        Route::get('/search-students', [BookIssueController::class, 'searchStudents'])->name('search-students');
+    });
+    
+    // Staff Management (Phase 6 / Phase B Week 3-5)
+    Route::resource('staff', StaffController::class);
+    Route::get('/staff-search', [StaffController::class, 'search'])->name('staff.search');
+    
+    // Salary Management
+    Route::prefix('salaries')->name('salaries.')->group(function () {
+        Route::get('/', [SalaryController::class, 'index'])->name('index');
+        Route::get('/process', [SalaryController::class, 'process'])->name('process');
+        Route::post('/store', [SalaryController::class, 'store'])->name('store');
+        Route::post('/generate-bulk', [SalaryController::class, 'generateBulk'])->name('generate-bulk');
+        Route::post('/{salary}/mark-paid', [SalaryController::class, 'markAsPaid'])->name('mark-paid');
+        Route::get('/{salary}/slip', [SalaryController::class, 'slip'])->name('slip');
+        Route::get('/staff/{staff}/history', [SalaryController::class, 'history'])->name('staff-history');
+    });
+    
+    // Examination Module (Phase 7 / Phase B Week 6-8)
+    Route::prefix('exams')->name('exams.')->group(function () {
+        // Exam Management
+        Route::get('/', [ExamController::class, 'index'])->name('index');
+        Route::get('/create', [ExamController::class, 'create'])->name('create');
+        Route::post('/', [ExamController::class, 'store'])->name('store');
+        Route::get('/{exam}', [ExamController::class, 'show'])->name('show');
+        Route::get('/{exam}/edit', [ExamController::class, 'edit'])->name('edit');
+        Route::put('/{exam}', [ExamController::class, 'update'])->name('update');
+        Route::delete('/{exam}', [ExamController::class, 'destroy'])->name('destroy');
+        
+        // Subject Assignment
+        Route::get('/{exam}/subjects', [ExamController::class, 'assignSubjects'])->name('subjects');
+        Route::post('/{exam}/subjects', [ExamController::class, 'storeSubjects'])->name('subjects.store');
+        
+        // Timetable
+        Route::get('/{exam}/timetable', [ExamController::class, 'timetable'])->name('timetable');
+        
+        // Publish/Unpublish
+        Route::post('/{exam}/toggle-publish', [ExamController::class, 'togglePublish'])->name('toggle-publish');
+    });
+    
+    // Mark Entry
+    Route::prefix('marks')->name('marks.')->group(function () {
+        Route::get('/', [MarkController::class, 'index'])->name('index');
+        Route::get('/entry', [MarkController::class, 'entryForm'])->name('entry');
+        Route::post('/store', [MarkController::class, 'store'])->name('store');
+        Route::get('/student', [MarkController::class, 'studentMarks'])->name('student');
+        Route::get('/subject/{examSubject}', [MarkController::class, 'subjectMarks'])->name('subject');
+        Route::get('/search-students', [MarkController::class, 'searchStudents'])->name('search-students');
+    });
+    
+    // Results
+    Route::prefix('results')->name('results.')->group(function () {
+        Route::get('/', [ResultController::class, 'index'])->name('index');
+        Route::get('/generate', [ResultController::class, 'generateForm'])->name('generate');
+        Route::post('/generate', [ResultController::class, 'generate'])->name('generate.store');
+        Route::get('/{result}', [ResultController::class, 'view'])->name('view');
+        Route::get('/class/results', [ResultController::class, 'classResults'])->name('class');
+        Route::post('/{result}/toggle-publish', [ResultController::class, 'togglePublish'])->name('toggle-publish');
+    });
+    
+    // Attendance Module (Phase C)
+    Route::prefix('attendance')->name('attendance.')->group(function () {
+        // Attendance Dashboard
+        Route::get('/', [AttendanceController::class, 'index'])->name('index');
+        
+        // Mark Attendance
+        Route::get('/register', [AttendanceController::class, 'register'])->name('register');
+        Route::post('/store', [AttendanceController::class, 'store'])->name('store');
+        
+        // Edit Attendance
+        Route::get('/edit', [AttendanceController::class, 'edit'])->name('edit');
+        Route::put('/update', [AttendanceController::class, 'update'])->name('update');
+        
+        // View Attendance
+        Route::get('/student', [AttendanceController::class, 'studentAttendance'])->name('student');
+        Route::get('/class', [AttendanceController::class, 'classAttendance'])->name('class');
+        
+        // Search
+        Route::get('/search-students', [AttendanceController::class, 'searchStudents'])->name('search-students');
+    });
+    
+    // Attendance Reports
+    Route::prefix('reports/attendance')->name('reports.attendance.')->group(function () {
+        Route::get('/', [AttendanceReportController::class, 'index'])->name('index');
+        Route::post('/generate', [AttendanceReportController::class, 'generate'])->name('generate');
+        Route::get('/student', [AttendanceReportController::class, 'studentReport'])->name('student');
+        Route::get('/class', [AttendanceReportController::class, 'classReport'])->name('class');
+        Route::get('/monthly', [AttendanceReportController::class, 'monthlyReport'])->name('monthly');
+        Route::get('/daterange', [AttendanceReportController::class, 'dateRangeReport'])->name('daterange');
+    });
+    
+    // Account Categories (Phase D)
+    Route::resource('categories', AccountCategoryController::class);
+    Route::post('/categories/{category}/toggle-status', [AccountCategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
+    
+    // Income Management
+    Route::resource('income', IncomeController::class);
+    
+    // Expense Management
+    Route::resource('expenses', ExpenseController::class);
+    
+    // Account Reports
+    Route::prefix('reports/accounts')->name('reports.accounts.')->group(function () {
+        Route::get('/', [AccountReportController::class, 'index'])->name('index');
+        Route::get('/summary', [AccountReportController::class, 'summary'])->name('summary');
+        Route::get('/details', [AccountReportController::class, 'details'])->name('details');
+        Route::get('/export-csv', [AccountReportController::class, 'exportCsv'])->name('export-csv');
+    });
+    
+    // TODO: Add Transport routes (Phase D+1)
+    // TODO: Add Classes/Subjects/Sections routes (Phase D+2)
 });

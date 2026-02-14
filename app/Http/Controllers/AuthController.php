@@ -20,7 +20,7 @@ class AuthController extends Controller
      * Show the login form.
      * Converts: index.php (login view)
      */
-    public function showLogin()
+    public function showLoginForm()
     {
         // Redirect to dashboard if already authenticated
         if (Auth::check()) {
@@ -46,9 +46,10 @@ class AuthController extends Controller
         ]);
 
         // Prepare credentials for authentication
-        // Note: We use 'user_id' field instead of default 'email'
+        // Note: Use 'password' as key - Laravel will use getAuthPassword() to map to 'admin_password'
+        // and 'admin_user' as the identifier based on getAuthIdentifierName()
         $loginCredentials = [
-            'user_id' => $credentials['username'],
+            'admin_user' => $credentials['username'],
             'password' => $credentials['password'],
         ];
 
@@ -62,8 +63,8 @@ class AuthController extends Controller
 
             // Log authentication for audit
             \Log::info('User logged in', [
-                'user_id' => Auth::user()->user_id,
-                'role' => Auth::user()->role,
+                'admin_user' => Auth::user()->admin_user,
+                'role' => Auth::user()->role ?? 'N/A',
                 'ip' => $request->ip(),
             ]);
 
@@ -85,8 +86,8 @@ class AuthController extends Controller
         // Log logout for audit
         if (Auth::check()) {
             \Log::info('User logged out', [
-                'user_id' => Auth::user()->user_id,
-                'role' => Auth::user()->role,
+                'admin_user' => Auth::user()->admin_user,
+                'role' => Auth::user()->role ?? 'N/A',
             ]);
         }
 

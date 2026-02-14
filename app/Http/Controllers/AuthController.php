@@ -46,10 +46,11 @@ class AuthController extends Controller
         ]);
 
         // Prepare credentials for authentication
-        // Note: Database uses 'admin_user' and 'admin_password' fields
+        // Note: Use 'password' as key - Laravel will use getAuthPassword() to map to 'admin_password'
+        // and 'admin_user' as the identifier based on getAuthIdentifierName()
         $loginCredentials = [
             'admin_user' => $credentials['username'],
-            'admin_password' => $credentials['password'],
+            'password' => $credentials['password'],
         ];
 
         // Remember me functionality

@@ -23,13 +23,12 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      * Note: Database uses admin_user and admin_password columns
+     * Security: admin_password and role excluded to prevent mass assignment attacks
      *
      * @var array<int, string>
      */
     protected $fillable = [
         'admin_user',
-        'admin_password',
-        'role',
     ];
 
     /**

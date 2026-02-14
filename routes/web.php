@@ -15,6 +15,10 @@ use App\Http\Controllers\MarkController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\AccountCategoryController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\AccountReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -159,7 +163,24 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/daterange', [AttendanceReportController::class, 'dateRangeReport'])->name('daterange');
     });
     
-    // TODO: Add Transport routes (Phase C+1)
-    // TODO: Add Accounts routes (Phase C+2)
-    // TODO: Add Classes/Subjects/Sections routes (Phase C+3)
+    // Account Categories (Phase D)
+    Route::resource('categories', AccountCategoryController::class);
+    Route::post('/categories/{category}/toggle-status', [AccountCategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
+    
+    // Income Management
+    Route::resource('income', IncomeController::class);
+    
+    // Expense Management
+    Route::resource('expenses', ExpenseController::class);
+    
+    // Account Reports
+    Route::prefix('reports/accounts')->name('reports.accounts.')->group(function () {
+        Route::get('/', [AccountReportController::class, 'index'])->name('index');
+        Route::get('/summary', [AccountReportController::class, 'summary'])->name('summary');
+        Route::get('/details', [AccountReportController::class, 'details'])->name('details');
+        Route::get('/export-csv', [AccountReportController::class, 'exportCsv'])->name('export-csv');
+    });
+    
+    // TODO: Add Transport routes (Phase D+1)
+    // TODO: Add Classes/Subjects/Sections routes (Phase D+2)
 });

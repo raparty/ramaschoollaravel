@@ -6,32 +6,60 @@ use App\Http\Requests\StoreExamRequest;
 use App\Models\Exam;
 use App\Models\ExamSubject;
 use App\Models\ClassModel;
+use App\Models\Term;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 /**
  * ExamController
- * 
+ *
  * Handles exam schedule management
  */
 class ExamController extends Controller
 {
     /**
+     * Error message for missing database tables/migrations
+     */
+    private const MISSING_TABLE_ERROR_MESSAGE = 'Database tables are not set up. Please run migrations first using: php artisan migrate';
+
+    /**
+     * Check if a QueryException is due to missing tables
+     */
+    private function isMissingTableError(QueryException $e): bool
+    {
+        // MySQL error code 1146: Table doesn't exist
+        // PDO error codes are returned as strings
+        // Also check for message patterns for other database drivers
+        return $e->getCode() === '1146'
+            || $e->getCode() === 1146
+            || str_contains($e->getMessage(), "doesn't exist")
+            || str_contains($e->getMessage(), 'Base table or view not found');
+    }
+    /**
      * Display a listing of exams.
      */
     public function index(Request $request)
     {
-        $query = Exam::with('term')->latest();
+        try {
+            $query = Exam::with('term')->latest();
 
-        // Filter by term
-        if ($request->filled('term_id')) {
-            $query->forTerm($request->term_id);
+            // Filter by term
+            if ($request->filled('term_id')) {
+                $query->forTerm($request->term_id);
+            }
+
+            $exams = $query->paginate(15);
+            $terms = Term::orderBy('start_date', 'desc')->get();
+
+            return view('exams.index', compact('exams', 'terms'));
+        } catch (QueryException $e) {
+            if ($this->isMissingTableError($e)) {
+                return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
+            }
+
+            throw $e;
         }
-
-        $exams = $query->paginate(15);
-        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
-
-        return view('exams.index', compact('exams', 'terms'));
     }
 
     /**
@@ -39,10 +67,18 @@ class ExamController extends Controller
      */
     public function create()
     {
-        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
-        $classes = ClassModel::ordered()->get();
+        try {
+            $terms = Term::orderBy('start_date', 'desc')->get();
+            $classes = ClassModel::ordered()->get();
 
-        return view('exams.create', compact('terms', 'classes'));
+            return view('exams.create', compact('terms', 'classes'));
+        } catch (QueryException $e) {
+            if ($this->isMissingTableError($e)) {
+                return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
+            }
+
+            throw $e;
+        }
     }
 
     /**
@@ -74,7 +110,7 @@ class ExamController extends Controller
     public function show(Exam $exam)
     {
         $exam->load(['term', 'examSubjects.classModel', 'examSubjects.subject']);
-        
+
         return view('exams.show', compact('exam'));
     }
 
@@ -83,10 +119,18 @@ class ExamController extends Controller
      */
     public function edit(Exam $exam)
     {
-        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
-        $classes = ClassModel::ordered()->get();
+        try {
+            $terms = Term::orderBy('start_date', 'desc')->get();
+            $classes = ClassModel::ordered()->get();
 
-        return view('exams.edit', compact('exam', 'terms', 'classes'));
+            return view('exams.edit', compact('exam', 'terms', 'classes'));
+        } catch (QueryException $e) {
+            if ($this->isMissingTableError($e)) {
+                return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
+            }
+
+            throw $e;
+        }
     }
 
     /**
@@ -139,7 +183,7 @@ class ExamController extends Controller
     public function assignSubjects(Exam $exam)
     {
         $exam->load('examSubjects');
-        
+
         return view('exams.subjects', compact('exam'));
     }
 
@@ -204,7 +248,7 @@ class ExamController extends Controller
 
     /**
      * Publish or unpublish exam results.
-     * 
+     *
      * ⚠️ DISABLED - is_published column doesn't exist in database
      * Uncomment after adding is_published column to exams table
      */

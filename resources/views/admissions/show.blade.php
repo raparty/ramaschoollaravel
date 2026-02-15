@@ -10,10 +10,10 @@
     </div>
     <div class="btn-group">
         <a href="{{ route('transfer-certificate.show', $admission->reg_no) }}" class="btn btn-info">
-            📄 Transfer Certificate
+            <i class="bi bi-file-earmark-text"></i> Transfer Certificate
         </a>
         <a href="{{ route('admissions.edit', $admission) }}" class="btn btn-warning">
-            ✏️ Edit
+            <i class="bi bi-pencil"></i> Edit
         </a>
         <form method="POST" 
               action="{{ route('admissions.destroy', $admission) }}" 
@@ -22,7 +22,7 @@
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger">
-                🗑️ Delete
+                <i class="bi bi-trash"></i> Delete
             </button>
         </form>
     </div>

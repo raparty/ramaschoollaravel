@@ -29,7 +29,7 @@
                             This is to certify that <strong>{{ $student->student_name }}</strong>, 
                             Registration No: <strong>{{ $student->reg_no }}</strong>, 
                             son/daughter of <strong>{{ $student->guardian_name ?? 'N/A' }}</strong> 
-                            was a bonafide student of this institution.
+                            was a bona fide student of this institution.
                         </p>
 
                         <p style="text-align: justify;">

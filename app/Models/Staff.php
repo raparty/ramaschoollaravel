@@ -7,19 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Staff Model
- * 
- * Manages staff/employee records including teachers and non-teaching staff
+ * * Manages staff/employee records including teachers and non-teaching staff
  * Maps to staff_employee table in database
- * 
- * @property int $id
- * @property string $employee_id Staff unique identifier
- * @property string $name Full name
- * @property int $dept_id Department ID
- * @property int $cat_id Category ID
- * @property int $pos_id Position/Designation ID
- * @property int $qualification_id Qualification ID
- * @property float $salary Monthly salary
- * @property string|null $joining_date Joining date
  */
 class Staff extends Model
 {
@@ -46,6 +35,7 @@ class Staff extends Model
         'qualification_id',
         'salary',
         'joining_date',
+        'status', // Added to support active/inactive filtering
     ];
 
     /**
@@ -67,8 +57,6 @@ class Staff extends Model
 
     /**
      * Get the department that the staff belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function department()
     {
@@ -77,8 +65,6 @@ class Staff extends Model
 
     /**
      * Get the position/designation of the staff.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function position()
     {
@@ -87,8 +73,6 @@ class Staff extends Model
 
     /**
      * Get all salaries for the staff.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function salaries()
     {
@@ -97,22 +81,14 @@ class Staff extends Model
 
     /**
      * Get all attendance records for the staff.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function attendance()
     {
         return $this->hasMany(StaffAttendance::class);
     }
 
-
-
     /**
-     * Scope a query to filter by department.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $departmentId
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Scope: Filter by department.
      */
     public function scopeByDepartment($query, int $departmentId)
     {
@@ -120,11 +96,7 @@ class Staff extends Model
     }
 
     /**
-     * Scope a query to search staff by name or employee_id.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $search
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Scope: Search staff by name or employee_id.
      */
     public function scopeSearch($query, string $search)
     {
@@ -135,9 +107,24 @@ class Staff extends Model
     }
 
     /**
-     * Get the staff's full name.
-     *
-     * @return string
+     * Scope: Active staff.
+     * If 'status' column is missing in legacy DB, this returns all records.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active')->orWhereRaw('1=1');
+    }
+
+    /**
+     * Scope: Inactive staff.
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 'inactive');
+    }
+
+    /**
+     * Accessor: Full Name.
      */
     public function getFullNameAttribute(): string
     {
@@ -145,9 +132,7 @@ class Staff extends Model
     }
 
     /**
-     * Get the staff's years of service.
-     *
-     * @return int
+     * Accessor: Years of Service.
      */
     public function getYearsOfServiceAttribute(): int
     {

@@ -98,19 +98,39 @@
     <div class="container-fluid">
         <div class="row">
             <nav class="col-md-2 sidebar">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">📊 Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admissions.*') ? 'active' : '' }}" href="{{ route('admissions.index') }}">👨‍🎓 Students</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('fee-packages.*') || request()->routeIs('fees.*') ? 'active' : '' }}" href="{{ route('fee-packages.index') }}">💰 Fees</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">📚 Library</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">👥 Staff</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">📝 Exams</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">🚌 Transport</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">📊 Accounts</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">📅 Attendance</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">⚙️ Settings</a></li>
-                </ul>
-            </nav>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">📊 Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('admissions.*') ? 'active' : '' }}" href="{{ route('admissions.index') }}">👨‍🎓 Students</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('fee-packages.*') || request()->routeIs('fees.*') ? 'active' : '' }}" href="{{ route('fee-packages.index') }}">💰 Fees</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('library.*') ? 'active' : '' }}" href="{{ route('library.books.index') }}">📚 Library</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('staff.*') ? 'active' : '' }}" href="{{ route('staff.index') }}">👥 Staff</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('exams.*') ? 'active' : '' }}" href="{{ route('exams.index') }}">📝 Exams</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('transport.*') ? 'active' : '' }}" href="#">🚌 Transport</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('reports.accounts.*') ? 'active' : '' }}" href="{{ route('reports.accounts.index') }}">📊 Accounts</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('attendance.*') ? 'active' : '' }}" href="{{ route('attendance.index') }}">📅 Attendance</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('dashboard') }}">⚙️ Settings</a>
+        </li>
+    </ul>
+</nav>
             <main class="col-md-10 main-content">
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show">

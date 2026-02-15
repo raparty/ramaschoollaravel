@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Expense;
 use App\Models\AccountCategory;
-use App\Http/Requests/StoreExpenseRequest;
+use App\Http\Requests\StoreExpenseRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

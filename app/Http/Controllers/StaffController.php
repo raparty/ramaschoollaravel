@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * StaffController
- * 
- * Manages staff/employee operations including CRUD, search, and profile management
+ * * Manages staff/employee operations including CRUD, search, and profile management
  */
 class StaffController extends Controller
 {
@@ -50,7 +49,13 @@ class StaffController extends Controller
         $staff = $query->orderBy('created_at', 'desc')->paginate(20);
         $departments = Department::all();
 
-        return view('staff.index', compact('staff', 'departments'));
+        // FIX: Calculate summary counts for the statistics cards in the view
+        // These methods (active/inactive) must be defined as scopes in your Staff model.
+        $activeCount = Staff::active()->count();
+        $inactiveCount = Staff::inactive()->count();
+
+        // Pass the new variables to the view using compact
+        return view('staff.index', compact('staff', 'departments', 'activeCount', 'inactiveCount'));
     }
 
     /**
@@ -236,7 +241,7 @@ class StaffController extends Controller
                     'department' => $member->department->name ?? '',
                     'position' => $member->position->title ?? '',
                     'email' => $member->email,
-                    'text' => "{$member->staff_id} - {$member->name} ({$member->department->name ?? 'N/A'})",
+                    'text' => $member->staff_id . " - " . $member->name . " (" . ($member->department->name ?? 'N/A') . ")",
                 ];
             });
 

@@ -7,6 +7,10 @@ class Expense extends Model {
     public $timestamps = false;
     protected $fillable = ['id', 'category_id', 'amount', 'description', 'date_of_txn', 'type', 'title'];
     
+    protected $casts = [
+        'date_of_txn' => 'date',
+    ];
+    
     // Type constant
     const TYPE_EXPENSE = 'Expense';
     
@@ -25,5 +29,13 @@ class Expense extends Model {
     public function category()
     {
         return $this->belongsTo(AccountCategory::class, 'category_id');
+    }
+    
+    /**
+     * Accessor for date attribute (alias for date_of_txn).
+     */
+    public function getDateAttribute()
+    {
+        return $this->date_of_txn;
     }
 }

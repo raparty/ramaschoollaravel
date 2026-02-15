@@ -12,7 +12,7 @@ class AccountReportController extends Controller
 {
     public function index()
     {
-        $categories = AccountCategory::active()->orderBy('type')->orderBy('name')->get();
+        $categories = AccountCategory::active()->orderBy('category_name')->get();
         return view('reports.accounts.index', compact('categories'));
     }
 
@@ -57,12 +57,12 @@ class AccountReportController extends Controller
         
         $incomes = Income::with('category')
             ->forDateRange($startDate, $endDate)
-            ->orderBy('date', 'desc')
+            ->orderBy('date_of_txn', 'desc')
             ->get();
         
         $expenses = Expense::with('category')
             ->forDateRange($startDate, $endDate)
-            ->orderBy('date', 'desc')
+            ->orderBy('date_of_txn', 'desc')
             ->get();
         
         return view('reports.accounts.details', compact('incomes', 'expenses', 'startDate', 'endDate'));
@@ -75,12 +75,12 @@ class AccountReportController extends Controller
         
         $incomes = Income::with('category')
             ->forDateRange($startDate, $endDate)
-            ->orderBy('date')
+            ->orderBy('date_of_txn')
             ->get();
         
         $expenses = Expense::with('category')
             ->forDateRange($startDate, $endDate)
-            ->orderBy('date')
+            ->orderBy('date_of_txn')
             ->get();
         
         $filename = "accounts_report_{$startDate}_to_{$endDate}.csv";

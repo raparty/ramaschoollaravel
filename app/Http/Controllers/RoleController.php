@@ -26,7 +26,7 @@ class RoleController extends Controller
         
         // Get user counts for each role
         foreach ($roles as $role) {
-            $role->users_count = $role->users_count;
+            $role->users_count = DB::table('users')->where('role', $role->role_name)->count();
         }
 
         return view('settings.roles.index', compact('roles'));
@@ -96,7 +96,7 @@ class RoleController extends Controller
         $this->authorize('manage-settings');
 
         $role->load('permissions');
-        $usersCount = $role->users_count;
+        $usersCount = DB::table('users')->where('role', $role->role_name)->count();
 
         return view('settings.roles.show', compact('role', 'usersCount'));
     }

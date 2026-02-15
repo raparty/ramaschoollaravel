@@ -54,14 +54,19 @@ class PermissionController extends Controller
         ]);
 
         try {
-            // Check for duplicate
-            $exists = Permission::where('module', $validated['module'])
-                ->where('action', $validated['action'])
-                ->exists();
-
-            if ($exists) {
+            // Check for duplicate (considering submodule)
+            $query = Permission::where('module', $validated['module'])
+                ->where('action', $validated['action']);
+            
+            if (isset($validated['submodule'])) {
+                $query->where('submodule', $validated['submodule']);
+            } else {
+                $query->whereNull('submodule');
+            }
+            
+            if ($query->exists()) {
                 return back()->withInput()
-                    ->with('error', 'Permission already exists for this module and action.');
+                    ->with('error', 'Permission already exists for this module, action, and submodule combination.');
             }
 
             Permission::create($validated);

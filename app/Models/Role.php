@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Role Model
@@ -85,6 +86,6 @@ class Role extends Model
     public function getUsersCountAttribute()
     {
         // This queries the actual users table
-        return \DB::table('users')->where('role', $this->role_name)->count();
+        return DB::table('users')->where('role', $this->role_name)->count();
     }
 }

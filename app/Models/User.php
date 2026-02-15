@@ -140,8 +140,13 @@ class User extends Authenticatable
      */
     public function canAccessModule($module)
     {
-        return $this->permissions()
+        $roleModel = $this->roleModel();
+        if (!$roleModel) {
+            return false;
+        }
+
+        return $roleModel->permissions()
             ->where('module', $module)
-            ->isNotEmpty();
+            ->exists();
     }
 } // <--- THIS must be the ONLY brace at the end of the file.

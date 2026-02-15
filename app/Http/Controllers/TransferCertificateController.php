@@ -11,7 +11,7 @@ class TransferCertificateController extends Controller
     /**
      * Maximum number of search results to display.
      */
-    public const SEARCH_RESULT_LIMIT = 50;
+    private const SEARCH_RESULT_LIMIT = 50;
 
     /**
      * Display the transfer certificate entry/search page.

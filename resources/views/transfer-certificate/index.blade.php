@@ -95,7 +95,7 @@
                 @if(isset($students) && count($students) > 0)
                     <div class="card mt-4">
                         <div class="card-header">
-                            <h6 class="mb-0">Search Results ({{ count($students) }} student(s) displayed)</h6>
+                            <h6 class="mb-0">Search Results ({{ $isLimited ?? false ? count($students) . '+' : count($students) }} student(s){{ isset($isLimited) && $isLimited ? ' - showing first ' . count($students) : '' }})</h6>
                         </div>
                         <div class="card-body">
                             @if(isset($isLimited) && $isLimited)

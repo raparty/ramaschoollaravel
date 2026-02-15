@@ -141,6 +141,11 @@
                         </a>
                     </div>
                     <div class="col-md-3">
+                        <a href="{{ route('transfer-certificate.index') }}" class="btn btn-outline-primary w-100">
+                            📄 Generate TC
+                        </a>
+                    </div>
+                    <div class="col-md-3">
                         <a href="{{ route('reports.attendance.index') }}" class="btn btn-outline-primary w-100">
                             📊 Reports
                         </a>

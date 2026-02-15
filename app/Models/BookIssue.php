@@ -149,4 +149,26 @@ class BookIssue extends Model
     {
         return $this->return_date ? $this->return_date->format('d-M-Y') : 'Not Returned';
     }
+
+    /**
+     * Get days overdue.
+     */
+    public function getDaysOverdueAttribute(): int
+    {
+        if (!$this->due_date || $this->return_date) {
+            return 0;
+        }
+        
+        return max(0, now()->diffInDays($this->due_date, false) * -1);
+    }
+
+    /**
+     * Calculate fine amount for overdue book.
+     * Fine rate: ₹5 per day overdue
+     */
+    public function calculateFine(): float
+    {
+        $finePerDay = 5.0;
+        return $this->days_overdue * $finePerDay;
+    }
 }

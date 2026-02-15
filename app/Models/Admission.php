@@ -82,4 +82,20 @@ class Admission extends Model {
     {
         return $query->orderBy('admission_date', 'desc')->orderBy('id', 'desc');
     }
+
+    /**
+     * Accessor: Get name attribute (alias for student_name)
+     */
+    public function getNameAttribute(): ?string
+    {
+        return $this->student_name;
+    }
+
+    /**
+     * Accessor: Get regno attribute (alias for reg_no)
+     */
+    public function getRegnoAttribute(): ?string
+    {
+        return $this->reg_no;
+    }
 }

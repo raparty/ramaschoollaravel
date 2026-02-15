@@ -25,7 +25,7 @@
                 <p class="text-muted mb-0">Students Affected</p>
             </div>
             <div class="col-md-3">
-                <h3 class="text-primary mb-0">{{ $overdueIssues->unique('book_id')->count() }}</h3>
+                <h3 class="text-primary mb-0">{{ $overdueIssues->unique('book_number')->count() }}</h3>
                 <p class="text-muted mb-0">Different Books</p>
             </div>
         </div>
@@ -64,7 +64,7 @@
                                 <td>{{ $issue->student->class->name ?? 'N/A' }}</td>
                                 <td>
                                     <strong>{{ $issue->book->book_name }}</strong><br>
-                                    <small class="text-muted">{{ $issue->book->author_name }}</small>
+                                    <small class="text-muted">{{ $issue->book->book_author }}</small>
                                 </td>
                                 <td>{{ $issue->issue_date->format('d M Y') }}</td>
                                 <td>{{ $issue->due_date->format('d M Y') }}</td>

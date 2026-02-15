@@ -87,11 +87,61 @@ class User extends Authenticatable
     }
 
     /**
-     * Define the hasPermission method to prevent the next likely error.
+     * Get the user's role model.
+     */
+    public function roleModel()
+    {
+        // Note: users.role is a string, not a foreign key
+        return Role::where('role_name', $this->role)->first();
+    }
+
+    /**
+     * Get the user's role name.
+     */
+    public function getRoleNameAttribute()
+    {
+        return $this->role;
+    }
+
+    /**
+     * Check if user has a specific permission.
      */
     public function hasPermission($module, $action)
     {
-        // For now, return true to get past the gate checks.
-        return true;
+        // Admins have all permissions
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        // Get role and check permissions
+        $roleModel = $this->roleModel();
+        if (!$roleModel) {
+            return false;
+        }
+
+        return $roleModel->hasPermission($module, $action);
+    }
+
+    /**
+     * Get all permissions for this user's role.
+     */
+    public function permissions()
+    {
+        $roleModel = $this->roleModel();
+        if (!$roleModel) {
+            return collect([]);
+        }
+
+        return $roleModel->permissions;
+    }
+
+    /**
+     * Check if user can access a module.
+     */
+    public function canAccessModule($module)
+    {
+        return $this->permissions()
+            ->where('module', $module)
+            ->isNotEmpty();
     }
 } // <--- THIS must be the ONLY brace at the end of the file.

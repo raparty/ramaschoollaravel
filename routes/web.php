@@ -19,6 +19,10 @@ use App\Http\Controllers\AccountCategoryController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\AccountReportController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\UserManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -188,10 +192,22 @@ Route::middleware(['auth'])->group(function () {
         })->name('index');
     });
     
-    // Settings Module (Basic placeholder until full implementation)  
+    // Settings Module - RBAC Management
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('/', function() {
-            return view('settings.index');
-        })->name('index');
+        Route::get('/', [SettingsController::class, 'index'])->name('index');
+        
+        // Role Management
+        Route::resource('roles', RoleController::class);
+        
+        // Permission Management
+        Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
+        Route::get('/permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
+        Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
+        Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+        
+        // User Management
+        Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+        Route::get('/users/{id}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{id}', [UserManagementController::class, 'update'])->name('users.update');
     });
 });

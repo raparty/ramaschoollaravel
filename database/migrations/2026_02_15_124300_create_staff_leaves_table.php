@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('staff_leaves', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('staff_id');
-            $table->foreignId('leave_type_id')->constrained('leave_types')->onDelete('restrict');
+            $table->unsignedBigInteger('leave_type_id');
+            $table->foreign('leave_type_id')->references('id')->on('leave_types')->onDelete('restrict');
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('days')->comment('Number of leave days');
             $table->text('reason');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->unsignedInteger('approved_by')->nullable();
+            $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
             $table->timestamp('approved_at')->nullable();
             $table->text('admin_remarks')->nullable();
             $table->timestamps();

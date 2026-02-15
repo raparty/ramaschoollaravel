@@ -69,7 +69,6 @@ class ResultController extends Controller
                 $students = Admission::whereIn('id', $request->student_ids)->get();
             } else {
                 $students = Admission::where('class_id', $exam->class_id)
-                    ->where('status', 'active')
                     ->get();
             }
 

@@ -26,7 +26,7 @@ class AttendanceController extends Controller
      */
     public function index(): View
     {
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
         $today = Carbon::today()->toDateString();
         
         // Get today's attendance statistics
@@ -51,15 +51,14 @@ class AttendanceController extends Controller
         $classId = $request->input('class_id');
         $date = $request->input('date', Carbon::today()->toDateString());
         
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
         $students = [];
         $existingAttendance = [];
         
         if ($classId) {
             // Get students for the class
             $students = Admission::where('class_id', $classId)
-                ->where('status', 'active')
-                ->orderBy('name')
+                ->orderBy('student_name')
                 ->get();
             
             // Get existing attendance for the date
@@ -124,14 +123,13 @@ class AttendanceController extends Controller
         $classId = $request->input('class_id');
         $date = $request->input('date');
         
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
         $students = [];
         $attendance = [];
         
         if ($classId && $date) {
             $students = Admission::where('class_id', $classId)
-                ->where('status', 'active')
-                ->orderBy('name')
+                ->orderBy('student_name')
                 ->get();
             
             $attendance = Attendance::forDate($date)
@@ -209,7 +207,7 @@ class AttendanceController extends Controller
         $classId = $request->input('class_id');
         $date = $request->input('date', Carbon::today()->toDateString());
         
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
         $class = null;
         $attendance = collect();
         $statistics = [];
@@ -223,7 +221,7 @@ class AttendanceController extends Controller
                 ->orderBy('created_at')
                 ->get();
             
-            $total = Admission::where('class_id', $classId)->where('status', 'active')->count();
+            $total = Admission::where('class_id', $classId)->count();
             $present = $attendance->filter(fn($a) => $a->isPresent())->count();
             $absent = $attendance->filter(fn($a) => $a->isAbsent())->count();
             
@@ -249,11 +247,11 @@ class AttendanceController extends Controller
         $query = $request->input('q');
         $classId = $request->input('class_id');
         
-        $students = Admission::where('status', 'active')
+        $students = Admission::query()
             ->when($classId, fn($q) => $q->where('class_id', $classId))
             ->where(function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('regno', 'like', "%{$query}%");
+                $q->where('student_name', 'like', "%{$query}%")
+                  ->orWhere('reg_no', 'like', "%{$query}%");
             })
             ->limit(10)
             ->get(['id', 'name', 'regno', 'class_id']);

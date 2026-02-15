@@ -128,7 +128,6 @@ class Book extends Model
         if (empty($categoryId)) {
             return $query;
         }
-        
         return $query->where('book_category_id', $categoryId);
     }
 }

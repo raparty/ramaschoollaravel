@@ -31,15 +31,9 @@ class Department extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'dept_name',
+        'name',
+        'description',
     ];
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
 
     /**
      * Get all staff in this department.
@@ -51,11 +45,5 @@ class Department extends Model
         return $this->hasMany(Staff::class, 'dept_id');
     }
 
-    /**
-     * Get the department name.
-     */
-    public function getNameAttribute(): string
-    {
-        return $this->dept_name;
-    }
+
 }

@@ -9,6 +9,8 @@ use App\Http\Controllers\FeeController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\PositionController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;
@@ -88,6 +90,10 @@ Route::middleware(['auth'])->group(function () {
     // Staff Management (Phase 6 / Phase B Week 3-5)
     Route::resource('staff', StaffController::class);
     Route::get('/staff-search', [StaffController::class, 'search'])->name('staff.search');
+    
+    // Staff Departments & Positions
+    Route::resource('departments', DepartmentController::class);
+    Route::resource('positions', PositionController::class);
     
     // ⚠️ SALARY MANAGEMENT - DISABLED (staff_salaries table doesn't exist)
     // To enable: Execute database/schema/missing-tables.sql

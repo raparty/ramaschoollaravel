@@ -18,9 +18,9 @@ use Illuminate\Database\QueryException;
 class ExamController extends Controller
 {
     /**
-     * Error message for missing database setup
+     * Error message for missing database tables/migrations
      */
-    private const DB_SETUP_ERROR = 'Database tables are not set up. Please run migrations first using: php artisan migrate';
+    private const MISSING_TABLE_ERROR_MESSAGE = 'Database tables are not set up. Please run migrations first using: php artisan migrate';
 
     /**
      * Check if a QueryException is due to missing tables
@@ -28,8 +28,10 @@ class ExamController extends Controller
     private function isMissingTableError(QueryException $e): bool
     {
         // MySQL error code 1146: Table doesn't exist
+        // PDO error codes are returned as strings
         // Also check for message patterns for other database drivers
-        return $e->getCode() == 1146 
+        return $e->getCode() === '1146' 
+            || $e->getCode() === 1146
             || str_contains($e->getMessage(), "doesn't exist") 
             || str_contains($e->getMessage(), 'Base table or view not found');
     }
@@ -52,7 +54,7 @@ class ExamController extends Controller
             return view('exams.index', compact('exams', 'terms'));
         } catch (QueryException $e) {
             if ($this->isMissingTableError($e)) {
-                return back()->with('error', self::DB_SETUP_ERROR);
+                return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
             }
             
             throw $e;
@@ -71,7 +73,7 @@ class ExamController extends Controller
             return view('exams.create', compact('terms', 'classes'));
         } catch (QueryException $e) {
             if ($this->isMissingTableError($e)) {
-                return back()->with('error', self::DB_SETUP_ERROR);
+                return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
             }
             
             throw $e;
@@ -123,7 +125,7 @@ class ExamController extends Controller
             return view('exams.edit', compact('exam', 'terms', 'classes'));
         } catch (QueryException $e) {
             if ($this->isMissingTableError($e)) {
-                return back()->with('error', self::DB_SETUP_ERROR);
+                return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
             }
             
             throw $e;

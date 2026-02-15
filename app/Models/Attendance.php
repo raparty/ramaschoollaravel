@@ -5,12 +5,13 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model {
     protected $table = 'attendance';
     public $timestamps = false;
-    protected $fillable = ['id', 'status', 'attendance_date', 'user_id', 'marked_by'];
+    protected $fillable = ['id', 'status', 'attendance_date', 'user_id', 'marked_by', 'admission_id', 'date', 'in_time', 'out_time', 'remarks', 'recorded_by'];
     
     // Status constants
     const STATUS_PRESENT = 'Present';
     const STATUS_ABSENT = 'Absent';
     const STATUS_LATE = 'Late';
+    const STATUS_HALF_DAY = 'Half Day';
     
     /**
      * Scope to filter attendance by date.
@@ -42,5 +43,63 @@ class Attendance extends Model {
     public function scopeLate($query)
     {
         return $query->where('status', self::STATUS_LATE);
+    }
+    
+    /**
+     * Scope to filter attendance by class.
+     */
+    public function scopeForClass($query, $classId)
+    {
+        return $query->whereHas('student', function($q) use ($classId) {
+            $q->where('class_id', $classId);
+        });
+    }
+    
+    /**
+     * Scope to filter attendance by student.
+     */
+    public function scopeForStudent($query, $studentId)
+    {
+        return $query->where('admission_id', $studentId);
+    }
+    
+    /**
+     * Scope to filter attendance by date range.
+     */
+    public function scopeDateRange($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('attendance_date', [$startDate, $endDate]);
+    }
+    
+    /**
+     * Scope to filter students on leave.
+     */
+    public function scopeOnLeave($query)
+    {
+        return $query->where('status', 'On Leave');
+    }
+    
+    /**
+     * Get the student (admission) record.
+     */
+    public function student()
+    {
+        return $this->belongsTo(Admission::class, 'admission_id');
+    }
+    
+    /**
+     * Check if the attendance is present.
+     */
+    public function isPresent(): bool
+    {
+        return in_array($this->status, [self::STATUS_PRESENT, self::STATUS_LATE, 'Half Day']);
+    }
+    
+    /**
+     * Check if the attendance is absent.
+     */
+    public function isAbsent(): bool
+    {
+        return $this->status === self::STATUS_ABSENT;
     }
 }

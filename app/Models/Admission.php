@@ -9,6 +9,13 @@ class Admission extends Model {
     protected $fillable = ['reg_no', 'student_name', 'class_id', 'admission_date'];
 
     /**
+     * The attributes that should be cast.
+     */
+    protected $casts = [
+        'admission_date' => 'date',
+    ];
+
+    /**
      * Get the class that owns the admission.
      */
     public function class(): BelongsTo

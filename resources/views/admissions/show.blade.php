@@ -46,7 +46,7 @@
                                 </tr>
                                 <tr>
                                     <th>Date of Birth:</th>
-                                    <td>{{ $admission->dob->format('d M Y') }} ({{ $admission->dob->age }} years)</td>
+                                    <td>{{ $admission->dob?->format('d M Y') ?? 'N/A' }} ({{ $admission->dob?->age ?? 'N/A' }} years)</td>
                                 </tr>
                                 <tr>
                                     <th>Gender:</th>
@@ -98,11 +98,11 @@
                     <tbody>
                         <tr>
                             <th width="180">Class:</th>
-                            <td><strong>{{ $admission->class->name ?? 'N/A' }}</strong></td>
+                            <td><strong>{{ $admission->class?->name ?? 'N/A' }}</strong></td>
                         </tr>
                         <tr>
                             <th>Admission Date:</th>
-                            <td>{{ $admission->admission_date->format('d M Y') }}</td>
+                            <td>{{ $admission->admission_date?->format('d M Y') ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <th>Previous School:</th>
@@ -110,7 +110,12 @@
                         </tr>
                         <tr>
                             <th>Academic Year:</th>
-                            <td>{{ $admission->admission_date->format('Y') }}-{{ $admission->admission_date->format('Y') + 1 }}</td>
+                            <td>
+                                @php
+                                    $year = $admission->admission_date?->format('Y');
+                                @endphp
+                                {{ $year ? $year . '-' . ($year + 1) : 'N/A' }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -56,7 +56,7 @@
                 <div class="col-md-10">
                     <h4>{{ $student->name }}</h4>
                     <p class="text-muted mb-1"><strong>Reg No:</strong> {{ $student->regno }}</p>
-                    <p class="text-muted mb-1"><strong>Class:</strong> {{ $student->class->name ?? 'N/A' }}</p>
+                    <p class="text-muted mb-1"><strong>Class:</strong> {{ $student->class?->name ?? 'N/A' }}</p>
                     <p class="text-muted mb-0"><strong>Period:</strong> {{ \Carbon\Carbon::parse($startDate)->format('M d, Y') }} to {{ \Carbon\Carbon::parse($endDate)->format('M d, Y') }}</p>
                 </div>
             </div>

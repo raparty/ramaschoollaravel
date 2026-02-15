@@ -28,7 +28,7 @@
                             <option value="">Select Exam</option>
                             @foreach($exams as $exam)
                                 <option value="{{ $exam->id }}" {{ request('exam_id') == $exam->id ? 'selected' : '' }}>
-                                    {{ $exam->name }} - {{ $exam->class->name }}
+                                    {{ $exam->name }} - {{ $exam->class?->name ?? 'N/A' }}
                                 </option>
                             @endforeach
                         </select>

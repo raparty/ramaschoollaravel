@@ -7,7 +7,7 @@
     <div>
         <h2>{{ $exam->name }}</h2>
         <p class="text-muted mb-0">
-            {{ $exam->class->name }} | {{ $exam->academicYear->name }} | 
+            {{ $exam->class?->name ?? 'N/A' }} | {{ $exam->academicYear?->name ?? 'N/A' }} | 
             @if($exam->status == 'draft')
                 <span class="badge bg-secondary">Draft</span>
             @elseif($exam->status == 'scheduled')
@@ -57,11 +57,11 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <h6 class="text-muted mb-1">Class</h6>
-                        <p class="mb-0">{{ $exam->class->name }}</p>
+                        <p class="mb-0">{{ $exam->class?->name ?? 'N/A' }}</p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <h6 class="text-muted mb-1">Duration</h6>
-                        <p class="mb-0">{{ $exam->start_date->format('d M, Y') }} - {{ $exam->end_date->format('d M, Y') }}</p>
+                        <p class="mb-0">{{ $exam->start_date?->format('d M, Y') ?? 'N/A' }} - {{ $exam->end_date?->format('d M, Y') ?? 'N/A' }}</p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <h6 class="text-muted mb-1">Total Marks</h6>

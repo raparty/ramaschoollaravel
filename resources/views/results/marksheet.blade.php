@@ -48,7 +48,7 @@
                     </tr>
                     <tr>
                         <td><strong>Class:</strong></td>
-                        <td>{{ $student->class->name ?? 'N/A' }}</td>
+                        <td>{{ $student->class?->name ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Father's Name:</strong></td>
@@ -86,7 +86,7 @@
                 <table class="table table-borderless table-sm">
                     <tr>
                         <td width="180"><strong>Exam Period:</strong></td>
-                        <td>{{ $exam->start_date->format('d M, Y') }} - {{ $exam->end_date->format('d M, Y') }}</td>
+                        <td>{{ $exam->start_date?->format('d M, Y') ?? 'N/A' }} - {{ $exam->end_date?->format('d M, Y') ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Date of Issue:</strong></td>

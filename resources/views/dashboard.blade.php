@@ -67,8 +67,8 @@
                                 <tr>
                                     <td>{{ $admission->reg_no }}</td>
                                     <td>{{ $admission->student_name }}</td>
-                                    <td>{{ $admission->class->name ?? 'N/A' }}</td>
-                                    <td>{{ $admission->admission_date ? $admission->admission_date->format('d-m-Y') : 'N/A' }}</td>
+                                    <td>{{ $admission->class?->name ?? 'N/A' }}</td>
+                                    <td>{{ $admission->admission_date?->format('d-m-Y') ?? 'N/A' }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -100,9 +100,9 @@
                         <tbody>
                             @forelse($overdue_books as $issue)
                                 <tr>
-                                    <td>{{ $issue->admission->student_name ?? 'N/A' }}</td>
-                                    <td>{{ $issue->book->title ?? 'N/A' }}</td>
-                                    <td class="text-danger">{{ $issue->due_date ? $issue->due_date->format('d-m-Y') : 'N/A' }}</td>
+                                    <td>{{ $issue->admission?->student_name ?? 'N/A' }}</td>
+                                    <td>{{ $issue->book?->title ?? 'N/A' }}</td>
+                                    <td class="text-danger">{{ $issue->due_date?->format('d-m-Y') ?? 'N/A' }}</td>
                                 </tr>
                             @empty
                                 <tr>

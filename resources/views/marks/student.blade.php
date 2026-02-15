@@ -34,7 +34,7 @@
                 @endif
                 
                 <h5 class="mb-1">{{ $student->name }}</h5>
-                <p class="text-muted mb-2">{{ $student->class->name ?? 'N/A' }}</p>
+                <p class="text-muted mb-2">{{ $student->class?->name ?? 'N/A' }}</p>
                 <p class="text-muted small mb-0">Roll No: {{ $student->roll_number ?? 'N/A' }}</p>
             </div>
         </div>

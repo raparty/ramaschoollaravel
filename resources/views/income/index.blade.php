@@ -26,7 +26,7 @@
                     <tbody>
                         @forelse($incomes as $income)
                         <tr>
-                            <td>{{ $income->date->format('d M Y') }}</td>
+                            <td>{{ $income->date?->format('d M Y') ?? 'N/A' }}</td>
                             <td>{{ $income->category->name }}</td>
                             <td>₹{{ number_format($income->amount, 2) }}</td>
                             <td>{{ $income->invoice_number }}</td>

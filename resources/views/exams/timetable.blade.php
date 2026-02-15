@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
     <div>
         <h2>Exam Timetable</h2>
-        <p class="text-muted mb-0">{{ $exam->name }} - {{ $exam->class->name }}</p>
+        <p class="text-muted mb-0">{{ $exam->name }} - {{ $exam->class?->name ?? 'N/A' }}</p>
     </div>
     <div>
         <button onclick="window.print()" class="btn btn-primary me-2">
@@ -35,7 +35,7 @@
                 <table class="table table-borderless table-sm">
                     <tr>
                         <td width="150"><strong>Class:</strong></td>
-                        <td>{{ $exam->class->name }}</td>
+                        <td>{{ $exam->class?->name ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Exam Type:</strong></td>
@@ -51,7 +51,7 @@
                 <table class="table table-borderless table-sm">
                     <tr>
                         <td width="150"><strong>Exam Period:</strong></td>
-                        <td>{{ $exam->start_date->format('d M, Y') }} - {{ $exam->end_date->format('d M, Y') }}</td>
+                        <td>{{ $exam->start_date?->format('d M, Y') ?? 'N/A' }} - {{ $exam->end_date?->format('d M, Y') ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Total Marks:</strong></td>

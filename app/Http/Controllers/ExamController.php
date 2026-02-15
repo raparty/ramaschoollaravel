@@ -18,6 +18,22 @@ use Illuminate\Database\QueryException;
 class ExamController extends Controller
 {
     /**
+     * Error message for missing database setup
+     */
+    private const DB_SETUP_ERROR = 'Database tables are not set up. Please run migrations first using: php artisan migrate';
+
+    /**
+     * Check if a QueryException is due to missing tables
+     */
+    private function isMissingTableError(QueryException $e): bool
+    {
+        // MySQL error code 1146: Table doesn't exist
+        // Also check for message patterns for other database drivers
+        return $e->getCode() == 1146 
+            || str_contains($e->getMessage(), "doesn't exist") 
+            || str_contains($e->getMessage(), 'Base table or view not found');
+    }
+    /**
      * Display a listing of exams.
      */
     public function index(Request $request)
@@ -35,14 +51,10 @@ class ExamController extends Controller
 
             return view('exams.index', compact('exams', 'terms'));
         } catch (QueryException $e) {
-            // Check if the error is due to missing tables
-            if (str_contains($e->getMessage(), "doesn't exist") || str_contains($e->getMessage(), 'Base table or view not found')) {
-                return back()->with('error', 
-                    'Database tables are not set up. Please run migrations first using: php artisan migrate'
-                );
+            if ($this->isMissingTableError($e)) {
+                return back()->with('error', self::DB_SETUP_ERROR);
             }
             
-            // Re-throw other database errors
             throw $e;
         }
     }
@@ -58,14 +70,10 @@ class ExamController extends Controller
 
             return view('exams.create', compact('terms', 'classes'));
         } catch (QueryException $e) {
-            // Check if the error is due to missing tables
-            if (str_contains($e->getMessage(), "doesn't exist") || str_contains($e->getMessage(), 'Base table or view not found')) {
-                return back()->with('error', 
-                    'Database tables are not set up. Please run migrations first using: php artisan migrate'
-                );
+            if ($this->isMissingTableError($e)) {
+                return back()->with('error', self::DB_SETUP_ERROR);
             }
             
-            // Re-throw other database errors
             throw $e;
         }
     }
@@ -114,14 +122,10 @@ class ExamController extends Controller
 
             return view('exams.edit', compact('exam', 'terms', 'classes'));
         } catch (QueryException $e) {
-            // Check if the error is due to missing tables
-            if (str_contains($e->getMessage(), "doesn't exist") || str_contains($e->getMessage(), 'Base table or view not found')) {
-                return back()->with('error', 
-                    'Database tables are not set up. Please run migrations first using: php artisan migrate'
-                );
+            if ($this->isMissingTableError($e)) {
+                return back()->with('error', self::DB_SETUP_ERROR);
             }
             
-            // Re-throw other database errors
             throw $e;
         }
     }

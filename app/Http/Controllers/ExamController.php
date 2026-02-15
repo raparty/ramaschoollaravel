@@ -162,9 +162,16 @@ class ExamController extends Controller
     public function destroy(Exam $exam)
     {
         try {
-            // Check if exam has results
-            if ($exam->results()->exists()) {
-                return back()->with('error', 'Cannot delete exam with existing results.');
+            // Check if exam has results (only if results table exists)
+            try {
+                if ($exam->results()->exists()) {
+                    return back()->with('error', 'Cannot delete exam with existing results.');
+                }
+            } catch (QueryException $e) {
+                // Results table doesn't exist yet, skip the check
+                if (!$this->isMissingTableError($e)) {
+                    throw $e;
+                }
             }
 
             $exam->delete();

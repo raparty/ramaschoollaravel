@@ -33,7 +33,7 @@
                         </p>
 
                         <p style="text-align: justify;">
-                            He/She was admitted to Class <strong>{{ $student->class->name ?? 'N/A' }}</strong> 
+                            He/She was admitted to Class <strong>{{ $student->class?->name ?? 'N/A' }}</strong> 
                             on <strong>{{ $student->admission_date ? $student->admission_date->format('d-M-Y') : 'N/A' }}</strong>.
                         </p>
                         

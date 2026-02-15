@@ -22,7 +22,7 @@
                         <p class="mb-0"><strong>Reg No:</strong> {{ $student->reg_no }}</p>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-2"><strong>Class:</strong> {{ $student->class->name ?? 'N/A' }}</p>
+                        <p class="mb-2"><strong>Class:</strong> {{ $student->class?->name ?? 'N/A' }}</p>
                         <p class="mb-0"><strong>Guardian:</strong> {{ $student->guardian_name ?? 'N/A' }}</p>
                     </div>
                     <div class="col-md-4">

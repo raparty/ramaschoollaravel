@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2>Manage Exam Subjects</h2>
-        <p class="text-muted mb-0">{{ $exam->name }} - {{ $exam->class->name }}</p>
+        <p class="text-muted mb-0">{{ $exam->name }} - {{ $exam->class?->name ?? 'N/A' }}</p>
     </div>
     <a href="{{ route('exams.show', $exam) }}" class="btn btn-secondary">
         <i class="bi bi-arrow-left"></i> Back to Exam

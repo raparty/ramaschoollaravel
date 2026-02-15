@@ -37,7 +37,7 @@
             <div class="col-md-10">
                 <h4>{{ $student->name }}</h4>
                 <p class="text-muted mb-1"><strong>Reg No:</strong> {{ $student->regno }}</p>
-                <p class="text-muted mb-1"><strong>Class:</strong> {{ $student->class->name ?? 'N/A' }}</p>
+                <p class="text-muted mb-1"><strong>Class:</strong> {{ $student->class?->name ?? 'N/A' }}</p>
                 <p class="text-muted mb-0"><strong>Report Period:</strong> {{ \Carbon\Carbon::parse($startDate)->format('M d, Y') }} to {{ \Carbon\Carbon::parse($endDate)->format('M d, Y') }}</p>
             </div>
         </div>
@@ -119,11 +119,11 @@
                     <tbody>
                         @foreach($attendance as $record)
                             <tr>
-                                <td>{{ $record->date->format('M d, Y') }}</td>
-                                <td>{{ $record->date->format('D') }}</td>
+                                <td>{{ $record->date?->format('M d, Y') ?? 'N/A' }}</td>
+                                <td>{{ $record->date?->format('D') ?? 'N/A' }}</td>
                                 <td><span class="badge {{ $record->status_badge }}">{{ $record->status_text }}</span></td>
-                                <td>{{ $record->in_time ? $record->in_time->format('h:i A') : '-' }}</td>
-                                <td>{{ $record->out_time ? $record->out_time->format('h:i A') : '-' }}</td>
+                                <td>{{ $record->in_time?->format('h:i A') ?? '-' }}</td>
+                                <td>{{ $record->out_time?->format('h:i A') ?? '-' }}</td>
                                 <td>{{ $record->formatted_duration ?? '-' }}</td>
                                 <td>{{ $record->remarks ?: '-' }}</td>
                             </tr>

@@ -21,7 +21,7 @@
                     <tbody>
                         @foreach($transactions as $trans)
                         <tr>
-                            <td>{{ $trans->date->format('d M Y') }}</td>
+                            <td>{{ $trans->date?->format('d M Y') ?? 'N/A' }}</td>
                             <td><span class="badge bg-{{ $trans->type == 'income' ? 'success' : 'danger' }}">{{ ucfirst($trans->type) }}</span></td>
                             <td>{{ $trans->category }}</td>
                             <td>{{ $trans->description ?? '-' }}</td>

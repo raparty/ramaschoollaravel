@@ -108,7 +108,7 @@
                         </div>
                         <div class="card-body">
                             <p class="mb-2">
-                                <strong>Class:</strong> {{ $exam->class->name ?? 'N/A' }}
+                                <strong>Class:</strong> {{ $exam->class?->name ?? 'N/A' }}
                             </p>
                             <p class="mb-2">
                                 <strong>Session:</strong> {{ $exam->session }}

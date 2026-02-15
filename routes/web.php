@@ -25,6 +25,8 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\LeaveTypeController;
+use App\Http\Controllers\StaffLeaveController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +96,15 @@ Route::middleware(['auth'])->group(function () {
     // Staff Departments & Positions
     Route::resource('departments', DepartmentController::class);
     Route::resource('positions', PositionController::class);
+    
+    // Leave Types Management
+    Route::resource('leave-types', LeaveTypeController::class);
+    Route::post('/leave-types/{leaveType}/toggle-status', [LeaveTypeController::class, 'toggleStatus'])->name('leave-types.toggle-status');
+    
+    // Staff Leave Applications
+    Route::resource('staff-leaves', StaffLeaveController::class);
+    Route::post('/staff-leaves/{staffLeave}/approve', [StaffLeaveController::class, 'approve'])->name('staff-leaves.approve');
+    Route::post('/staff-leaves/{staffLeave}/reject', [StaffLeaveController::class, 'reject'])->name('staff-leaves.reject');
     
     // ⚠️ SALARY MANAGEMENT - DISABLED (staff_salaries table doesn't exist)
     // To enable: Execute database/schema/missing-tables.sql

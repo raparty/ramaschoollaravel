@@ -88,6 +88,14 @@ class Staff extends Model
     }
 
     /**
+     * Get all leave applications for the staff.
+     */
+    public function leaves()
+    {
+        return $this->hasMany(StaffLeave::class);
+    }
+
+    /**
      * Scope: Filter by department.
      */
     public function scopeByDepartment($query, int $departmentId)

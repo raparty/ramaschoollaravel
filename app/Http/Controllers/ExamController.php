@@ -6,6 +6,7 @@ use App\Http\Requests\StoreExamRequest;
 use App\Models\Exam;
 use App\Models\ExamSubject;
 use App\Models\ClassModel;
+use App\Models\Term;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
@@ -49,7 +50,7 @@ class ExamController extends Controller
             }
 
             $exams = $query->paginate(15);
-            $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
+            $terms = Term::orderBy('start_date', 'desc')->get();
 
             return view('exams.index', compact('exams', 'terms'));
         } catch (QueryException $e) {
@@ -67,7 +68,7 @@ class ExamController extends Controller
     public function create()
     {
         try {
-            $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
+            $terms = Term::orderBy('start_date', 'desc')->get();
             $classes = ClassModel::ordered()->get();
 
             return view('exams.create', compact('terms', 'classes'));
@@ -119,7 +120,7 @@ class ExamController extends Controller
     public function edit(Exam $exam)
     {
         try {
-            $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
+            $terms = Term::orderBy('start_date', 'desc')->get();
             $classes = ClassModel::ordered()->get();
 
             return view('exams.edit', compact('exam', 'terms', 'classes'));

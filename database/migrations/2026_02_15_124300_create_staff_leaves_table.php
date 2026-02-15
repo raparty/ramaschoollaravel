@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('staff_leaves', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staff_id')->constrained('staff')->onDelete('cascade');
+            $table->unsignedBigInteger('staff_id');
             $table->foreignId('leave_type_id')->constrained('leave_types')->onDelete('restrict');
             $table->date('start_date');
             $table->date('end_date');
@@ -24,6 +24,10 @@ return new class extends Migration
             $table->timestamp('approved_at')->nullable();
             $table->text('admin_remarks')->nullable();
             $table->timestamps();
+            
+            // Add index for staff_id without foreign key constraint
+            // to avoid issues with staff table name inconsistency
+            $table->index('staff_id');
         });
     }
 

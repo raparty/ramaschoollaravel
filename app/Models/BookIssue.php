@@ -165,10 +165,11 @@ class BookIssue extends Model
     /**
      * Calculate fine amount for overdue book.
      * Fine rate: ₹5 per day overdue
+     * TODO: Move fine rate to configuration for easier adjustment
      */
     public function calculateFine(): float
     {
-        $finePerDay = 5.0;
+        $finePerDay = config('library.fine_per_day', 5.0);
         return $this->days_overdue * $finePerDay;
     }
 }

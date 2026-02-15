@@ -110,7 +110,12 @@
                         </tr>
                         <tr>
                             <th>Academic Year:</th>
-                            <td>{{ $admission->admission_date ? $admission->admission_date->format('Y') . '-' . ($admission->admission_date->format('Y') + 1) : 'N/A' }}</td>
+                            <td>
+                                @php
+                                    $year = $admission->admission_date?->format('Y');
+                                @endphp
+                                {{ $year ? $year . '-' . ($year + 1) : 'N/A' }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -126,7 +126,7 @@ class Staff extends Model
     public function scopeInactive($query)
     {
         // Return empty result since legacy DB doesn't have status column
-        return $query->whereRaw('1=0');
+        return $query->whereRaw('0 = 1');
     }
 
     /**

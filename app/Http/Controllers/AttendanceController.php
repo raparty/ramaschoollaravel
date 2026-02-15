@@ -254,7 +254,7 @@ class AttendanceController extends Controller
                   ->orWhere('reg_no', 'like', "%{$query}%");
             })
             ->limit(10)
-            ->get(['id', 'name', 'regno', 'class_id']);
+            ->get(['id', 'student_name', 'reg_no', 'class_id']);
         
         return response()->json($students);
     }

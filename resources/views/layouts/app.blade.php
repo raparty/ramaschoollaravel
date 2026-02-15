@@ -104,10 +104,7 @@
             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">📊 Dashboard</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('admissions.*') ? 'active' : '' }}" href="{{ route('admissions.index') }}">👨‍🎓 Students</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('transfer-certificate.*') ? 'active' : '' }}" href="{{ route('transfer-certificate.index') }}">📄 Transfer Certificate</a>
+            <a class="nav-link {{ request()->routeIs('admissions.*') || request()->routeIs('students.transfer-certificate.*') ? 'active' : '' }}" href="{{ route('admissions.index') }}">👨‍🎓 Students</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('fee-packages.*') || request()->routeIs('fees.*') ? 'active' : '' }}" href="{{ route('fee-packages.index') }}">💰 Fees</a>

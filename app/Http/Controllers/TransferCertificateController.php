@@ -21,9 +21,9 @@ class TransferCertificateController extends Controller
     public function index()
     {
         // Get all classes for the search form
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
 
-        return view('transfer-certificate.index', [
+        return view('admissions.transfer-certificate.index', [
             'classes' => $classes,
         ]);
     }
@@ -44,11 +44,11 @@ class TransferCertificateController extends Controller
 
         // Require at least one search criterion
         if (empty($validated['name']) && empty($validated['class_id'])) {
-            return redirect()->route('transfer-certificate.index')
+            return redirect()->route('students.transfer-certificate.index')
                 ->withErrors(['search' => 'Please provide at least one search criterion (name or class).']);
         }
 
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
         
         $query = Admission::with('class');
 
@@ -73,7 +73,7 @@ class TransferCertificateController extends Controller
             $students = $students->take(self::SEARCH_RESULT_LIMIT);
         }
 
-        return view('transfer-certificate.index', [
+        return view('admissions.transfer-certificate.index', [
             'classes' => $classes,
             'students' => $students,
             'isLimited' => $isLimited,
@@ -93,7 +93,7 @@ class TransferCertificateController extends Controller
         ]);
 
         // Redirect to the show route
-        return redirect()->route('transfer-certificate.show', $request->reg_no);
+        return redirect()->route('students.transfer-certificate.show', $request->reg_no);
     }
 
     /**
@@ -109,7 +109,7 @@ class TransferCertificateController extends Controller
             ->where('reg_no', $regNo)
             ->firstOrFail();
 
-        return view('transfer-certificate.show', [
+        return view('admissions.transfer-certificate.show', [
             'student' => $student,
         ]);
     }

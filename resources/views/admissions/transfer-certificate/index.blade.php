@@ -17,7 +17,7 @@
                                 <h6 class="card-title">
                                     <i class="bi bi-search"></i> Search by Registration Number
                                 </h6>
-                                <form action="{{ route('transfer-certificate.show-by-regno') }}" method="GET" class="mt-3">
+                                <form action="{{ route('students.transfer-certificate.show-by-regno') }}" method="GET" class="mt-3">
                                     <div class="mb-3">
                                         <label for="reg_no" class="form-label">
                                             Student Registration Number <span class="text-danger">*</span>
@@ -45,7 +45,7 @@
                                 <h6 class="card-title">
                                     <i class="bi bi-people"></i> Search by Student Name
                                 </h6>
-                                <form action="{{ route('transfer-certificate.search') }}" method="GET" class="mt-3">
+                                <form action="{{ route('students.transfer-certificate.search') }}" method="GET" class="mt-3">
                                     @if($errors->has('search'))
                                         <div class="alert alert-warning alert-dismissible fade show">
                                             {{ $errors->first('search') }}
@@ -126,7 +126,7 @@
                                                 <td>{{ $student->class?->name ?? 'N/A' }}</td>
                                                 <td>{{ $student->guardian_name ?? 'N/A' }}</td>
                                                 <td>
-                                                    <a href="{{ route('transfer-certificate.show', $student->reg_no) }}" 
+                                                    <a href="{{ route('students.transfer-certificate.show', $student->reg_no) }}" 
                                                        class="btn btn-sm btn-primary"
                                                        target="_blank">
                                                         <i class="bi bi-file-earmark-text"></i> Generate TC

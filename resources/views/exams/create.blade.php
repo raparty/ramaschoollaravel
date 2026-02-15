@@ -36,31 +36,16 @@
                         </div>
                         
                         <div class="col-md-6">
-                            <label class="form-label">Academic Session <span class="text-danger">*</span></label>
-                            <select name="session" class="form-select @error('session') is-invalid @enderror" required>
-                                <option value="">Select Academic Session</option>
-                                @foreach($academicYears as $year)
-                                    <option value="{{ $year->id }}" {{ old('session', $currentSession) == $year->id ? 'selected' : '' }}>
-                                        {{ $year->name }}
+                            <label class="form-label">Academic Term <span class="text-danger">*</span></label>
+                            <select name="term_id" class="form-select @error('term_id') is-invalid @enderror" required>
+                                <option value="">Select Academic Term</option>
+                                @foreach($terms as $term)
+                                    <option value="{{ $term->id }}" {{ old('term_id') == $term->id ? 'selected' : '' }}>
+                                        {{ $term->name }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('session')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label class="form-label">Class <span class="text-danger">*</span></label>
-                            <select name="class_id" class="form-select @error('class_id') is-invalid @enderror" required>
-                                <option value="">Select Class</option>
-                                @foreach($classes as $class)
-                                    <option value="{{ $class->id }}" {{ old('class_id') == $class->id ? 'selected' : '' }}>
-                                        {{ $class->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('class_id')
+                            @error('term_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -82,62 +67,6 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
-                        <div class="col-12">
-                            <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control @error('description') is-invalid @enderror" 
-                                      rows="3" placeholder="Optional exam details or instructions">{{ old('description') }}</textarea>
-                            @error('description')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Grading Configuration -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Grading Configuration</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Total Marks <span class="text-danger">*</span></label>
-                            <input type="number" name="total_marks" class="form-control @error('total_marks') is-invalid @enderror" 
-                                   value="{{ old('total_marks', 100) }}" min="1" required>
-                            @error('total_marks')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <label class="form-label">Passing Marks <span class="text-danger">*</span></label>
-                            <input type="number" name="passing_marks" class="form-control @error('passing_marks') is-invalid @enderror" 
-                                   value="{{ old('passing_marks', 40) }}" min="1" required>
-                            @error('passing_marks')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <label class="form-label">Grace Marks</label>
-                            <input type="number" name="grace_marks" class="form-control @error('grace_marks') is-invalid @enderror" 
-                                   value="{{ old('grace_marks', 0) }}" min="0">
-                            @error('grace_marks')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input type="checkbox" name="enable_grace_marks" class="form-check-input" 
-                                       id="enableGraceMarks" value="1" {{ old('enable_grace_marks') ? 'checked' : '' }}>
-                                <label class="form-check-label" for="enableGraceMarks">
-                                    Enable grace marks for this exam
-                                </label>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -145,49 +74,6 @@
         
         <!-- Right Column -->
         <div class="col-lg-4">
-            <!-- Exam Settings -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Exam Settings</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">Status <span class="text-danger">*</span></label>
-                        <select name="status" class="form-select @error('status') is-invalid @enderror" required>
-                            <option value="draft" {{ old('status', 'draft') == 'draft' ? 'selected' : '' }}>Draft</option>
-                            <option value="scheduled" {{ old('status') == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-                            <option value="ongoing" {{ old('status') == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
-                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                        </select>
-                        @error('status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="form-check form-switch">
-                            <input type="checkbox" name="is_published" class="form-check-input" 
-                                   id="isPublished" value="1" {{ old('is_published') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="isPublished">
-                                Publish Exam
-                            </label>
-                        </div>
-                        <small class="text-muted">Students can view published exams</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="form-check form-switch">
-                            <input type="checkbox" name="is_results_published" class="form-check-input" 
-                                   id="isResultsPublished" value="1" {{ old('is_results_published') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="isResultsPublished">
-                                Publish Results
-                            </label>
-                        </div>
-                        <small class="text-muted">Allow students to view their results</small>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Quick Info -->
             <div class="card mb-4">
                 <div class="card-header">

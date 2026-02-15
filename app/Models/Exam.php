@@ -6,30 +6,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Exam Model
  * 
  * Represents examination schedules and details
+ * Matches migration schema: database/migrations/2026_02_14_072514_create_core_tables.php
  * 
  * @property int $id
  * @property string $name Exam name (Midterm, Final, Unit Test 1, etc.)
- * @property int $class_id Related class ID
- * @property string $session Academic session (e.g., 2023-2024)
+ * @property int $term_id Related term ID (academic term/year)
  * @property date $start_date Exam start date
  * @property date $end_date Exam end date
- * @property int $total_marks Total maximum marks
- * @property int $pass_marks Minimum pass marks
- * @property boolean $is_published Whether results are published
- * @property string|null $description Exam description
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon|null $deleted_at
  */
 class Exam extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -38,14 +32,9 @@ class Exam extends Model
      */
     protected $fillable = [
         'name',
-        'class_id',
-        'session',
+        'term_id',
         'start_date',
         'end_date',
-        'total_marks',
-        'pass_marks',
-        'is_published',
-        'description',
     ];
 
     /**
@@ -56,17 +45,15 @@ class Exam extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'is_published' => 'boolean',
-        'total_marks' => 'integer',
-        'pass_marks' => 'integer',
+        'term_id' => 'integer',
     ];
 
     /**
-     * Get the class that this exam belongs to.
+     * Get the term that this exam belongs to.
      */
-    public function class(): BelongsTo
+    public function term(): BelongsTo
     {
-        return $this->belongsTo(ClassModel::class, 'class_id');
+        return $this->belongsTo(Term::class, 'term_id');
     }
 
     /**
@@ -78,43 +65,11 @@ class Exam extends Model
     }
 
     /**
-     * Get the results for this exam.
+     * Scope to get exams for a specific term.
      */
-    public function results(): HasMany
+    public function scopeForTerm($query, int $termId)
     {
-        return $this->hasMany(Result::class);
-    }
-
-    /**
-     * Scope to get published exams.
-     */
-    public function scopePublished($query)
-    {
-        return $query->where('is_published', true);
-    }
-
-    /**
-     * Scope to get unpublished exams.
-     */
-    public function scopeUnpublished($query)
-    {
-        return $query->where('is_published', false);
-    }
-
-    /**
-     * Scope to get exams for a specific session.
-     */
-    public function scopeForSession($query, string $session)
-    {
-        return $query->where('session', $session);
-    }
-
-    /**
-     * Scope to get exams for a specific class.
-     */
-    public function scopeForClass($query, int $classId)
-    {
-        return $query->where('class_id', $classId);
+        return $query->where('term_id', $termId);
     }
 
     /**
@@ -122,10 +77,6 @@ class Exam extends Model
      */
     public function getStatusBadgeAttribute(): string
     {
-        if ($this->is_published) {
-            return 'success';
-        }
-        
         if ($this->end_date < now()) {
             return 'warning';
         }
@@ -138,10 +89,6 @@ class Exam extends Model
      */
     public function getStatusTextAttribute(): string
     {
-        if ($this->is_published) {
-            return 'Published';
-        }
-        
         if ($this->end_date < now()) {
             return 'Completed';
         }

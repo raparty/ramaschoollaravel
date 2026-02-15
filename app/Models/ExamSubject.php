@@ -11,16 +11,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * ExamSubject Model
  * 
  * Represents subjects assigned to an exam with maximum marks
+ * Matches migration schema: database/migrations/2026_02_14_072514_create_core_tables.php
  * 
  * @property int $id
  * @property int $exam_id Related exam ID
- * @property int $subject_id Related subject ID (from classes_subjects or subjects table)
- * @property int $theory_marks Maximum theory marks
- * @property int $practical_marks Maximum practical marks
+ * @property int $class_id Related class ID
+ * @property int $subject_id Related subject ID
+ * @property int $max_marks Maximum marks for this subject in exam
  * @property int $pass_marks Minimum pass marks for this subject
- * @property date|null $exam_date Exam date for this subject
- * @property time|null $exam_time Exam time
- * @property int|null $duration_minutes Exam duration in minutes
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
@@ -35,13 +33,10 @@ class ExamSubject extends Model
      */
     protected $fillable = [
         'exam_id',
+        'class_id',
         'subject_id',
-        'theory_marks',
-        'practical_marks',
+        'max_marks',
         'pass_marks',
-        'exam_date',
-        'exam_time',
-        'duration_minutes',
     ];
 
     /**
@@ -51,12 +46,10 @@ class ExamSubject extends Model
      */
     protected $casts = [
         'exam_id' => 'integer',
+        'class_id' => 'integer',
         'subject_id' => 'integer',
-        'theory_marks' => 'integer',
-        'practical_marks' => 'integer',
+        'max_marks' => 'integer',
         'pass_marks' => 'integer',
-        'duration_minutes' => 'integer',
-        'exam_date' => 'date',
     ];
 
     /**
@@ -68,44 +61,26 @@ class ExamSubject extends Model
     }
 
     /**
+     * Get the class that this exam subject belongs to.
+     */
+    public function classModel(): BelongsTo
+    {
+        return $this->belongsTo(ClassModel::class, 'class_id');
+    }
+
+    /**
+     * Get the subject details.
+     */
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
+    /**
      * Get the marks for this exam subject.
      */
     public function marks(): HasMany
     {
         return $this->hasMany(Mark::class);
-    }
-
-    /**
-     * Get total maximum marks (theory + practical).
-     */
-    public function getTotalMarksAttribute(): int
-    {
-        return $this->theory_marks + $this->practical_marks;
-    }
-
-    /**
-     * Get formatted exam date and time.
-     */
-    public function getFormattedDateTimeAttribute(): string
-    {
-        if (!$this->exam_date) {
-            return 'Not Scheduled';
-        }
-        
-        $formatted = $this->exam_date->format('d M Y');
-        
-        if ($this->exam_time) {
-            $formatted .= ' at ' . date('h:i A', strtotime($this->exam_time));
-        }
-        
-        return $formatted;
-    }
-
-    /**
-     * Check if practical marks are included.
-     */
-    public function hasPractical(): bool
-    {
-        return $this->practical_marks > 0;
     }
 }

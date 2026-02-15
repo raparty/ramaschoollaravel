@@ -21,31 +21,17 @@ class ExamController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Exam::with('class')->latest();
+        $query = Exam::with('term')->latest();
 
-        // Filter by session
-        if ($request->filled('session')) {
-            $query->forSession($request->session);
-        }
-
-        // Filter by class
-        if ($request->filled('class_id')) {
-            $query->forClass($request->class_id);
-        }
-
-        // Filter by status
-        if ($request->filled('status')) {
-            if ($request->status === 'published') {
-                $query->published();
-            } elseif ($request->status === 'unpublished') {
-                $query->unpublished();
-            }
+        // Filter by term
+        if ($request->filled('term_id')) {
+            $query->forTerm($request->term_id);
         }
 
         $exams = $query->paginate(15);
-        $classes = ClassModel::ordered()->get();
+        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
 
-        return view('exams.index', compact('exams', 'classes'));
+        return view('exams.index', compact('exams', 'terms'));
     }
 
     /**
@@ -53,23 +39,10 @@ class ExamController extends Controller
      */
     public function create()
     {
+        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
         $classes = ClassModel::ordered()->get();
-        
-        // Generate academic year options (last year, current year, next year)
-        $currentYear = date('Y');
-        $academicYears = [];
-        for ($i = -1; $i <= 1; $i++) {
-            $startYear = $currentYear + $i;
-            $endYear = $startYear + 1;
-            $academicYears[] = (object)[
-                'id' => "{$startYear}-{$endYear}",
-                'name' => "{$startYear}-{$endYear}"
-            ];
-        }
-        
-        $currentSession = $academicYears[1]->id; // Current year session
 
-        return view('exams.create', compact('classes', 'academicYears', 'currentSession'));
+        return view('exams.create', compact('terms', 'classes'));
     }
 
     /**
@@ -100,7 +73,7 @@ class ExamController extends Controller
      */
     public function show(Exam $exam)
     {
-        $exam->load(['class', 'examSubjects', 'results']);
+        $exam->load(['term', 'examSubjects.classModel', 'examSubjects.subject']);
         
         return view('exams.show', compact('exam'));
     }
@@ -110,9 +83,10 @@ class ExamController extends Controller
      */
     public function edit(Exam $exam)
     {
+        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
         $classes = ClassModel::ordered()->get();
 
-        return view('exams.edit', compact('exam', 'classes'));
+        return view('exams.edit', compact('exam', 'terms', 'classes'));
     }
 
     /**
@@ -230,7 +204,11 @@ class ExamController extends Controller
 
     /**
      * Publish or unpublish exam results.
+     * 
+     * ⚠️ DISABLED - is_published column doesn't exist in database
+     * Uncomment after adding is_published column to exams table
      */
+    /*
     public function togglePublish(Exam $exam)
     {
         try {
@@ -250,4 +228,5 @@ class ExamController extends Controller
             return back()->with('error', 'Failed to update publish status: ' . $e->getMessage());
         }
     }
+    */
 }

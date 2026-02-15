@@ -86,16 +86,17 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('staff', StaffController::class);
     Route::get('/staff-search', [StaffController::class, 'search'])->name('staff.search');
     
-    // Salary Management
-    Route::prefix('salaries')->name('salaries.')->group(function () {
-        Route::get('/', [SalaryController::class, 'index'])->name('index');
-        Route::get('/process', [SalaryController::class, 'process'])->name('process');
-        Route::post('/store', [SalaryController::class, 'store'])->name('store');
-        Route::post('/generate-bulk', [SalaryController::class, 'generateBulk'])->name('generate-bulk');
-        Route::post('/{salary}/mark-paid', [SalaryController::class, 'markAsPaid'])->name('mark-paid');
-        Route::get('/{salary}/slip', [SalaryController::class, 'slip'])->name('slip');
-        Route::get('/staff/{staff}/history', [SalaryController::class, 'history'])->name('staff-history');
-    });
+    // ⚠️ SALARY MANAGEMENT - DISABLED (staff_salaries table doesn't exist)
+    // To enable: Execute database/schema/missing-tables.sql
+    // Route::prefix('salaries')->name('salaries.')->group(function () {
+    //     Route::get('/', [SalaryController::class, 'index'])->name('index');
+    //     Route::get('/process', [SalaryController::class, 'process'])->name('process');
+    //     Route::post('/store', [SalaryController::class, 'store'])->name('store');
+    //     Route::post('/generate-bulk', [SalaryController::class, 'generateBulk'])->name('generate-bulk');
+    //     Route::post('/{salary}/mark-paid', [SalaryController::class, 'markAsPaid'])->name('mark-paid');
+    //     Route::get('/{salary}/slip', [SalaryController::class, 'slip'])->name('slip');
+    //     Route::get('/staff/{staff}/history', [SalaryController::class, 'history'])->name('staff-history');
+    // });
     
     // Examination Module (Phase 7 / Phase B Week 6-8)
     Route::prefix('exams')->name('exams.')->group(function () {
@@ -115,8 +116,8 @@ Route::middleware(['auth'])->group(function () {
         // Timetable
         Route::get('/{exam}/timetable', [ExamController::class, 'timetable'])->name('timetable');
         
-        // Publish/Unpublish
-        Route::post('/{exam}/toggle-publish', [ExamController::class, 'togglePublish'])->name('toggle-publish');
+        // Publish/Unpublish - DISABLED (is_published column doesn't exist)
+        // Route::post('/{exam}/toggle-publish', [ExamController::class, 'togglePublish'])->name('toggle-publish');
     });
     
     // Mark Entry
@@ -129,15 +130,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/search-students', [MarkController::class, 'searchStudents'])->name('search-students');
     });
     
-    // Results
-    Route::prefix('results')->name('results.')->group(function () {
-        Route::get('/', [ResultController::class, 'index'])->name('index');
-        Route::get('/generate', [ResultController::class, 'generateForm'])->name('generate');
-        Route::post('/generate', [ResultController::class, 'generate'])->name('generate.store');
-        Route::get('/{result}', [ResultController::class, 'view'])->name('view');
-        Route::get('/class/results', [ResultController::class, 'classResults'])->name('class');
-        Route::post('/{result}/toggle-publish', [ResultController::class, 'togglePublish'])->name('toggle-publish');
-    });
+    // ⚠️ RESULTS MODULE - DISABLED (results table doesn't exist)
+    // To enable: Execute database/schema/missing-tables.sql
+    // Route::prefix('results')->name('results.')->group(function () {
+    //     Route::get('/', [ResultController::class, 'index'])->name('index');
+    //     Route::get('/generate', [ResultController::class, 'generateForm'])->name('generate');
+    //     Route::post('/generate', [ResultController::class, 'generate'])->name('generate.store');
+    //     Route::get('/{result}', [ResultController::class, 'view'])->name('view');
+    //     Route::get('/class/results', [ResultController::class, 'classResults'])->name('class');
+    //     Route::post('/{result}/toggle-publish', [ResultController::class, 'togglePublish'])->name('toggle-publish');
+    // });
     
     // Attendance Module (Phase C)
     Route::prefix('attendance')->name('attendance.')->group(function () {

@@ -28,13 +28,9 @@ class StoreExamRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'class_id' => ['required', 'integer', 'exists:classes,id'],
-            'session' => ['required', 'string', 'max:50'],
+            'term_id' => ['required', 'integer', 'exists:terms,id'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'total_marks' => ['nullable', 'integer', 'min:0'],
-            'pass_marks' => ['nullable', 'integer', 'min:0'],
-            'description' => ['nullable', 'string', 'max:1000'],
         ];
     }
 
@@ -47,9 +43,8 @@ class StoreExamRequest extends FormRequest
     {
         return [
             'name.required' => 'Exam name is required.',
-            'class_id.required' => 'Please select a class.',
-            'class_id.exists' => 'Selected class does not exist.',
-            'session.required' => 'Academic session is required.',
+            'term_id.required' => 'Please select an academic term.',
+            'term_id.exists' => 'Selected term does not exist.',
             'start_date.required' => 'Start date is required.',
             'end_date.required' => 'End date is required.',
             'end_date.after_or_equal' => 'End date must be after or equal to start date.',

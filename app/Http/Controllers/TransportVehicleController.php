@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TransportVehicle;
 use App\Models\TransportRoute;
+use App\Models\TransportDriver;
 use Illuminate\Http\Request;
 
 /**
@@ -18,7 +19,7 @@ class TransportVehicleController extends Controller
      */
     public function index(Request $request)
     {
-        $query = TransportVehicle::query();
+        $query = TransportVehicle::query()->with('driver');
 
         // Search
         if ($request->filled('search')) {
@@ -36,7 +37,8 @@ class TransportVehicleController extends Controller
     public function create()
     {
         $routes = TransportRoute::ordered()->get();
-        return view('transport.vehicles.create', compact('routes'));
+        $drivers = TransportDriver::where('status', 'active')->ordered()->get();
+        return view('transport.vehicles.create', compact('routes', 'drivers'));
     }
 
     /**
@@ -49,6 +51,11 @@ class TransportVehicleController extends Controller
             'no_of_seats' => 'required|integer|min:1|max:100',
             'route_id' => 'nullable|array',
             'route_id.*' => 'exists:transport_add_route,route_id',
+            'driver_id' => 'nullable|exists:transport_drivers,driver_id',
+            'insurance_number' => 'nullable|string|max:100',
+            'insurance_expiry' => 'nullable|date',
+            'permit_number' => 'nullable|string|max:100',
+            'permit_expiry' => 'nullable|date',
         ]);
 
         // Convert route array to comma-separated string (legacy format)
@@ -70,11 +77,12 @@ class TransportVehicleController extends Controller
     public function edit(TransportVehicle $vehicle)
     {
         $routes = TransportRoute::ordered()->get();
+        $drivers = TransportDriver::where('status', 'active')->ordered()->get();
         
         // Convert comma-separated route IDs to array for checkbox selection
         $selectedRoutes = !empty($vehicle->route_id) ? explode(',', $vehicle->route_id) : [];
         
-        return view('transport.vehicles.edit', compact('vehicle', 'routes', 'selectedRoutes'));
+        return view('transport.vehicles.edit', compact('vehicle', 'routes', 'drivers', 'selectedRoutes'));
     }
 
     /**
@@ -87,6 +95,11 @@ class TransportVehicleController extends Controller
             'no_of_seats' => 'required|integer|min:1|max:100',
             'route_id' => 'nullable|array',
             'route_id.*' => 'exists:transport_add_route,route_id',
+            'driver_id' => 'nullable|exists:transport_drivers,driver_id',
+            'insurance_number' => 'nullable|string|max:100',
+            'insurance_expiry' => 'nullable|date',
+            'permit_number' => 'nullable|string|max:100',
+            'permit_expiry' => 'nullable|date',
         ]);
 
         // Convert route array to comma-separated string (legacy format)

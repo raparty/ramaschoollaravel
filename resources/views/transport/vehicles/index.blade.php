@@ -50,6 +50,7 @@
                             <tr>
                                 <th style="width: 80px;">S.No.</th>
                                 <th>Vehicle Number</th>
+                                <th>Driver</th>
                                 <th>Routes Assigned</th>
                                 <th style="width: 150px;" class="text-center">Seats</th>
                                 <th style="width: 150px;" class="text-center">Available</th>
@@ -62,6 +63,16 @@
                                 <td>{{ $vehicles->firstItem() + $index }}</td>
                                 <td>
                                     <strong>{{ $vehicle->vechile_no }}</strong>
+                                </td>
+                                <td>
+                                    @if($vehicle->driver)
+                                        <span class="text-success">{{ $vehicle->driver->driver_name }}</span>
+                                        @if($vehicle->driver->contact_number)
+                                            <br><small class="text-muted">{{ $vehicle->driver->contact_number }}</small>
+                                        @endif
+                                    @else
+                                        <span class="text-muted fst-italic">No driver assigned</span>
+                                    @endif
                                 </td>
                                 <td>
                                     @if($vehicle->route_names)

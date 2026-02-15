@@ -30,6 +30,7 @@ use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\StaffLeaveController;
 use App\Http\Controllers\TransportRouteController;
 use App\Http\Controllers\TransportVehicleController;
+use App\Http\Controllers\TransportDriverController;
 use App\Http\Controllers\TransportStudentController;
 
 /*
@@ -243,6 +244,9 @@ Route::middleware(['auth'])->group(function () {
         
         // Routes Management
         Route::resource('routes', TransportRouteController::class)->except(['show']);
+        
+        // Drivers Management
+        Route::resource('drivers', TransportDriverController::class)->except(['show']);
         
         // Vehicles Management
         Route::resource('vehicles', TransportVehicleController::class)->except(['show']);

@@ -8,6 +8,7 @@ use App\Models\ExamSubject;
 use App\Models\ClassModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 /**
  * ExamController
@@ -21,17 +22,29 @@ class ExamController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Exam::with('term')->latest();
+        try {
+            $query = Exam::with('term')->latest();
 
-        // Filter by term
-        if ($request->filled('term_id')) {
-            $query->forTerm($request->term_id);
+            // Filter by term
+            if ($request->filled('term_id')) {
+                $query->forTerm($request->term_id);
+            }
+
+            $exams = $query->paginate(15);
+            $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
+
+            return view('exams.index', compact('exams', 'terms'));
+        } catch (QueryException $e) {
+            // Check if the error is due to missing tables
+            if (str_contains($e->getMessage(), "doesn't exist") || str_contains($e->getMessage(), 'Base table or view not found')) {
+                return back()->with('error', 
+                    'Database tables are not set up. Please run migrations first using: php artisan migrate'
+                );
+            }
+            
+            // Re-throw other database errors
+            throw $e;
         }
-
-        $exams = $query->paginate(15);
-        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
-
-        return view('exams.index', compact('exams', 'terms'));
     }
 
     /**
@@ -39,10 +52,22 @@ class ExamController extends Controller
      */
     public function create()
     {
-        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
-        $classes = ClassModel::ordered()->get();
+        try {
+            $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
+            $classes = ClassModel::ordered()->get();
 
-        return view('exams.create', compact('terms', 'classes'));
+            return view('exams.create', compact('terms', 'classes'));
+        } catch (QueryException $e) {
+            // Check if the error is due to missing tables
+            if (str_contains($e->getMessage(), "doesn't exist") || str_contains($e->getMessage(), 'Base table or view not found')) {
+                return back()->with('error', 
+                    'Database tables are not set up. Please run migrations first using: php artisan migrate'
+                );
+            }
+            
+            // Re-throw other database errors
+            throw $e;
+        }
     }
 
     /**
@@ -83,10 +108,22 @@ class ExamController extends Controller
      */
     public function edit(Exam $exam)
     {
-        $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
-        $classes = ClassModel::ordered()->get();
+        try {
+            $terms = \App\Models\Term::orderBy('start_date', 'desc')->get();
+            $classes = ClassModel::ordered()->get();
 
-        return view('exams.edit', compact('exam', 'terms', 'classes'));
+            return view('exams.edit', compact('exam', 'terms', 'classes'));
+        } catch (QueryException $e) {
+            // Check if the error is due to missing tables
+            if (str_contains($e->getMessage(), "doesn't exist") || str_contains($e->getMessage(), 'Base table or view not found')) {
+                return back()->with('error', 
+                    'Database tables are not set up. Please run migrations first using: php artisan migrate'
+                );
+            }
+            
+            // Re-throw other database errors
+            throw $e;
+        }
     }
 
     /**

@@ -108,19 +108,25 @@ class Staff extends Model
 
     /**
      * Scope: Active staff.
-     * If 'status' column is missing in legacy DB, this returns all records.
+     * Note: The legacy DB doesn't have a 'status' column, so this returns all records.
+     * If a status column is added in the future, update this scope accordingly.
      */
     public function scopeActive($query)
     {
-        return $query->where('status', 'active')->orWhereRaw('1=1');
+        // Check if the status column exists by trying to use it
+        // For now, return all records since legacy DB doesn't have status column
+        return $query;
     }
 
     /**
      * Scope: Inactive staff.
+     * Note: The legacy DB doesn't have a 'status' column, so this returns no records.
+     * If a status column is added in the future, update this scope accordingly.
      */
     public function scopeInactive($query)
     {
-        return $query->where('status', 'inactive');
+        // Return empty result since legacy DB doesn't have status column
+        return $query->whereRaw('1=0');
     }
 
     /**

@@ -36,20 +36,25 @@ class TransferCertificateController extends Controller
      */
     public function search(Request $request)
     {
-        // Validate input
+        // Validate input - at least one search criterion required
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'class_id' => 'nullable|integer|exists:classes,id',
         ]);
 
+        // Require at least one search criterion
+        if (empty($validated['name']) && empty($validated['class_id'])) {
+            return redirect()->route('transfer-certificate.index')
+                ->withErrors(['search' => 'Please provide at least one search criterion (name or class).']);
+        }
+
         $classes = ClassModel::orderBy('name')->get();
         
         $query = Admission::with('class');
 
-        // Filter by name if provided (use addcslashes to escape LIKE wildcards)
+        // Filter by name if provided (Laravel handles SQL injection via parameter binding)
         if ($request->filled('name')) {
-            $searchName = addcslashes($validated['name'], '%_');
-            $query->where('student_name', 'like', '%' . $searchName . '%');
+            $query->where('student_name', 'like', '%' . $validated['name'] . '%');
         }
 
         // Filter by class if provided
@@ -57,17 +62,21 @@ class TransferCertificateController extends Controller
             $query->where('class_id', $validated['class_id']);
         }
 
-        // Get total count before limiting
-        $totalCount = $query->count();
+        // Get students with limit + 1 to check if there are more results
+        $students = $query->orderBy('student_name')->limit(self::SEARCH_RESULT_LIMIT + 1)->get();
         
-        // Get students with limit to prevent overwhelming the page
-        $students = $query->orderBy('student_name')->limit(self::SEARCH_RESULT_LIMIT)->get();
+        // Check if results were limited
+        $isLimited = $students->count() > self::SEARCH_RESULT_LIMIT;
+        
+        // If limited, remove the extra record
+        if ($isLimited) {
+            $students = $students->take(self::SEARCH_RESULT_LIMIT);
+        }
 
         return view('transfer-certificate.index', [
             'classes' => $classes,
             'students' => $students,
-            'totalCount' => $totalCount,
-            'isLimited' => $totalCount > self::SEARCH_RESULT_LIMIT,
+            'isLimited' => $isLimited,
         ]);
     }
 

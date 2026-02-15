@@ -46,6 +46,13 @@
                                     <i class="bi bi-people"></i> Search by Student Name
                                 </h6>
                                 <form action="{{ route('transfer-certificate.search') }}" method="GET" class="mt-3">
+                                    @if($errors->has('search'))
+                                        <div class="alert alert-warning alert-dismissible fade show">
+                                            {{ $errors->first('search') }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    @endif
+                                    
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Student Name <span class="text-muted">(Optional)</span></label>
                                         <input 
@@ -56,7 +63,7 @@
                                             placeholder="Enter student name to search"
                                             value="{{ request('name') }}"
                                         >
-                                        <small class="form-text text-muted">Leave blank to search all students</small>
+                                        <small class="form-text text-muted">Provide name and/or class to search</small>
                                     </div>
                                     <div class="mb-3">
                                         <label for="class_id" class="form-label">Class <span class="text-muted">(Optional)</span></label>
@@ -81,13 +88,13 @@
                 @if(isset($students) && count($students) > 0)
                     <div class="card mt-4">
                         <div class="card-header">
-                            <h6 class="mb-0">Search Results ({{ count($students) }} student(s) found)</h6>
+                            <h6 class="mb-0">Search Results ({{ count($students) }} student(s) displayed)</h6>
                         </div>
                         <div class="card-body">
                             @if(isset($isLimited) && $isLimited)
                                 <div class="alert alert-info mb-3">
                                     <i class="bi bi-info-circle"></i> 
-                                    Showing first {{ count($students) }} of {{ $totalCount ?? 0 }} matching students. 
+                                    Showing first {{ count($students) }} results. More students match your search. 
                                     Please refine your search criteria to see more specific results.
                                 </div>
                             @endif

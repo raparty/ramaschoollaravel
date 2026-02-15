@@ -65,6 +65,22 @@ class Exam extends Model
     }
 
     /**
+     * Get the results for this exam.
+     * 
+     * ⚠️ Note: The 'results' table doesn't exist yet in the database.
+     * This relationship is defined to prevent errors in ExamController.
+     * The Result model exists in the same namespace (App\Models).
+     * 
+     * TODO: The results table needs to be created via migration. Once created,
+     * this relationship will work properly and the error handling in 
+     * ExamController::destroy() can be removed.
+     */
+    public function results(): HasMany
+    {
+        return $this->hasMany(Result::class);
+    }
+
+    /**
      * Scope to get exams for a specific term.
      */
     public function scopeForTerm($query, int $termId)

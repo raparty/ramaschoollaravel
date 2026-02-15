@@ -50,6 +50,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('admissions', AdmissionController::class);
     Route::get('/admissions/search', [AdmissionController::class, 'search'])->name('admissions.search');
     Route::get('/admissions/{admission}/check-regno', [AdmissionController::class, 'checkRegNo'])->name('admissions.check-regno');
+    
+    // Transfer Certificate
+    Route::get('/transfer-certificate/{regNo}', [App\Http\Controllers\TransferCertificateController::class, 'show'])->name('transfer-certificate.show');
 
     // Fee Management (Phase 4)
     Route::resource('fee-packages', FeePackageController::class);

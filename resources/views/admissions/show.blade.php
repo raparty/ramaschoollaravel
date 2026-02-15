@@ -9,6 +9,9 @@
         <p class="text-muted mb-0">Registration No: <strong>{{ $admission->reg_no }}</strong></p>
     </div>
     <div class="btn-group">
+        <a href="{{ route('transfer-certificate.show', $admission->reg_no) }}" class="btn btn-info">
+            📄 Transfer Certificate
+        </a>
         <a href="{{ route('admissions.edit', $admission) }}" class="btn btn-warning">
             ✏️ Edit
         </a>

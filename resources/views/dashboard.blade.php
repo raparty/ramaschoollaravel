@@ -136,12 +136,12 @@
                         </a>
                     </div>
                     <div class="col-md-3">
-                        <a href="#" class="btn btn-outline-primary w-100">
+                        <a href="{{ route('library.books.index') }}" class="btn btn-outline-primary w-100">
                             📚 Library Management
                         </a>
                     </div>
                     <div class="col-md-3">
-                        <a href="#" class="btn btn-outline-primary w-100">
+                        <a href="{{ route('reports.attendance.index') }}" class="btn btn-outline-primary w-100">
                             📊 Reports
                         </a>
                     </div>

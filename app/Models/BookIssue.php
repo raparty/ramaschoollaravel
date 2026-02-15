@@ -149,4 +149,39 @@ class BookIssue extends Model
     {
         return $this->return_date ? $this->return_date->format('d-M-Y') : 'Not Returned';
     }
+
+    /**
+     * Get the number of days overdue.
+     */
+    public function getDaysOverdueAttribute(): int
+    {
+        if (!$this->due_date || $this->return_date) {
+            return 0;
+        }
+
+        $dueDate = Carbon::parse($this->due_date);
+        $today = Carbon::today();
+
+        if ($today->lte($dueDate)) {
+            return 0;
+        }
+
+        return $today->diffInDays($dueDate);
+    }
+
+    /**
+     * Calculate fine for overdue book.
+     * Fine rate: ₹5 per day
+     */
+    public function calculateFine(): float
+    {
+        $daysOverdue = $this->days_overdue;
+        
+        if ($daysOverdue <= 0) {
+            return 0;
+        }
+
+        // ₹5 per day fine
+        return $daysOverdue * 5;
+    }
 }

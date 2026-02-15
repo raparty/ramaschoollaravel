@@ -25,7 +25,7 @@
                 <p class="text-muted mb-0">Students Affected</p>
             </div>
             <div class="col-md-3">
-                <h3 class="text-primary mb-0">{{ $overdueIssues->unique('book_id')->count() }}</h3>
+                <h3 class="text-primary mb-0">{{ $overdueIssues->unique('book_number')->count() }}</h3>
                 <p class="text-muted mb-0">Different Books</p>
             </div>
         </div>

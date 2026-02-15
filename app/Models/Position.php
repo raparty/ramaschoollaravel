@@ -31,15 +31,9 @@ class Position extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'staff_position',
+        'name',
+        'description',
     ];
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
 
     /**
      * Get all staff with this position.
@@ -51,11 +45,5 @@ class Position extends Model
         return $this->hasMany(Staff::class, 'pos_id');
     }
 
-    /**
-     * Get the position name.
-     */
-    public function getNameAttribute(): string
-    {
-        return $this->staff_position;
-    }
+
 }

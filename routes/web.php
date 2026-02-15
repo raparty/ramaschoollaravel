@@ -89,6 +89,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('staff', StaffController::class);
     Route::get('/staff-search', [StaffController::class, 'search'])->name('staff.search');
     
+    // Staff Departments & Positions
+    Route::resource('departments', DepartmentController::class);
+    Route::resource('positions', PositionController::class);
+    
     // ⚠️ SALARY MANAGEMENT - DISABLED (staff_salaries table doesn't exist)
     // To enable: Execute database/schema/missing-tables.sql
     // Route::prefix('salaries')->name('salaries.')->group(function () {

@@ -141,7 +141,22 @@
             <a class="nav-link {{ request()->routeIs('library.*') ? 'active' : '' }}" href="{{ route('library.books.index') }}">📚 Library</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('staff.*') ? 'active' : '' }}" href="{{ route('staff.index') }}">👥 Staff</a>
+            <a class="nav-link {{ request()->routeIs('staff.*') || request()->routeIs('departments.*') || request()->routeIs('positions.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#staffSubmenu" role="button" aria-expanded="{{ request()->routeIs('staff.*') || request()->routeIs('departments.*') || request()->routeIs('positions.*') ? 'true' : 'false' }}" aria-controls="staffSubmenu">
+                👥 Staff <i class="bi bi-chevron-down float-end" aria-hidden="true"></i>
+            </a>
+            <div class="collapse {{ request()->routeIs('staff.*') || request()->routeIs('departments.*') || request()->routeIs('positions.*') ? 'show' : '' }}" id="staffSubmenu">
+                <ul class="nav flex-column submenu">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('staff.*') && !request()->routeIs('staff-search') ? 'active' : '' }}" href="{{ route('staff.index') }}">👤 Staff Members</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('departments.*') ? 'active' : '' }}" href="{{ route('departments.index') }}">🏢 Departments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('positions.*') ? 'active' : '' }}" href="{{ route('positions.index') }}">💼 Positions</a>
+                    </li>
+                </ul>
+            </div>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('exams.*') ? 'active' : '' }}" href="{{ route('exams.index') }}">📝 Exams</a>

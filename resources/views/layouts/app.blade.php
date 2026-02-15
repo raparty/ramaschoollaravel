@@ -118,16 +118,16 @@
             <a class="nav-link {{ request()->routeIs('exams.*') ? 'active' : '' }}" href="{{ route('exams.index') }}">📝 Exams</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('transport.*') ? 'active' : '' }}" href="#">🚌 Transport</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('reports.accounts.*') ? 'active' : '' }}" href="{{ route('reports.accounts.index') }}">📊 Accounts</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('attendance.*') ? 'active' : '' }}" href="{{ route('attendance.index') }}">📅 Attendance</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('dashboard') }}">⚙️ Settings</a>
+            <a class="nav-link {{ request()->routeIs('reports.accounts.*') || request()->routeIs('categories.*') || request()->routeIs('income.*') || request()->routeIs('expenses.*') ? 'active' : '' }}" href="{{ route('reports.accounts.index') }}">💼 Accounts</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-muted" href="#" onclick="alert('Transport module coming soon!'); return false;">🚌 Transport</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-muted" href="#" onclick="alert('Settings module coming soon!'); return false;">⚙️ Settings</a>
         </li>
     </ul>
 </nav>

@@ -64,7 +64,7 @@
                                 <td>{{ $issue->student->class->name ?? 'N/A' }}</td>
                                 <td>
                                     <strong>{{ $issue->book->book_name }}</strong><br>
-                                    <small class="text-muted">{{ $issue->book->author_name }}</small>
+                                    <small class="text-muted">{{ $issue->book->book_author }}</small>
                                 </td>
                                 <td>{{ $issue->issue_date->format('d M Y') }}</td>
                                 <td>{{ $issue->due_date->format('d M Y') }}</td>

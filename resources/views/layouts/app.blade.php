@@ -107,6 +107,9 @@
             <a class="nav-link {{ request()->routeIs('admissions.*') ? 'active' : '' }}" href="{{ route('admissions.index') }}">👨‍🎓 Students</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('transfer-certificate.*') ? 'active' : '' }}" href="{{ route('transfer-certificate.index') }}">📄 Transfer Certificate</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('fee-packages.*') || request()->routeIs('fees.*') ? 'active' : '' }}" href="{{ route('fee-packages.index') }}">💰 Fees</a>
         </li>
         <li class="nav-item">

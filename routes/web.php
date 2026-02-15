@@ -52,6 +52,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admissions/{admission}/check-regno', [AdmissionController::class, 'checkRegNo'])->name('admissions.check-regno');
     
     // Transfer Certificate
+    Route::get('/transfer-certificate', [App\Http\Controllers\TransferCertificateController::class, 'index'])->name('transfer-certificate.index');
+    Route::get('/transfer-certificate/search', [App\Http\Controllers\TransferCertificateController::class, 'search'])->name('transfer-certificate.search');
+    Route::get('/transfer-certificate/show-by-regno', [App\Http\Controllers\TransferCertificateController::class, 'showByRegNo'])->name('transfer-certificate.show-by-regno');
     Route::get('/transfer-certificate/{regNo}', [App\Http\Controllers\TransferCertificateController::class, 'show'])->name('transfer-certificate.show');
 
     // Fee Management (Phase 4)

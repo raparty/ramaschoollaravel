@@ -28,10 +28,13 @@ class Admission extends Model {
      */
     public function scopeSearch($query, $search)
     {
-        return $query->where(function($q) use ($search) {
-            $q->where('student_name', 'like', "%{$search}%")
-              ->orWhere('reg_no', 'like', "%{$search}%")
-              ->orWhere('guardian_name', 'like', "%{$search}%");
+        // Escape wildcard characters in user input
+        $escapedSearch = str_replace(['%', '_'], ['\%', '\_'], $search);
+        
+        return $query->where(function($q) use ($escapedSearch) {
+            $q->where('student_name', 'like', "%{$escapedSearch}%")
+              ->orWhere('reg_no', 'like', "%{$escapedSearch}%")
+              ->orWhere('guardian_name', 'like', "%{$escapedSearch}%");
         });
     }
 
@@ -40,6 +43,10 @@ class Admission extends Model {
      */
     public function scopeInClass($query, $classId)
     {
+        if (empty($classId)) {
+            return $query;
+        }
+        
         return $query->where('class_id', $classId);
     }
 

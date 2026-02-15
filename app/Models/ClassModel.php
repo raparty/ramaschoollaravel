@@ -72,7 +72,7 @@ class ClassModel extends Model
      * Accessor: Get name attribute (alias for class_name)
      * Used for consistency across views
      */
-    public function getNameAttribute(): string
+    public function getNameAttribute(): ?string
     {
         return $this->class_name;
     }

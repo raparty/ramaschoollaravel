@@ -54,7 +54,10 @@
                                     @endif
                                     
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Student Name <span class="text-muted">(Optional)</span></label>
+                                        <label for="name" class="form-label">
+                                            Student Name 
+                                            <span class="text-muted" aria-label="Optional field">(Optional)</span>
+                                        </label>
                                         <input 
                                             type="text" 
                                             class="form-control" 
@@ -62,11 +65,15 @@
                                             name="name" 
                                             placeholder="Enter student name to search"
                                             value="{{ request('name') }}"
+                                            aria-describedby="nameHelp"
                                         >
-                                        <small class="form-text text-muted">Provide name and/or class to search</small>
+                                        <small id="nameHelp" class="form-text text-muted">Provide name and/or class to search</small>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="class_id" class="form-label">Class <span class="text-muted">(Optional)</span></label>
+                                        <label for="class_id" class="form-label">
+                                            Class 
+                                            <span class="text-muted" aria-label="Optional field">(Optional)</span>
+                                        </label>
                                         <select class="form-select" id="class_id" name="class_id">
                                             <option value="">-- Select Class --</option>
                                             @foreach($classes as $class)

@@ -46,9 +46,9 @@ class TransferCertificateController extends Controller
         
         $query = Admission::with('class');
 
-        // Filter by name if provided (escape special LIKE characters)
+        // Filter by name if provided (use addcslashes to escape LIKE wildcards)
         if ($request->filled('name')) {
-            $searchName = str_replace(['%', '_'], ['\%', '\_'], $validated['name']);
+            $searchName = addcslashes($validated['name'], '%_');
             $query->where('student_name', 'like', '%' . $searchName . '%');
         }
 
@@ -57,12 +57,17 @@ class TransferCertificateController extends Controller
             $query->where('class_id', $validated['class_id']);
         }
 
+        // Get total count before limiting
+        $totalCount = $query->count();
+        
         // Get students with limit to prevent overwhelming the page
         $students = $query->orderBy('student_name')->limit(self::SEARCH_RESULT_LIMIT)->get();
 
         return view('transfer-certificate.index', [
             'classes' => $classes,
             'students' => $students,
+            'totalCount' => $totalCount,
+            'isLimited' => $totalCount > self::SEARCH_RESULT_LIMIT,
         ]);
     }
 

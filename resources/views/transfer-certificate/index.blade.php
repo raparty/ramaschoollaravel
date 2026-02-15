@@ -47,7 +47,7 @@
                                 </h6>
                                 <form action="{{ route('transfer-certificate.search') }}" method="GET" class="mt-3">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Student Name</label>
+                                        <label for="name" class="form-label">Student Name <span class="text-muted">(Optional)</span></label>
                                         <input 
                                             type="text" 
                                             class="form-control" 
@@ -56,9 +56,10 @@
                                             placeholder="Enter student name to search"
                                             value="{{ request('name') }}"
                                         >
+                                        <small class="form-text text-muted">Leave blank to search all students</small>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="class_id" class="form-label">Class (Optional)</label>
+                                        <label for="class_id" class="form-label">Class <span class="text-muted">(Optional)</span></label>
                                         <select class="form-select" id="class_id" name="class_id">
                                             <option value="">-- Select Class --</option>
                                             @foreach($classes as $class)
@@ -83,6 +84,13 @@
                             <h6 class="mb-0">Search Results ({{ count($students) }} student(s) found)</h6>
                         </div>
                         <div class="card-body">
+                            @if(isset($isLimited) && $isLimited)
+                                <div class="alert alert-info mb-3">
+                                    <i class="bi bi-info-circle"></i> 
+                                    Showing first {{ count($students) }} of {{ $totalCount ?? 0 }} matching students. 
+                                    Please refine your search criteria to see more specific results.
+                                </div>
+                            @endif
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <thead>

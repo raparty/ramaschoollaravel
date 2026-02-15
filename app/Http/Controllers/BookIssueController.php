@@ -48,7 +48,7 @@ class BookIssueController extends Controller
 
         $validated = $request->validate([
             'registration_no' => 'required|exists:admissions,reg_no',
-            'book_id' => 'required|exists:books,id',
+            'book_id' => 'required|exists:book_manager,book_id',
             'issue_date' => 'required|date',
             'due_date' => 'required|date|after:issue_date',
         ]);
@@ -66,9 +66,17 @@ class BookIssueController extends Controller
                     ->with('error', 'This book is not available. All copies are currently issued.');
             }
 
-            // Create book issue record
-            $validated['issue_by'] = auth()->user()->name ?? 'Admin';
-            $issue = BookIssue::create($validated);
+            // Create book issue record using book_number instead of book_id
+            $issueData = [
+                'registration_no' => $validated['registration_no'],
+                'book_number' => $book->book_number,
+                'issue_date' => $validated['issue_date'],
+                'due_date' => $validated['due_date'],
+                'booking_status' => '1',
+                'session' => date('Y') . '-' . (date('Y') + 1),
+            ];
+            
+            $issue = BookIssue::create($issueData);
 
             DB::commit();
 
@@ -121,7 +129,7 @@ class BookIssueController extends Controller
         $this->authorize('return-library');
 
         $validated = $request->validate([
-            'issue_id' => 'required|exists:student_books,id',
+            'issue_id' => 'required|exists:student_books_details,id',
             'return_date' => 'required|date',
             'fine_amount' => 'nullable|numeric|min:0',
         ]);
@@ -228,7 +236,7 @@ class BookIssueController extends Controller
 
         $validated = $request->validate([
             'registration_no' => 'required|exists:admissions,reg_no',
-            'book_issue_id' => 'required|exists:student_books,id',
+            'book_issue_id' => 'required|exists:student_books_details,id',
             'fine_amount' => 'required|numeric|min:0',
         ]);
 

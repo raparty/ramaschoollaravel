@@ -58,6 +58,17 @@ class Book extends Model
     ];
 
     /**
+     * Relationship: Get all book issues.
+     * Maps to 'student_books_details' using 'book_number'.
+     */
+    public function issues(): HasMany
+    {
+        // Foreign Key: 'book_number' in student_books_details
+        // Local Key: 'book_number' in book_manager
+        return $this->hasMany(BookIssue::class, 'book_number', 'book_number');
+    }
+
+    /**
      * Relationship: Get active (not returned) issues.
      * Maps to 'student_books_details' using 'book_number'.
      */
@@ -107,5 +118,16 @@ class Book extends Model
               ->orWhere('book_author', 'LIKE', "%{$search}%")
               ->orWhere('book_number', 'LIKE', "%{$search}%");
         });
+    }
+
+    /**
+     * Scope: Filter by category.
+     */
+    public function scopeByCategory($query, $categoryId)
+    {
+        if (empty($categoryId)) {
+            return $query;
+        }
+        return $query->where('book_category_id', $categoryId);
     }
 }

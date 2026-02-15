@@ -2,6 +2,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Admission extends Model {
     protected $table = 'admissions';
@@ -21,6 +22,30 @@ class Admission extends Model {
     public function class(): BelongsTo
     {
         return $this->belongsTo(ClassModel::class, 'class_id');
+    }
+
+    /**
+     * Get the fees for this student.
+     */
+    public function fees(): HasMany
+    {
+        return $this->hasMany(StudentFee::class, 'registration_no', 'reg_no');
+    }
+
+    /**
+     * Get the transport fees for this student.
+     */
+    public function transportFees(): HasMany
+    {
+        return $this->hasMany(StudentTransportFee::class, 'registration_no', 'reg_no');
+    }
+
+    /**
+     * Get the library books issued to this student.
+     */
+    public function libraryBooks(): HasMany
+    {
+        return $this->hasMany(BookIssue::class, 'registration_no', 'reg_no');
     }
 
     /**

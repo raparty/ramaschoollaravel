@@ -25,7 +25,7 @@ class AttendanceReportController extends Controller
      */
     public function index(): View
     {
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
         
         return view('reports.attendance.index', compact('classes'));
     }
@@ -111,8 +111,7 @@ class AttendanceReportController extends Controller
         
         $class = ClassModel::findOrFail($classId);
         $students = Admission::where('class_id', $classId)
-            ->where('status', 'active')
-            ->orderBy('name')
+            ->orderBy('student_name')
             ->get();
         
         // Calculate attendance for each student
@@ -163,7 +162,7 @@ class AttendanceReportController extends Controller
         $startDate = Carbon::create($year, $month, 1)->startOfMonth()->toDateString();
         $endDate = Carbon::create($year, $month, 1)->endOfMonth()->toDateString();
         
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
         $class = $classId ? ClassModel::findOrFail($classId) : null;
         
         // Get daily attendance statistics for the month
@@ -218,7 +217,7 @@ class AttendanceReportController extends Controller
         $endDate = $request->input('end_date');
         $classId = $request->input('class_id');
         
-        $classes = ClassModel::orderBy('name')->get();
+        $classes = ClassModel::ordered()->get();
         $class = $classId ? ClassModel::findOrFail($classId) : null;
         
         // Get daily attendance for the range

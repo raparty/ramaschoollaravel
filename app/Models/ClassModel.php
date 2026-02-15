@@ -65,7 +65,7 @@ class ClassModel extends Model
      */
     public function scopeOrdered($query)
     {
-        return $query->orderBy('id', 'asc');
+        return $query->orderBy('class_name', 'asc');
     }
 
     /**

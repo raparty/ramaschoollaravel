@@ -42,11 +42,10 @@ class MarkController extends Controller
 
         // Get students for this class
         $students = Admission::where('class_id', $exam->class_id)
-            ->where('status', 'active')
             ->with(['marks' => function ($query) use ($request) {
                 $query->where('exam_subject_id', $request->exam_subject_id);
             }])
-            ->orderBy('name')
+            ->orderBy('student_name')
             ->get();
 
         return view('marks.entry', compact('examSubject', 'students', 'exam'));
@@ -174,13 +173,13 @@ class MarkController extends Controller
      */
     public function searchStudents(Request $request)
     {
-        $query = Admission::where('status', 'active');
+        $query = Admission::query();
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('regno', 'like', "%{$search}%");
+                $q->where('student_name', 'like', "%{$search}%")
+                  ->orWhere('reg_no', 'like', "%{$search}%");
             });
         }
 

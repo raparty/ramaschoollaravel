@@ -39,6 +39,7 @@ class BookIssue extends Model
         'registration_no',
         'book_number',
         'issue_date',
+        'due_date',
         'return_date',
         'booking_status',
         'session',
@@ -120,6 +121,16 @@ class BookIssue extends Model
     public function scopeForSession($query, string $session)
     {
         return $query->where('session', $session);
+    }
+
+    /**
+     * Scope: Overdue books (past due date and not returned).
+     */
+    public function scopeOverdue($query)
+    {
+        return $query->where('booking_status', '1')
+                    ->whereNull('return_date')
+                    ->where('due_date', '<', now());
     }
 
     /**

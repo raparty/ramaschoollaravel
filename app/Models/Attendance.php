@@ -92,7 +92,7 @@ class Attendance extends Model {
      */
     public function isPresent(): bool
     {
-        return in_array($this->status, [self::STATUS_PRESENT, self::STATUS_LATE, 'Half Day']);
+        return in_array($this->status, [self::STATUS_PRESENT, self::STATUS_LATE, self::STATUS_HALF_DAY]);
     }
     
     /**

@@ -37,7 +37,7 @@ return new class extends Migration
                 $table->increments('id');
                 $table->string('registration_no', 50);
                 $table->unsignedInteger('route_id');
-                $table->unsignedInteger('vechile_id');
+                $table->unsignedInteger('vehicle_id'); // Note: Correct spelling in this table
                 $table->integer('class_id')->nullable();
                 $table->integer('stream_id')->nullable();
                 $table->string('session', 50);
@@ -45,7 +45,7 @@ return new class extends Migration
                 // Add indexes for better performance
                 $table->index('registration_no');
                 $table->index('route_id');
-                $table->index('vechile_id');
+                $table->index('vehicle_id');
                 $table->index('session');
             });
         }

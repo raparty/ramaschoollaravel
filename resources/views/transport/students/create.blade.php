@@ -64,19 +64,19 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="vechile_id" class="form-label">Vehicle <span class="text-danger">*</span></label>
-                            <select class="form-select @error('vechile_id') is-invalid @enderror" 
-                                    id="vechile_id" 
-                                    name="vechile_id" 
+                            <label for="vehicle_id" class="form-label">Vehicle <span class="text-danger">*</span></label>
+                            <select class="form-select @error('vehicle_id') is-invalid @enderror" 
+                                    id="vehicle_id" 
+                                    name="vehicle_id" 
                                     required>
                                 <option value="">-- Select Vehicle --</option>
                                 @foreach($vehicles as $vehicle)
-                                    <option value="{{ $vehicle->vechile_id }}" {{ old('vechile_id') == $vehicle->vechile_id ? 'selected' : '' }}>
+                                    <option value="{{ $vehicle->vechile_id }}" {{ old('vehicle_id') == $vehicle->vechile_id ? 'selected' : '' }}>
                                         {{ $vehicle->vechile_no }} ({{ $vehicle->available_seats }} seats available)
                                     </option>
                                 @endforeach
                             </select>
-                            @error('vechile_id')
+                            @error('vehicle_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

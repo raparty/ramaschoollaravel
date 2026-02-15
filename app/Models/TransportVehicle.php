@@ -57,7 +57,7 @@ class TransportVehicle extends Model
      */
     public function studentAssignments(): HasMany
     {
-        return $this->hasMany(TransportStudentAssignment::class, 'vechile_id', 'vechile_id');
+        return $this->hasMany(TransportStudentAssignment::class, 'vehicle_id', 'vechile_id');
     }
 
     /**

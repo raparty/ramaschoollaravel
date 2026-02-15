@@ -98,7 +98,7 @@ class TransportStudentController extends Controller
         $validated = $request->validate([
             'registration_no' => 'required|string|exists:admissions,reg_no',
             'route_id' => 'required|exists:transport_add_route,route_id',
-            'vechile_id' => 'required|exists:transport_add_vechile,vechile_id',
+            'vehicle_id' => 'required|exists:transport_add_vechile,vechile_id',
             'class_id' => 'nullable|integer',
             'stream_id' => 'nullable|integer',
             'session' => 'required|string|max:50',
@@ -145,7 +145,7 @@ class TransportStudentController extends Controller
     {
         $validated = $request->validate([
             'route_id' => 'required|exists:transport_add_route,route_id',
-            'vechile_id' => 'required|exists:transport_add_vechile,vechile_id',
+            'vehicle_id' => 'required|exists:transport_add_vechile,vechile_id',
             'class_id' => 'nullable|integer',
             'stream_id' => 'nullable|integer',
         ]);

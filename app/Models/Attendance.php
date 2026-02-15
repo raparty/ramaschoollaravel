@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model {
     protected $table = 'attendance';
     public $timestamps = false;
-    protected $fillable = ['id', 'status', 'attendance_date', 'user_id', 'marked_by', 'admission_id', 'date', 'in_time', 'out_time', 'remarks', 'recorded_by'];
+    protected $fillable = ['id', 'status', 'attendance_date', 'user_id', 'marked_by'];
     
     // Status constants
     const STATUS_PRESENT = 'Present';
@@ -60,7 +60,7 @@ class Attendance extends Model {
      */
     public function scopeForStudent($query, $studentId)
     {
-        return $query->where('admission_id', $studentId);
+        return $query->where('user_id', $studentId);
     }
     
     /**
@@ -80,11 +80,11 @@ class Attendance extends Model {
     }
     
     /**
-     * Get the student (admission) record.
+     * Get the student (admission) record via user_id.
      */
     public function student()
     {
-        return $this->belongsTo(Admission::class, 'admission_id');
+        return $this->belongsTo(Admission::class, 'user_id', 'reg_no');
     }
     
     /**
@@ -101,5 +101,21 @@ class Attendance extends Model {
     public function isAbsent(): bool
     {
         return $this->status === self::STATUS_ABSENT;
+    }
+    
+    /**
+     * Accessor for date attribute (alias for attendance_date).
+     */
+    public function getDateAttribute()
+    {
+        return $this->attendance_date;
+    }
+    
+    /**
+     * Accessor for admission_id attribute (alias for user_id).
+     */
+    public function getAdmissionIdAttribute()
+    {
+        return $this->user_id;
     }
 }

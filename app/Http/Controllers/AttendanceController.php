@@ -61,11 +61,15 @@ class AttendanceController extends Controller
                 ->orderBy('student_name')
                 ->get();
             
-            // Get existing attendance for the date
-            $existingAttendance = Attendance::forDate($date)
-                ->forClass($classId)
-                ->get()
-                ->keyBy('admission_id');
+            // Get existing attendance for the date, keyed by reg_no since attendance.user_id = admission.reg_no
+            $attendanceRecords = Attendance::forDate($date)->get();
+            foreach ($attendanceRecords as $record) {
+                // Find the admission by reg_no
+                $admission = Admission::where('reg_no', $record->user_id)->first();
+                if ($admission) {
+                    $existingAttendance[$admission->id] = $record;
+                }
+            }
         }
         
         return view('attendance.register', compact('classes', 'classId', 'date', 'students', 'existingAttendance'));
@@ -86,18 +90,21 @@ class AttendanceController extends Controller
             $attendanceData = $request->input('attendance');
             
             foreach ($attendanceData as $data) {
-                // Update or create attendance
+                // Get the admission record to find the reg_no (which maps to user_id in attendance table)
+                $admission = Admission::find($data['admission_id']);
+                if (!$admission) {
+                    continue;
+                }
+                
+                // Update or create attendance using user_id (which is the reg_no)
                 Attendance::updateOrCreate(
                     [
-                        'admission_id' => $data['admission_id'],
-                        'date' => $date,
+                        'user_id' => $admission->reg_no,
+                        'attendance_date' => $date,
                     ],
                     [
                         'status' => $data['status'],
-                        'in_time' => isset($data['in_time']) ? Carbon::parse($date . ' ' . $data['in_time']) : null,
-                        'out_time' => isset($data['out_time']) ? Carbon::parse($date . ' ' . $data['out_time']) : null,
-                        'remarks' => $data['remarks'] ?? null,
-                        'recorded_by' => auth()->id(),
+                        'marked_by' => auth()->user()->name ?? auth()->user()->user_id ?? 'Admin',
                     ]
                 );
             }
@@ -132,10 +139,15 @@ class AttendanceController extends Controller
                 ->orderBy('student_name')
                 ->get();
             
-            $attendance = Attendance::forDate($date)
-                ->forClass($classId)
-                ->get()
-                ->keyBy('admission_id');
+            // Get existing attendance for the date, keyed by admission id
+            $attendanceRecords = Attendance::forDate($date)->get();
+            foreach ($attendanceRecords as $record) {
+                // Find the admission by reg_no
+                $admission = Admission::where('reg_no', $record->user_id)->first();
+                if ($admission) {
+                    $attendance[$admission->id] = $record;
+                }
+            }
         }
         
         return view('attendance.edit', compact('classes', 'classId', 'date', 'students', 'attendance'));
@@ -171,17 +183,32 @@ class AttendanceController extends Controller
         if ($studentId) {
             $student = Admission::findOrFail($studentId);
             
-            $attendance = Attendance::forStudent($studentId)
-                ->dateRange($startDate, $endDate)
-                ->orderBy('date', 'desc')
+            // Query using user_id which maps to reg_no
+            $attendance = Attendance::where('user_id', $student->reg_no)
+                ->whereBetween('attendance_date', [$startDate, $endDate])
+                ->orderBy('attendance_date', 'desc')
                 ->paginate(30);
             
             // Calculate statistics
-            $totalDays = Attendance::forStudent($studentId)->dateRange($startDate, $endDate)->count();
-            $presentDays = Attendance::forStudent($studentId)->dateRange($startDate, $endDate)->whereIn('status', [Attendance::STATUS_PRESENT, Attendance::STATUS_LATE, Attendance::STATUS_HALF_DAY])->count();
-            $absentDays = Attendance::forStudent($studentId)->dateRange($startDate, $endDate)->absent()->count();
-            $lateDays = Attendance::forStudent($studentId)->dateRange($startDate, $endDate)->late()->count();
-            $leaveDays = Attendance::forStudent($studentId)->dateRange($startDate, $endDate)->onLeave()->count();
+            $totalDays = Attendance::where('user_id', $student->reg_no)
+                ->whereBetween('attendance_date', [$startDate, $endDate])
+                ->count();
+            $presentDays = Attendance::where('user_id', $student->reg_no)
+                ->whereBetween('attendance_date', [$startDate, $endDate])
+                ->whereIn('status', [Attendance::STATUS_PRESENT, Attendance::STATUS_LATE, Attendance::STATUS_HALF_DAY])
+                ->count();
+            $absentDays = Attendance::where('user_id', $student->reg_no)
+                ->whereBetween('attendance_date', [$startDate, $endDate])
+                ->where('status', Attendance::STATUS_ABSENT)
+                ->count();
+            $lateDays = Attendance::where('user_id', $student->reg_no)
+                ->whereBetween('attendance_date', [$startDate, $endDate])
+                ->where('status', Attendance::STATUS_LATE)
+                ->count();
+            $leaveDays = Attendance::where('user_id', $student->reg_no)
+                ->whereBetween('attendance_date', [$startDate, $endDate])
+                ->where('status', 'On Leave')
+                ->count();
             
             $statistics = [
                 'total' => $totalDays,
@@ -215,11 +242,21 @@ class AttendanceController extends Controller
         if ($classId) {
             $class = ClassModel::findOrFail($classId);
             
-            $attendance = Attendance::forDate($date)
-                ->forClass($classId)
-                ->with('student')
-                ->orderBy('created_at')
-                ->get();
+            // Get all students in the class
+            $students = Admission::where('class_id', $classId)->get();
+            
+            // Get attendance for the date
+            $attendanceRecords = Attendance::forDate($date)->get()->keyBy('user_id');
+            
+            // Build attendance collection with student info
+            $attendance = collect();
+            foreach ($students as $student) {
+                if (isset($attendanceRecords[$student->reg_no])) {
+                    $record = $attendanceRecords[$student->reg_no];
+                    $record->student = $student;
+                    $attendance->push($record);
+                }
+            }
             
             $total = Admission::where('class_id', $classId)->count();
             $present = $attendance->filter(fn($a) => $a->isPresent())->count();

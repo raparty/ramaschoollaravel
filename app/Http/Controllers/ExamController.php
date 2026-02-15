@@ -9,6 +9,7 @@ use App\Models\ClassModel;
 use App\Models\Term;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 
 /**
@@ -169,9 +170,15 @@ class ExamController extends Controller
                 }
             } catch (QueryException $e) {
                 // Results table doesn't exist yet, skip the check
+                // TODO: Once results table is created, remove this error handling
                 if (!$this->isMissingTableError($e)) {
                     throw $e;
                 }
+                // Log warning that we're skipping the results check
+                \Log::warning('Skipping results check for exam deletion - results table does not exist', [
+                    'exam_id' => $exam->id,
+                    'exam_name' => $exam->name
+                ]);
             }
 
             $exam->delete();

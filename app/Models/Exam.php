@@ -69,6 +69,10 @@ class Exam extends Model
      * 
      * ⚠️ Note: The 'results' table doesn't exist yet in the database.
      * This relationship is defined to prevent errors in ExamController.
+     * 
+     * TODO: The results table needs to be created via migration. Once created,
+     * this relationship will work properly and the error handling in 
+     * ExamController::destroy() can be removed.
      */
     public function results(): HasMany
     {

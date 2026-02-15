@@ -13,7 +13,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class AccountCategory extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'account_category';
+
+    /**
+     * Indicates if the model should be timestamped.
+     */
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -21,19 +33,7 @@ class AccountCategory extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'name',
-        'type',
-        'description',
-        'is_active',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'is_active' => 'boolean',
+        'category_name',
     ];
 
     /**
@@ -53,54 +53,42 @@ class AccountCategory extends Model
     }
 
     /**
-     * Scope to get only income categories
-     */
-    public function scopeIncome($query)
-    {
-        return $query->where('type', 'income');
-    }
-
-    /**
-     * Scope to get only expense categories
-     */
-    public function scopeExpense($query)
-    {
-        return $query->where('type', 'expense');
-    }
-
-    /**
-     * Scope to get only active categories
+     * Scope to get only active categories (returns all for legacy compatibility)
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query;
     }
 
     /**
-     * Get type badge class
+     * Get name accessor for legacy column.
+     */
+    public function getNameAttribute(): string
+    {
+        return $this->category_name ?? '';
+    }
+
+    /**
+     * Get type badge class (default for legacy compatibility)
      */
     public function getTypeBadgeAttribute(): string
     {
-        return match($this->type) {
-            'income' => 'success',
-            'expense' => 'danger',
-            default => 'secondary',
-        };
+        return 'secondary';
     }
 
     /**
-     * Get status badge class
+     * Get status badge class (default for legacy compatibility)
      */
     public function getStatusBadgeAttribute(): string
     {
-        return $this->is_active ? 'success' : 'secondary';
+        return 'success';
     }
 
     /**
-     * Get status text
+     * Get status text (default for legacy compatibility)
      */
     public function getStatusTextAttribute(): string
     {
-        return $this->is_active ? 'Active' : 'Inactive';
+        return 'Active';
     }
 }

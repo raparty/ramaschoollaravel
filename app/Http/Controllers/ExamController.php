@@ -43,7 +43,7 @@ class ExamController extends Controller
         }
 
         $exams = $query->paginate(15);
-        $classes = ClassModel::all();
+        $classes = ClassModel::ordered()->get();
 
         return view('exams.index', compact('exams', 'classes'));
     }
@@ -53,7 +53,7 @@ class ExamController extends Controller
      */
     public function create()
     {
-        $classes = ClassModel::all();
+        $classes = ClassModel::ordered()->get();
         $currentSession = date('Y') . '-' . (date('Y') + 1);
 
         return view('exams.create', compact('classes', 'currentSession'));
@@ -97,7 +97,7 @@ class ExamController extends Controller
      */
     public function edit(Exam $exam)
     {
-        $classes = ClassModel::all();
+        $classes = ClassModel::ordered()->get();
 
         return view('exams.edit', compact('exam', 'classes'));
     }

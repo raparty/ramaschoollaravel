@@ -130,6 +130,7 @@ class BookIssue extends Model
     {
         return $query->where('booking_status', '1')
                     ->whereNull('return_date')
+                    ->whereNotNull('due_date')
                     ->where('due_date', '<', now());
     }
 

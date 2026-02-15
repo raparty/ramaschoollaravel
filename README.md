@@ -228,6 +228,8 @@ php artisan migrate
 php artisan db:seed
 ```
 
+> 📊 **Need Schema Information?** See [DB_SCHEMA_REFERENCE.md](DB_SCHEMA_REFERENCE.md) for complete database documentation including all tables, columns, and SQL files.
+
 ### Step 6: Create Storage Symlink
 
 ```bash
@@ -574,11 +576,20 @@ php artisan route:list
 
 ## 📚 Documentation
 
-Comprehensive documentation is available in the `/docs` folder:
+Comprehensive documentation is available in the `/docs` folder and root directory:
 
+### Core Documentation
+- **[Database Schema Reference](DB_SCHEMA_REFERENCE.md)** - 📊 **Complete guide to all database tables, columns, and schema files**
+- **[Database Documentation Index](DATABASE_DOCUMENTATION_INDEX.md)** - Main database documentation hub
 - **[Detailed Setup Guide](docs/SETUP.md)** - Complete installation and configuration instructions
 - **[Quick Start Guide](docs/QUICK_START_GUIDE.md)** - Get started quickly
 - **[Contributing Guidelines](CONTRIBUTING.md)** - How to contribute to the project
+
+### Module-Specific Documentation
+- **[Transport Module](TRANSPORT_MODULE_README.md)** - Transport management system
+- **[Staff Leave Management](STAFF_LEAVE_MANAGEMENT_README.md)** - Leave application system
+- **[Settings Module](SETTINGS_MODULE_README.md)** - RBAC and permissions
+- **[Tables Visual Reference](TABLES_VISUAL_REFERENCE.md)** - Visual table diagrams
 - **[Archive Documentation](docs/archive/)** - Historical development documentation
 
 ## 🤝 Contributing

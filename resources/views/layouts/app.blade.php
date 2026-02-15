@@ -124,10 +124,10 @@
             <a class="nav-link {{ request()->routeIs('reports.accounts.*') || request()->routeIs('categories.*') || request()->routeIs('income.*') || request()->routeIs('expenses.*') ? 'active' : '' }}" href="{{ route('reports.accounts.index') }}">💼 Accounts</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-muted" href="#" onclick="alert('Transport module coming soon!'); return false;">🚌 Transport</a>
+            <a class="nav-link {{ request()->routeIs('transport.*') ? 'active' : '' }}" href="{{ route('transport.index') }}">🚌 Transport</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-muted" href="#" onclick="alert('Settings module coming soon!'); return false;">⚙️ Settings</a>
+            <a class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">⚙️ Settings</a>
         </li>
     </ul>
 </nav>

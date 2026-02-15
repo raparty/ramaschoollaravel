@@ -181,6 +181,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-csv', [AccountReportController::class, 'exportCsv'])->name('export-csv');
     });
     
-    // TODO: Add Transport routes (Phase D+1)
-    // TODO: Add Classes/Subjects/Sections routes (Phase D+2)
+    // Transport Module (Basic placeholder until full implementation)
+    Route::prefix('transport')->name('transport.')->group(function () {
+        Route::get('/', function() {
+            return view('transport.index');
+        })->name('index');
+    });
+    
+    // Settings Module (Basic placeholder until full implementation)  
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', function() {
+            return view('settings.index');
+        })->name('index');
+    });
 });

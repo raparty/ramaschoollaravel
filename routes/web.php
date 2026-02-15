@@ -28,6 +28,9 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\StaffLeaveController;
+use App\Http\Controllers\TransportRouteController;
+use App\Http\Controllers\TransportVehicleController;
+use App\Http\Controllers\TransportStudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -232,11 +235,20 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-csv', [AccountReportController::class, 'exportCsv'])->name('export-csv');
     });
     
-    // Transport Module (Basic placeholder until full implementation)
+    // Transport Module
     Route::prefix('transport')->name('transport.')->group(function () {
         Route::get('/', function() {
             return view('transport.index');
         })->name('index');
+        
+        // Routes Management
+        Route::resource('routes', TransportRouteController::class)->except(['show']);
+        
+        // Vehicles Management
+        Route::resource('vehicles', TransportVehicleController::class)->except(['show']);
+        
+        // Student Transport Assignments
+        Route::resource('students', TransportStudentController::class)->except(['show']);
     });
     
     // Settings Module - RBAC Management

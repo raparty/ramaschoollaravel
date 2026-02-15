@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 class TransferCertificateController extends Controller
 {
     /**
+     * Maximum number of search results to display.
+     */
+    const SEARCH_RESULT_LIMIT = 50;
+
+    /**
      * Display the transfer certificate entry/search page.
      *
      * @return \Illuminate\View\View
@@ -31,22 +36,29 @@ class TransferCertificateController extends Controller
      */
     public function search(Request $request)
     {
+        // Validate input
+        $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'class_id' => 'nullable|integer|exists:classes,id',
+        ]);
+
         $classes = ClassModel::orderBy('name')->get();
         
         $query = Admission::with('class');
 
-        // Filter by name if provided
+        // Filter by name if provided (escape special LIKE characters)
         if ($request->filled('name')) {
-            $query->where('student_name', 'like', '%' . $request->name . '%');
+            $searchName = str_replace(['%', '_'], ['\%', '\_'], $validated['name']);
+            $query->where('student_name', 'like', '%' . $searchName . '%');
         }
 
         // Filter by class if provided
         if ($request->filled('class_id')) {
-            $query->where('class_id', $request->class_id);
+            $query->where('class_id', $validated['class_id']);
         }
 
-        // Get students (limit to 50 results to prevent overwhelming the page)
-        $students = $query->orderBy('student_name')->limit(50)->get();
+        // Get students with limit to prevent overwhelming the page
+        $students = $query->orderBy('student_name')->limit(self::SEARCH_RESULT_LIMIT)->get();
 
         return view('transfer-certificate.index', [
             'classes' => $classes,

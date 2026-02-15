@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Admission extends Model {
     protected $table = 'admissions';
-    public $timestamps = false; 
     protected $fillable = [
         'reg_no',
         'student_name',

@@ -17,6 +17,7 @@ use App\Http\Controllers\MarkController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\StaffAttendanceController;
 use App\Http\Controllers\AccountCategoryController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpenseController;
@@ -161,7 +162,28 @@ Route::middleware(['auth'])->group(function () {
     //     Route::post('/{result}/toggle-publish', [ResultController::class, 'togglePublish'])->name('toggle-publish');
     // });
     
-    // Attendance Module (Phase C)
+    // Staff Attendance Module (Priority - Staff attendance first)
+    Route::prefix('staff-attendance')->name('staff-attendance.')->group(function () {
+        // Staff Attendance Dashboard
+        Route::get('/', [StaffAttendanceController::class, 'index'])->name('index');
+        
+        // Mark Staff Attendance
+        Route::get('/register', [StaffAttendanceController::class, 'register'])->name('register');
+        Route::post('/store', [StaffAttendanceController::class, 'store'])->name('store');
+        
+        // Edit Staff Attendance
+        Route::get('/edit', [StaffAttendanceController::class, 'edit'])->name('edit');
+        Route::put('/update', [StaffAttendanceController::class, 'update'])->name('update');
+        
+        // View Staff Attendance
+        Route::get('/staff', [StaffAttendanceController::class, 'staffAttendance'])->name('staff');
+        Route::get('/department', [StaffAttendanceController::class, 'departmentAttendance'])->name('department');
+        
+        // Search
+        Route::get('/search-staff', [StaffAttendanceController::class, 'searchStaff'])->name('search-staff');
+    });
+    
+    // Student Attendance Module (Phase C)
     Route::prefix('attendance')->name('attendance.')->group(function () {
         // Attendance Dashboard
         Route::get('/', [AttendanceController::class, 'index'])->name('index');

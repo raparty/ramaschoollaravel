@@ -9,6 +9,8 @@ use App\Http\Controllers\FeeController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\PositionController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;

@@ -49,7 +49,7 @@
                                     <td>{{ $position->description ?? 'N/A' }}</td>
                                     <td>
                                         <span class="badge bg-info">
-                                            {{ $position->staff()->count() }} Staff
+                                            {{ $position->staff_count }} Staff
                                         </span>
                                     </td>
                                     <td>

@@ -12,7 +12,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::orderBy('name')->paginate(20);
+        $departments = Department::withCount('staff')->orderBy('name')->paginate(20);
 
         return view('departments.index', compact('departments'));
     }

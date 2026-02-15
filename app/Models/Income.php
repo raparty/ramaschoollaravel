@@ -36,6 +36,6 @@ class Income extends Model {
      */
     public function getDateAttribute()
     {
-        return $this->date_of_txn;
+        return $this->attributes['date_of_txn'] ?? null;
     }
 }

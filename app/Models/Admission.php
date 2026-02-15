@@ -104,7 +104,7 @@ class Admission extends Model {
      */
     public function getNameAttribute(): ?string
     {
-        return $this->student_name;
+        return $this->attributes['student_name'] ?? null;
     }
 
     /**
@@ -112,6 +112,6 @@ class Admission extends Model {
      */
     public function getRegnoAttribute(): ?string
     {
-        return $this->reg_no;
+        return $this->attributes['reg_no'] ?? null;
     }
 }

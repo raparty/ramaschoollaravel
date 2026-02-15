@@ -74,6 +74,6 @@ class ClassModel extends Model
      */
     public function getNameAttribute(): ?string
     {
-        return $this->class_name;
+        return $this->attributes['class_name'] ?? null;
     }
 }

@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Result Model
  * 
+ * ⚠️ WARNING: THIS MODEL IS NON-FUNCTIONAL ⚠️
+ * The 'results' table does NOT exist in the database migration.
+ * To enable this model, execute: database/schema/missing-tables.sql
+ * 
  * Represents compiled result of a student for an exam
  * 
  * @property int $id

@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Salary Model
  * 
+ * ⚠️ WARNING: THIS MODEL IS NON-FUNCTIONAL ⚠️
+ * The 'staff_salaries' table does NOT exist in the database migration.
+ * To enable this model, execute: database/schema/missing-tables.sql
+ * 
  * Manages staff salary records and payments
  * 
  * @property int $id

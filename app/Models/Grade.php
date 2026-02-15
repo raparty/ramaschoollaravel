@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Grade Model
  * 
+ * ⚠️ WARNING: THIS MODEL IS NON-FUNCTIONAL ⚠️
+ * The 'grades' table does NOT exist in the database migration.
+ * To enable this model, execute: database/schema/missing-tables.sql
+ * 
  * Represents grading system configuration
  * 
  * @property int $id

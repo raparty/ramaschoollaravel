@@ -175,7 +175,7 @@ class ExamController extends Controller
                     throw $e;
                 }
                 // Log warning that we're skipping the results check
-                \Log::warning('Skipping results check for exam deletion - results table does not exist', [
+                Log::warning('Skipping results check for exam deletion - results table does not exist', [
                     'exam_id' => $exam->id,
                     'exam_name' => $exam->name
                 ]);

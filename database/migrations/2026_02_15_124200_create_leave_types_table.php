@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('leave_types', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->integer('max_days')->nullable()->comment('Maximum days allowed per year, null for unlimited');
-            $table->boolean('requires_approval')->default(true);
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-        });
+        // Check if table already exists (e.g., created manually in production)
+        if (!Schema::hasTable('leave_types')) {
+            Schema::create('leave_types', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->text('description')->nullable();
+                $table->integer('max_days')->nullable()->comment('Maximum days allowed per year, null for unlimited');
+                $table->boolean('requires_approval')->default(true);
+                $table->boolean('is_active')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

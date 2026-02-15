@@ -60,9 +60,8 @@ class StaffAttendanceController extends Controller
         
         if ($departmentId) {
             // Get staff for the department
-            $staffMembers = Staff::where('department_id', $departmentId)
-                ->orderBy('first_name')
-                ->orderBy('last_name')
+            $staffMembers = Staff::where('dept_id', $departmentId)
+                ->orderBy('name')
                 ->get();
             
             // Get existing attendance for the date
@@ -75,8 +74,7 @@ class StaffAttendanceController extends Controller
             }
         } else {
             // Get all staff if no department selected
-            $staffMembers = Staff::orderBy('first_name')
-                ->orderBy('last_name')
+            $staffMembers = Staff::orderBy('name')
                 ->get();
             
             // Get existing attendance for the date
@@ -114,6 +112,12 @@ class StaffAttendanceController extends Controller
             $attendanceData = $request->input('attendance');
             
             foreach ($attendanceData as $data) {
+                // Check if staff exists
+                $staffExists = Staff::find($data['staff_id']);
+                if (!$staffExists) {
+                    continue;
+                }
+                
                 // Update or create attendance
                 StaffAttendance::updateOrCreate(
                     [
@@ -153,13 +157,11 @@ class StaffAttendanceController extends Controller
         
         if ($date) {
             if ($departmentId) {
-                $staffMembers = Staff::where('department_id', $departmentId)
-                    ->orderBy('first_name')
-                    ->orderBy('last_name')
+                $staffMembers = Staff::where('dept_id', $departmentId)
+                    ->orderBy('name')
                     ->get();
             } else {
-                $staffMembers = Staff::orderBy('first_name')
-                    ->orderBy('last_name')
+                $staffMembers = Staff::orderBy('name')
                     ->get();
             }
             
@@ -238,7 +240,7 @@ class StaffAttendanceController extends Controller
             ];
         }
         
-        $staffList = Staff::orderBy('first_name')->orderBy('last_name')->get();
+        $staffList = Staff::orderBy('name')->get();
         
         return view('staff-attendance.staff', compact('staff', 'staffList', 'attendance', 'statistics', 'startDate', 'endDate'));
     }
@@ -263,7 +265,7 @@ class StaffAttendanceController extends Controller
             $department = Department::findOrFail($departmentId);
             
             // Get all staff in the department
-            $staffMembers = Staff::where('department_id', $departmentId)->get()->keyBy('id');
+            $staffMembers = Staff::where('dept_id', $departmentId)->get()->keyBy('id');
             
             // Get attendance for the date
             $attendanceRecords = StaffAttendance::forDate($date)
@@ -314,14 +316,13 @@ class StaffAttendanceController extends Controller
         $departmentId = $request->input('department_id');
         
         $staff = Staff::query()
-            ->when($departmentId, fn($q) => $q->where('department_id', $departmentId))
+            ->when($departmentId, fn($q) => $q->where('dept_id', $departmentId))
             ->where(function ($q) use ($query) {
-                $q->where('first_name', 'like', "%{$query}%")
-                  ->orWhere('last_name', 'like', "%{$query}%")
+                $q->where('name', 'like', "%{$query}%")
                   ->orWhere('employee_id', 'like', "%{$query}%");
             })
             ->limit(10)
-            ->get(['id', 'first_name', 'last_name', 'employee_id', 'department_id']);
+            ->get(['id', 'name', 'employee_id', 'dept_id']);
         
         return response()->json($staff);
     }

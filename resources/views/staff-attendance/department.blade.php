@@ -122,7 +122,7 @@
                             @foreach($attendance as $record)
                                 <tr>
                                     <td>{{ $record->staff->employee_id }}</td>
-                                    <td>{{ $record->staff->first_name }} {{ $record->staff->last_name }}</td>
+                                    <td>{{ $record->staff->name }}</td>
                                     <td>
                                         @if($record->staff->position)
                                             {{ $record->staff->position->title }}

@@ -23,7 +23,7 @@
                     <option value="">Select Staff Member</option>
                     @foreach($staffList as $staffMember)
                         <option value="{{ $staffMember->id }}" {{ request('staff_id') == $staffMember->id ? 'selected' : '' }}>
-                            {{ $staffMember->first_name }} {{ $staffMember->last_name }} ({{ $staffMember->employee_id }})
+                            {{ $staffMember->name }} ({{ $staffMember->employee_id }})
                         </option>
                     @endforeach
                 </select>
@@ -52,7 +52,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-8">
-                    <h5>{{ $staff->first_name }} {{ $staff->last_name }}</h5>
+                    <h5>{{ $staff->name }}</h5>
                     <p class="text-muted mb-1">Employee ID: {{ $staff->employee_id }}</p>
                     @if($staff->department)
                         <p class="text-muted mb-1">Department: {{ $staff->department->name }}</p>

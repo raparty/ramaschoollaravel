@@ -76,7 +76,7 @@
                                 <tr>
                                     <td>{{ $staff->employee_id }}</td>
                                     <td>
-                                        {{ $staff->first_name }} {{ $staff->last_name }}
+                                        {{ $staff->name }}
                                         <input type="hidden" name="attendance[{{ $loop->index }}][staff_id]" value="{{ $staff->id }}">
                                     </td>
                                     <td>

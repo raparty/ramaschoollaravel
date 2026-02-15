@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * TransportVehicle Model
@@ -16,6 +17,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $vechile_no
  * @property string $route_id (comma-separated route IDs)
  * @property int $no_of_seats
+ * @property int|null $driver_id
+ * @property string|null $insurance_number
+ * @property string|null $insurance_expiry
+ * @property string|null $permit_number
+ * @property string|null $permit_expiry
  */
 class TransportVehicle extends Model
 {
@@ -43,6 +49,11 @@ class TransportVehicle extends Model
         'vechile_no',
         'route_id',
         'no_of_seats',
+        'driver_id',
+        'insurance_number',
+        'insurance_expiry',
+        'permit_number',
+        'permit_expiry',
     ];
 
     /**
@@ -50,6 +61,9 @@ class TransportVehicle extends Model
      */
     protected $casts = [
         'no_of_seats' => 'integer',
+        'driver_id' => 'integer',
+        'insurance_expiry' => 'date',
+        'permit_expiry' => 'date',
     ];
 
     /**
@@ -58,6 +72,14 @@ class TransportVehicle extends Model
     public function studentAssignments(): HasMany
     {
         return $this->hasMany(TransportStudentAssignment::class, 'vehicle_id', 'vechile_id');
+    }
+
+    /**
+     * Get the driver assigned to this vehicle.
+     */
+    public function driver(): BelongsTo
+    {
+        return $this->belongsTo(TransportDriver::class, 'driver_id', 'driver_id');
     }
 
     /**

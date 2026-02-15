@@ -82,6 +82,84 @@
                             <div class="form-text">Select the routes this vehicle will serve</div>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="driver_id" class="form-label">Assign Driver (Optional)</label>
+                            <select class="form-select @error('driver_id') is-invalid @enderror" 
+                                    id="driver_id" 
+                                    name="driver_id">
+                                <option value="">-- Select Driver --</option>
+                                @foreach($drivers as $driver)
+                                    <option value="{{ $driver->driver_id }}" {{ old('driver_id') == $driver->driver_id ? 'selected' : '' }}>
+                                        {{ $driver->driver_name }} 
+                                        @if($driver->license_number)
+                                            ({{ $driver->license_number }})
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('driver_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text">Assign a driver to this vehicle</div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h6 class="mb-3">Vehicle Documentation</h6>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="insurance_number" class="form-label">Insurance Number</label>
+                                <input type="text" 
+                                       class="form-control @error('insurance_number') is-invalid @enderror" 
+                                       id="insurance_number" 
+                                       name="insurance_number" 
+                                       value="{{ old('insurance_number') }}" 
+                                       placeholder="e.g., POL-123456789">
+                                @error('insurance_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="insurance_expiry" class="form-label">Insurance Expiry Date</label>
+                                <input type="date" 
+                                       class="form-control @error('insurance_expiry') is-invalid @enderror" 
+                                       id="insurance_expiry" 
+                                       name="insurance_expiry" 
+                                       value="{{ old('insurance_expiry') }}">
+                                @error('insurance_expiry')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="permit_number" class="form-label">Permit Number</label>
+                                <input type="text" 
+                                       class="form-control @error('permit_number') is-invalid @enderror" 
+                                       id="permit_number" 
+                                       name="permit_number" 
+                                       value="{{ old('permit_number') }}" 
+                                       placeholder="e.g., PER-987654321">
+                                @error('permit_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="permit_expiry" class="form-label">Permit Expiry Date</label>
+                                <input type="date" 
+                                       class="form-control @error('permit_expiry') is-invalid @enderror" 
+                                       id="permit_expiry" 
+                                       name="permit_expiry" 
+                                       value="{{ old('permit_expiry') }}">
+                                @error('permit_expiry')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check-circle"></i> Save Vehicle

@@ -35,7 +35,7 @@
                            class="form-control @error('dob') is-invalid @enderror" 
                            id="dob" 
                            name="dob" 
-                           value="{{ old('dob', $admission->dob->format('Y-m-d')) }}" 
+                           value="{{ old('dob', $admission->dob?->format('Y-m-d')) }}" 
                            required>
                     @error('dob')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -152,7 +152,7 @@
                            class="form-control @error('admission_date') is-invalid @enderror" 
                            id="admission_date" 
                            name="admission_date" 
-                           value="{{ old('admission_date', $admission->admission_date->format('Y-m-d')) }}" 
+                           value="{{ old('admission_date', $admission->admission_date?->format('Y-m-d')) }}" 
                            required>
                     @error('admission_date')
                         <div class="invalid-feedback">{{ $message }}</div>

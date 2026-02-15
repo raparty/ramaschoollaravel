@@ -80,10 +80,10 @@
                                     @endif
                                     {{ $admission->student_name }}
                                 </td>
-                                <td>{{ $admission->class->name ?? 'N/A' }}</td>
+                                <td>{{ $admission->class?->name ?? 'N/A' }}</td>
                                 <td>{{ $admission->guardian_name ?? '-' }}</td>
                                 <td>{{ $admission->guardian_phone ?? '-' }}</td>
-                                <td>{{ $admission->admission_date->format('d M Y') }}</td>
+                                <td>{{ $admission->admission_date?->format('d M Y') ?? 'N/A' }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="{{ route('admissions.show', $admission) }}" 

@@ -168,7 +168,19 @@
             <a class="nav-link {{ request()->routeIs('exams.*') ? 'active' : '' }}" href="{{ route('exams.index') }}">📝 Exams</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('attendance.*') ? 'active' : '' }}" href="{{ route('attendance.index') }}">📅 Attendance</a>
+            <a class="nav-link {{ request()->routeIs('staff-attendance.*') || request()->routeIs('attendance.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#attendanceSubmenu" role="button" aria-expanded="{{ request()->routeIs('staff-attendance.*') || request()->routeIs('attendance.*') ? 'true' : 'false' }}" aria-controls="attendanceSubmenu">
+                📅 Attendance <i class="bi bi-chevron-down float-end" aria-hidden="true"></i>
+            </a>
+            <div class="collapse {{ request()->routeIs('staff-attendance.*') || request()->routeIs('attendance.*') ? 'show' : '' }}" id="attendanceSubmenu">
+                <ul class="nav flex-column submenu">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('staff-attendance.*') ? 'active' : '' }}" href="{{ route('staff-attendance.index') }}">👥 Staff Attendance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('attendance.*') ? 'active' : '' }}" href="{{ route('attendance.index') }}">👨‍🎓 Student Attendance</a>
+                    </li>
+                </ul>
+            </div>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('reports.accounts.*') || request()->routeIs('categories.*') || request()->routeIs('income.*') || request()->routeIs('expenses.*') ? 'active' : '' }}" href="{{ route('reports.accounts.index') }}">💼 Accounts</a>

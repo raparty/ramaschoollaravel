@@ -7,6 +7,13 @@ class Attendance extends Model {
     public $timestamps = false;
     protected $fillable = ['id', 'status', 'attendance_date', 'user_id', 'marked_by'];
     
+    /**
+     * The attributes that should be cast.
+     */
+    protected $casts = [
+        'attendance_date' => 'date',
+    ];
+    
     // Status constants
     const STATUS_PRESENT = 'Present';
     const STATUS_ABSENT = 'Absent';

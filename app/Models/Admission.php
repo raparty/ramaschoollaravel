@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Admission extends Model {
     protected $table = 'admissions';
     public $timestamps = false; 
-    protected $fillable = ['reg_no', 'student_name', 'class_id', 'admission_date'];
+    protected $fillable = ['reg_no', 'student_name', 'class_id', 'admission_date', 'dob', 'gender', 'blood_group', 'section_id', 'stream_id', 'aadhaar_no', 'guardian_name', 'guardian_phone', 'address', 'past_school_info'];
 
     /**
      * The attributes that should be cast.
      */
     protected $casts = [
         'admission_date' => 'date',
+        'dob' => 'date',
     ];
 
     /**

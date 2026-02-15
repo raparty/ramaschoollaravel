@@ -51,16 +51,16 @@
                         </div>
                         
                         <div class="col-md-6">
-                            <label class="form-label">Academic Year <span class="text-danger">*</span></label>
-                            <select name="academic_year_id" class="form-select @error('academic_year_id') is-invalid @enderror" required>
-                                <option value="">Select Academic Year</option>
+                            <label class="form-label">Academic Session <span class="text-danger">*</span></label>
+                            <select name="session" class="form-select @error('session') is-invalid @enderror" required>
+                                <option value="">Select Academic Session</option>
                                 @foreach($academicYears as $year)
-                                    <option value="{{ $year->id }}" {{ old('academic_year_id') == $year->id ? 'selected' : '' }}>
+                                    <option value="{{ $year->id }}" {{ old('session', $currentSession) == $year->id ? 'selected' : '' }}>
                                         {{ $year->name }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('academic_year_id')
+                            @error('session')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

@@ -55,8 +55,19 @@ class ExamController extends Controller
     {
         $classes = ClassModel::ordered()->get();
         $currentSession = date('Y') . '-' . (date('Y') + 1);
+        
+        // Generate academic years for dropdown (current and next 2 years)
+        $academicYears = collect();
+        $currentYear = date('Y');
+        for ($i = -1; $i <= 2; $i++) {
+            $year = $currentYear + $i;
+            $academicYears->push((object)[
+                'id' => $year . '-' . ($year + 1),
+                'name' => $year . '-' . ($year + 1)
+            ]);
+        }
 
-        return view('exams.create', compact('classes', 'currentSession'));
+        return view('exams.create', compact('classes', 'currentSession', 'academicYears'));
     }
 
     /**

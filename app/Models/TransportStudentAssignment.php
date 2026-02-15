@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property string $registration_no
  * @property int $route_id
- * @property int $vechile_id
+ * @property int $vehicle_id
  * @property int $class_id
  * @property int $stream_id
  * @property string $session
@@ -40,7 +40,7 @@ class TransportStudentAssignment extends Model
     protected $fillable = [
         'registration_no',
         'route_id',
-        'vechile_id',
+        'vehicle_id',
         'class_id',
         'stream_id',
         'session',
@@ -51,7 +51,7 @@ class TransportStudentAssignment extends Model
      */
     protected $casts = [
         'route_id' => 'integer',
-        'vechile_id' => 'integer',
+        'vehicle_id' => 'integer',
         'class_id' => 'integer',
         'stream_id' => 'integer',
     ];
@@ -77,7 +77,7 @@ class TransportStudentAssignment extends Model
      */
     public function vehicle(): BelongsTo
     {
-        return $this->belongsTo(TransportVehicle::class, 'vechile_id', 'vechile_id');
+        return $this->belongsTo(TransportVehicle::class, 'vehicle_id', 'vechile_id');
     }
 
     /**
@@ -119,7 +119,7 @@ class TransportStudentAssignment extends Model
      */
     public function scopeForVehicle($query, int $vehicleId)
     {
-        return $query->where('vechile_id', $vehicleId);
+        return $query->where('vehicle_id', $vehicleId);
     }
 
     /**

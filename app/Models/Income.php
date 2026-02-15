@@ -7,13 +7,16 @@ class Income extends Model {
     public $timestamps = false;
     protected $fillable = ['id', 'category_id', 'amount', 'description', 'date_of_txn', 'type', 'title'];
     
+    // Type constant
+    const TYPE_INCOME = 'Income';
+    
     /**
      * Scope to filter by date range.
      */
     public function scopeForDateRange($query, $startDate, $endDate)
     {
         return $query->whereBetween('date_of_txn', [$startDate, $endDate])
-                     ->where('type', 'Income');
+                     ->where('type', self::TYPE_INCOME);
     }
     
     /**

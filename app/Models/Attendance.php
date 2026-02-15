@@ -7,6 +7,11 @@ class Attendance extends Model {
     public $timestamps = false;
     protected $fillable = ['id', 'status', 'attendance_date', 'user_id', 'marked_by'];
     
+    // Status constants
+    const STATUS_PRESENT = 'Present';
+    const STATUS_ABSENT = 'Absent';
+    const STATUS_LATE = 'Late';
+    
     /**
      * Scope to filter attendance by date.
      */
@@ -20,7 +25,7 @@ class Attendance extends Model {
      */
     public function scopePresent($query)
     {
-        return $query->where('status', 'Present');
+        return $query->where('status', self::STATUS_PRESENT);
     }
     
     /**
@@ -28,7 +33,7 @@ class Attendance extends Model {
      */
     public function scopeAbsent($query)
     {
-        return $query->where('status', 'Absent');
+        return $query->where('status', self::STATUS_ABSENT);
     }
     
     /**
@@ -36,6 +41,6 @@ class Attendance extends Model {
      */
     public function scopeLate($query)
     {
-        return $query->where('status', 'Late');
+        return $query->where('status', self::STATUS_LATE);
     }
 }

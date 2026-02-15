@@ -115,7 +115,7 @@ class Attendance extends Model {
      */
     public function getDateAttribute()
     {
-        return $this->attendance_date;
+        return $this->attributes['attendance_date'] ?? null;
     }
     
     /**
@@ -123,6 +123,6 @@ class Attendance extends Model {
      */
     public function getAdmissionIdAttribute()
     {
-        return $this->user_id;
+        return $this->attributes['user_id'] ?? null;
     }
 }

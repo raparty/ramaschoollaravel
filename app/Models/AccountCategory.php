@@ -65,7 +65,7 @@ class AccountCategory extends Model
      */
     public function getNameAttribute(): string
     {
-        return $this->category_name ?? '';
+        return $this->attributes['category_name'] ?? '';
     }
 
     /**

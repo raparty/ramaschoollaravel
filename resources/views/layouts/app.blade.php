@@ -56,6 +56,12 @@
         .sidebar .nav-link[data-bs-toggle="collapse"] {
             cursor: pointer;
         }
+        .sidebar .nav-link[data-bs-toggle="collapse"] .bi-chevron-down {
+            transition: transform 0.2s;
+        }
+        .sidebar .nav-link[aria-expanded="true"] .bi-chevron-down {
+            transform: rotate(180deg);
+        }
         .main-content {
             padding: 30px;
         }
@@ -114,7 +120,7 @@
             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">📊 Dashboard</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('admissions.*') || request()->routeIs('students.transfer-certificate.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#studentsSubmenu" role="button" aria-expanded="{{ request()->routeIs('admissions.*') || request()->routeIs('students.transfer-certificate.*') ? 'true' : 'false' }}" aria-controls="studentsSubmenu" aria-label="Students menu with submenu">
+            <a class="nav-link {{ request()->routeIs('admissions.*') || request()->routeIs('students.transfer-certificate.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#studentsSubmenu" role="button" aria-expanded="{{ request()->routeIs('admissions.*') || request()->routeIs('students.transfer-certificate.*') ? 'true' : 'false' }}" aria-controls="studentsSubmenu">
                 👨‍🎓 Students <i class="bi bi-chevron-down float-end" aria-hidden="true"></i>
             </a>
             <div class="collapse {{ request()->routeIs('admissions.*') || request()->routeIs('students.transfer-certificate.*') ? 'show' : '' }}" id="studentsSubmenu">

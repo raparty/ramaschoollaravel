@@ -13,7 +13,7 @@ use Illuminate\Database\QueryException;
 
 /**
  * ExamController
- * 
+ *
  * Handles exam schedule management
  */
 class ExamController extends Controller
@@ -31,9 +31,9 @@ class ExamController extends Controller
         // MySQL error code 1146: Table doesn't exist
         // PDO error codes are returned as strings
         // Also check for message patterns for other database drivers
-        return $e->getCode() === '1146' 
+        return $e->getCode() === '1146'
             || $e->getCode() === 1146
-            || str_contains($e->getMessage(), "doesn't exist") 
+            || str_contains($e->getMessage(), "doesn't exist")
             || str_contains($e->getMessage(), 'Base table or view not found');
     }
     /**
@@ -57,7 +57,7 @@ class ExamController extends Controller
             if ($this->isMissingTableError($e)) {
                 return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
             }
-            
+
             throw $e;
         }
     }
@@ -76,7 +76,7 @@ class ExamController extends Controller
             if ($this->isMissingTableError($e)) {
                 return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
             }
-            
+
             throw $e;
         }
     }
@@ -110,7 +110,7 @@ class ExamController extends Controller
     public function show(Exam $exam)
     {
         $exam->load(['term', 'examSubjects.classModel', 'examSubjects.subject']);
-        
+
         return view('exams.show', compact('exam'));
     }
 
@@ -128,7 +128,7 @@ class ExamController extends Controller
             if ($this->isMissingTableError($e)) {
                 return redirect()->route('dashboard')->with('error', self::MISSING_TABLE_ERROR_MESSAGE);
             }
-            
+
             throw $e;
         }
     }
@@ -183,7 +183,7 @@ class ExamController extends Controller
     public function assignSubjects(Exam $exam)
     {
         $exam->load('examSubjects');
-        
+
         return view('exams.subjects', compact('exam'));
     }
 
@@ -248,7 +248,7 @@ class ExamController extends Controller
 
     /**
      * Publish or unpublish exam results.
-     * 
+     *
      * ⚠️ DISABLED - is_published column doesn't exist in database
      * Uncomment after adding is_published column to exams table
      */

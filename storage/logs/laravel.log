@@ -9401,3 +9401,26 @@ ERROR 1227 (42000) at line 45: Access denied; you need (at least one of) the SYS
 #33 /home/runner/work/ramaschoollaravel/ramaschoollaravel/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
 #34 {main}
 "} 
+[2026-02-15 12:02:54] local.ERROR: PHP Parse error: Syntax error, unexpected '}', expecting EOF on line 25 {"exception":"[object] (Psy\\Exception\\ParseErrorException(code: 0): PHP Parse error: Syntax error, unexpected '}', expecting EOF on line 25 at /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/psy/psysh/src/Exception/ParseErrorException.php:44)
+[stacktrace]
+#0 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/psy/psysh/src/CodeCleaner.php(488): Psy\\Exception\\ParseErrorException::fromParseError()
+#1 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/psy/psysh/src/CodeCleaner.php(269): Psy\\CodeCleaner->parse()
+#2 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/psy/psysh/src/Shell.php(1059): Psy\\CodeCleaner->clean()
+#3 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/psy/psysh/src/Shell.php(1092): Psy\\Shell->addCode()
+#4 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/psy/psysh/src/Shell.php(1640): Psy\\Shell->setCode()
+#5 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/tinker/src/Console/TinkerCommand.php(77): Psy\\Shell->execute()
+#6 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Laravel\\Tinker\\Console\\TinkerCommand->handle()
+#7 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#8 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#9 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#10 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#11 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate\\Container\\Container->call()
+#12 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/symfony/console/Command/Command.php(326): Illuminate\\Console\\Command->execute()
+#13 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony\\Component\\Console\\Command\\Command->run()
+#14 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/symfony/console/Application.php(1106): Illuminate\\Console\\Command->run()
+#15 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/symfony/console/Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#16 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/symfony/console/Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#17 /home/runner/work/ramaschoollaravel/ramaschoollaravel/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#18 /home/runner/work/ramaschoollaravel/ramaschoollaravel/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#19 {main}
+"} 

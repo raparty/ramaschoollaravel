@@ -17,9 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('hostel')->name('hostel.')->group(function () {
     
     // Dashboard
-    Route::get('/', function () {
-        return view('hostel.dashboard');
-    })->name('dashboard');
+    Route::get('/', [HostelController::class, 'dashboard'])->name('dashboard');
 
     // Hostel Management
     Route::resource('hostels', HostelController::class)->except(['show'])->names([

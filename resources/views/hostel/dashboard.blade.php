@@ -147,37 +147,37 @@
                     <div class="row text-center">
                         <div class="col-md-2">
                             <div class="p-3">
-                                <h3 class="text-primary mb-1">{{ \App\Models\Hostel::count() }}</h3>
+                                <h3 class="text-primary mb-1">{{ $stats['hostels'] }}</h3>
                                 <p class="text-muted mb-0">Hostels</p>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="p-3">
-                                <h3 class="text-primary mb-1">{{ \App\Models\HostelRoom::count() }}</h3>
+                                <h3 class="text-primary mb-1">{{ $stats['rooms'] }}</h3>
                                 <p class="text-muted mb-0">Rooms</p>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="p-3">
-                                <h3 class="text-primary mb-1">{{ \App\Models\HostelBed::count() }}</h3>
+                                <h3 class="text-primary mb-1">{{ $stats['beds'] }}</h3>
                                 <p class="text-muted mb-0">Beds</p>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="p-3">
-                                <h3 class="text-primary mb-1">{{ \App\Models\HostelStudentAllocation::where('status', 'Active')->count() }}</h3>
+                                <h3 class="text-primary mb-1">{{ $stats['active_students'] }}</h3>
                                 <p class="text-muted mb-0">Active Students</p>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="p-3">
-                                <h3 class="text-primary mb-1">{{ \App\Models\HostelWarden::where('is_active', true)->count() }}</h3>
+                                <h3 class="text-primary mb-1">{{ $stats['active_wardens'] }}</h3>
                                 <p class="text-muted mb-0">Active Wardens</p>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="p-3">
-                                <h3 class="text-primary mb-1">{{ \App\Models\HostelExpense::where('status', 'Pending')->count() }}</h3>
+                                <h3 class="text-primary mb-1">{{ $stats['pending_expenses'] }}</h3>
                                 <p class="text-muted mb-0">Pending Expenses</p>
                             </div>
                         </div>

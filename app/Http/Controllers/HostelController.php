@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hostel;
+use App\Models\HostelBed;
+use App\Models\HostelRoom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -98,7 +100,7 @@ class HostelController extends Controller
         // Calculate statistics
         $stats = [
             'total_blocks' => $hostel->blocks()->count(),
-            'total_rooms' => \App\Models\HostelRoom::whereHas('floor.block', function ($query) use ($hostel) {
+            'total_rooms' => HostelRoom::whereHas('floor.block', function ($query) use ($hostel) {
                 $query->where('hostel_id', $hostel->id);
             })->count(),
             'total_beds' => $hostel->total_capacity,
@@ -150,7 +152,7 @@ class HostelController extends Controller
     {
         try {
             // Check if hostel has active allocations
-            $activeAllocations = \App\Models\HostelBed::whereHas('room.floor.block', function ($query) use ($hostel) {
+            $activeAllocations = HostelBed::whereHas('room.floor.block', function ($query) use ($hostel) {
                 $query->where('hostel_id', $hostel->id);
             })
             ->where('is_occupied', true)

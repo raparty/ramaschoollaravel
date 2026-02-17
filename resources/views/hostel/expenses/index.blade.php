@@ -106,7 +106,7 @@
                                     <strong>₹{{ number_format($expense->amount, 2) }}</strong>
                                 </td>
                                 <td>{{ $expense->expense_date ? \Carbon\Carbon::parse($expense->expense_date)->format('d M Y') : '-' }}</td>
-                                <td>{{ Str::limit($expense->description, 40) }}</td>
+                                <td>{{ Str::limit($expense->description ?? '', 40) }}</td>
                                 <td>
                                     @if($expense->status === 'Pending')
                                         <span class="badge bg-warning text-dark">Pending</span>

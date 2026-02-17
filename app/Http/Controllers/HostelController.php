@@ -98,7 +98,9 @@ class HostelController extends Controller
         // Calculate statistics
         $stats = [
             'total_blocks' => $hostel->blocks()->count(),
-            'total_rooms' => $hostel->blocks()->withCount('floors.rooms')->get()->sum('floors_rooms_count'),
+            'total_rooms' => \App\Models\HostelRoom::whereHas('floor.block', function ($query) use ($hostel) {
+                $query->where('hostel_id', $hostel->id);
+            })->count(),
             'total_beds' => $hostel->total_capacity,
             'occupied_beds' => $hostel->total_occupied,
             'available_beds' => $hostel->total_available,
@@ -148,12 +150,11 @@ class HostelController extends Controller
     {
         try {
             // Check if hostel has active allocations
-            $activeAllocations = $hostel->blocks()
-                ->withCount(['floors.rooms.beds' => function ($query) {
-                    $query->where('is_occupied', true);
-                }])
-                ->get()
-                ->sum('floors_rooms_beds_count');
+            $activeAllocations = \App\Models\HostelBed::whereHas('room.floor.block', function ($query) use ($hostel) {
+                $query->where('hostel_id', $hostel->id);
+            })
+            ->where('is_occupied', true)
+            ->count();
 
             if ($activeAllocations > 0) {
                 return redirect()->route('hostel.index')

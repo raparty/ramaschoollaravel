@@ -118,6 +118,17 @@ class Admission extends Model {
 
     /**
      * Generate a unique registration number for new admission
+     * 
+     * Format: YEAR + 4-digit sequence (e.g., 20260001, 20260002, etc.)
+     * 
+     * Uses database row locking within a transaction to prevent race conditions
+     * when multiple admissions are being created simultaneously.
+     * 
+     * The method counts existing admissions for the current year and increments.
+     * If a duplicate is detected (unlikely with locking), it retries up to 10 times.
+     * 
+     * @return string The generated registration number
+     * @throws \Exception If unable to generate unique number after max attempts
      */
     public static function generateRegNo(): string
     {

@@ -88,17 +88,7 @@ class AdmissionController extends Controller
 
             // Handle camera-captured photo (base64 data)
             if ($request->filled('student_pic_data') && !$request->hasFile('student_pic')) {
-                $imageData = $request->input('student_pic_data');
-                // Remove data:image/png;base64, prefix if present
-                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $imageData);
-                $imageData = base64_decode($imageData);
-                
-                if ($imageData !== false) {
-                    $filename = 'student_' . uniqid() . '_' . time() . '.jpg';
-                    $path = 'students/photos/' . $filename;
-                    Storage::disk('public')->put($path, $imageData);
-                    $validated['student_pic'] = $filename;
-                }
+                $validated['student_pic'] = $this->saveCameraPhoto($request->input('student_pic_data'));
             }
             // Handle student photo upload
             elseif ($request->hasFile('student_pic')) {
@@ -189,22 +179,12 @@ class AdmissionController extends Controller
 
             // Handle camera-captured photo (base64 data)
             if ($request->filled('student_pic_data') && !$request->hasFile('student_pic')) {
-                $imageData = $request->input('student_pic_data');
-                // Remove data:image/png;base64, prefix if present
-                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $imageData);
-                $imageData = base64_decode($imageData);
-                
-                if ($imageData !== false) {
-                    // Delete old photo
-                    if ($admission->student_pic) {
-                        Storage::disk('public')->delete('students/photos/' . $admission->student_pic);
-                    }
-                    
-                    $filename = 'student_' . uniqid() . '_' . time() . '.jpg';
-                    $path = 'students/photos/' . $filename;
-                    Storage::disk('public')->put($path, $imageData);
-                    $validated['student_pic'] = $filename;
+                // Delete old photo
+                if ($admission->student_pic) {
+                    Storage::disk('public')->delete('students/photos/' . $admission->student_pic);
                 }
+                
+                $validated['student_pic'] = $this->saveCameraPhoto($request->input('student_pic_data'));
             }
             // Handle student photo upload
             elseif ($request->hasFile('student_pic')) {
@@ -336,5 +316,30 @@ class AdmissionController extends Controller
             ->get(['id', 'reg_no', 'student_name', 'class_id']);
 
         return response()->json($students);
+    }
+
+    /**
+     * Save camera-captured photo from base64 data
+     * 
+     * @param string $base64Data The base64 encoded image data
+     * @return string The generated filename
+     */
+    private function saveCameraPhoto(string $base64Data): string
+    {
+        // Remove data:image/png;base64, prefix if present
+        $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $base64Data);
+        $imageData = base64_decode($imageData);
+        
+        if ($imageData === false) {
+            throw new \Exception('Invalid image data');
+        }
+        
+        // Generate unique filename
+        $filename = 'student_' . uniqid() . '_' . time() . '.jpg';
+        $path = 'students/photos/' . $filename;
+        
+        Storage::disk('public')->put($path, $imageData);
+        
+        return $filename;
     }
 }

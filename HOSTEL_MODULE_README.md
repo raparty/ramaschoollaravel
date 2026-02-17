@@ -91,13 +91,32 @@ A comprehensive hostel management system for educational institutions with suppo
 
 ## Installation
 
-### 1. Run Migrations
+### 1. Check Prerequisites (Optional but Recommended)
+
+Before running the migration, verify your database schema is correct:
+
+```bash
+php check_admissions_schema.php
+```
+
+This script will:
+- Verify the admissions table exists
+- Check that admissions.id is INT UNSIGNED (not BIGINT)
+- Confirm other prerequisite tables exist
+
+### 2. Run Migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 2. Seed Sample Data
+Or run just the hostel migration:
+
+```bash
+php artisan migrate --path=database/migrations/2026_02_17_083400_create_hostel_management_tables.php
+```
+
+### 3. Seed Sample Data
 
 ```bash
 php artisan db:seed --class=HostelSeeder

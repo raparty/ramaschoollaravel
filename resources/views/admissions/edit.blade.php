@@ -314,6 +314,12 @@
 
         // Capture photo button click
         document.getElementById('capturePhotoBtn').addEventListener('click', async function() {
+            // Show modal first
+            cameraModal.show();
+            
+            // Hide any previous error
+            document.getElementById('cameraError').style.display = 'none';
+            
             try {
                 // Request camera access
                 cameraStream = await navigator.mediaDevices.getUserMedia({ 
@@ -326,15 +332,9 @@
                 
                 const video = document.getElementById('cameraVideo');
                 video.srcObject = cameraStream;
-                
-                // Show modal
-                cameraModal.show();
-                
-                // Hide any previous error
-                document.getElementById('cameraError').style.display = 'none';
             } catch (error) {
                 const errorDiv = document.getElementById('cameraError');
-                errorDiv.textContent = 'Unable to access camera. Please ensure camera permissions are granted.';
+                errorDiv.textContent = 'Unable to access camera. Please ensure camera permissions are granted and you are using HTTPS.';
                 errorDiv.style.display = 'block';
             }
         });

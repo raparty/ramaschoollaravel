@@ -124,18 +124,25 @@ class Admission extends Model {
         // Get the current year
         $year = date('Y');
         
-        // Get the count of admissions for this year
-        $count = static::whereYear('created_at', $year)->count() + 1;
-        
-        // Generate registration number: YEAR + 4-digit sequence
-        $regNo = $year . str_pad($count, 4, '0', STR_PAD_LEFT);
-        
-        // Ensure uniqueness (in case of race conditions)
-        while (static::where('reg_no', $regNo)->exists()) {
-            $count++;
+        // Use database transaction to prevent race conditions
+        return DB::transaction(function () use ($year) {
+            // Lock the table for this transaction
+            $count = static::lockForUpdate()
+                ->whereYear('created_at', $year)
+                ->count() + 1;
+            
+            // Generate registration number: YEAR + 4-digit sequence
             $regNo = $year . str_pad($count, 4, '0', STR_PAD_LEFT);
-        }
-        
-        return $regNo;
+            
+            // Double-check uniqueness (in case of concurrent requests)
+            $attempt = 0;
+            while (static::where('reg_no', $regNo)->exists() && $attempt < 10) {
+                $count++;
+                $regNo = $year . str_pad($count, 4, '0', STR_PAD_LEFT);
+                $attempt++;
+            }
+            
+            return $regNo;
+        });
     }
 }

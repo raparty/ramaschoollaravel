@@ -17,8 +17,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $exam_id Related exam ID
  * @property int $class_id Related class ID
  * @property int $subject_id Related subject ID
- * @property int $max_marks Maximum marks for this subject in exam
+ * @property int $theory_marks Maximum theory marks for this subject
+ * @property int $practical_marks Maximum practical marks for this subject
  * @property int $pass_marks Minimum pass marks for this subject
+ * @property date $exam_date Date of exam for this subject
+ * @property time $exam_time Time of exam
+ * @property int $duration_minutes Duration of exam in minutes
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
@@ -35,8 +39,12 @@ class ExamSubject extends Model
         'exam_id',
         'class_id',
         'subject_id',
-        'max_marks',
+        'theory_marks',
+        'practical_marks',
         'pass_marks',
+        'exam_date',
+        'exam_time',
+        'duration_minutes',
     ];
 
     /**
@@ -48,8 +56,12 @@ class ExamSubject extends Model
         'exam_id' => 'integer',
         'class_id' => 'integer',
         'subject_id' => 'integer',
-        'max_marks' => 'integer',
+        'theory_marks' => 'integer',
+        'practical_marks' => 'integer',
         'pass_marks' => 'integer',
+        'exam_date' => 'date',
+        'exam_time' => 'datetime:H:i',
+        'duration_minutes' => 'integer',
     ];
 
     /**
@@ -82,5 +94,14 @@ class ExamSubject extends Model
     public function marks(): HasMany
     {
         return $this->hasMany(Mark::class);
+    }
+
+    /**
+     * Accessor for max_marks (backward compatibility).
+     * Returns sum of theory and practical marks.
+     */
+    public function getMaxMarksAttribute(): int
+    {
+        return $this->theory_marks + $this->practical_marks;
     }
 }

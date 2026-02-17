@@ -207,7 +207,7 @@ return new class extends Migration
         if (!Schema::hasTable('hostel_student_allocations')) {
             Schema::create('hostel_student_allocations', function (Blueprint $table) {
                 $table->id();
-                $table->integer('student_id');
+                $table->unsignedInteger('student_id');
                 $table->foreign('student_id')->references('id')->on('admissions')->onDelete('cascade');
                 $table->foreignId('bed_id')->constrained('hostel_beds')->onDelete('restrict');
                 $table->foreignId('locker_id')->nullable()->constrained('hostel_lockers')->onDelete('set null');
@@ -284,7 +284,7 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('hostel_id')->constrained('hostels')->onDelete('cascade');
                 $table->foreignId('reported_by')->constrained('hostel_wardens')->onDelete('restrict');
-                $table->integer('student_id')->nullable();
+                $table->unsignedInteger('student_id')->nullable();
                 $table->foreign('student_id')->references('id')->on('admissions')->onDelete('set null');
                 $table->string('title', 200);
                 $table->text('description');
@@ -309,7 +309,7 @@ return new class extends Migration
             Schema::create('hostel_attendance', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('hostel_id')->constrained('hostels')->onDelete('cascade');
-                $table->integer('student_id');
+                $table->unsignedInteger('student_id');
                 $table->foreign('student_id')->references('id')->on('admissions')->onDelete('cascade');
                 $table->date('attendance_date');
                 $table->enum('status', ['Present', 'Absent', 'On Leave'])->default('Present');
@@ -333,7 +333,7 @@ return new class extends Migration
         if (!Schema::hasTable('hostel_complaints')) {
             Schema::create('hostel_complaints', function (Blueprint $table) {
                 $table->id();
-                $table->integer('student_id');
+                $table->unsignedInteger('student_id');
                 $table->foreign('student_id')->references('id')->on('admissions')->onDelete('cascade');
                 $table->foreignId('hostel_id')->constrained('hostels')->onDelete('cascade');
                 $table->string('subject', 200);
@@ -382,7 +382,7 @@ return new class extends Migration
         if (!Schema::hasTable('hostel_student_fees')) {
             Schema::create('hostel_student_fees', function (Blueprint $table) {
                 $table->id();
-                $table->integer('student_id');
+                $table->unsignedInteger('student_id');
                 $table->foreign('student_id')->references('id')->on('admissions')->onDelete('cascade');
                 $table->foreignId('fee_structure_id')->constrained('hostel_fee_structures')->onDelete('restrict');
                 $table->decimal('amount_due', 10, 2);
@@ -408,7 +408,7 @@ return new class extends Migration
         if (!Schema::hasTable('hostel_payments')) {
             Schema::create('hostel_payments', function (Blueprint $table) {
                 $table->id();
-                $table->integer('student_id');
+                $table->unsignedInteger('student_id');
                 $table->foreign('student_id')->references('id')->on('admissions')->onDelete('cascade');
                 $table->foreignId('student_fee_id')->nullable()->constrained('hostel_student_fees')->onDelete('set null');
                 $table->string('receipt_number', 50)->unique();
@@ -434,7 +434,7 @@ return new class extends Migration
         if (!Schema::hasTable('hostel_security_deposits')) {
             Schema::create('hostel_security_deposits', function (Blueprint $table) {
                 $table->id();
-                $table->integer('student_id');
+                $table->unsignedInteger('student_id');
                 $table->foreign('student_id')->references('id')->on('admissions')->onDelete('cascade');
                 $table->foreignId('allocation_id')->constrained('hostel_student_allocations')->onDelete('cascade');
                 $table->decimal('deposit_amount', 10, 2);
@@ -460,7 +460,7 @@ return new class extends Migration
         if (!Schema::hasTable('hostel_imprest_wallets')) {
             Schema::create('hostel_imprest_wallets', function (Blueprint $table) {
                 $table->id();
-                $table->integer('student_id');
+                $table->unsignedInteger('student_id');
                 $table->foreign('student_id')->references('id')->on('admissions')->onDelete('cascade');
                 $table->decimal('opening_balance', 10, 2)->default(0);
                 $table->decimal('current_balance', 10, 2)->default(0);

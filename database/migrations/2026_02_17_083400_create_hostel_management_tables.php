@@ -14,14 +14,17 @@ return new class extends Migration
      * IMPORTANT: This migration requires that the admissions table exists with 
      * 'id' column as INT (not BIGINT) to match the production schema.
      * 
-     * All foreign keys to admissions.id use integer() to match the 
-     * column type. If you encounter "incompatible column type" errors:
+     * All foreign keys to admissions.id use integer() (signed INT) to match the 
+     * production schema where admissions.id is INT (signed), not INT UNSIGNED.
+     * Using unsignedInteger() causes MySQL error 3780 (incompatible column types).
      * 
-     * 1. Ensure the core_tables migration (2026_02_14_072514) has been run first
-     * 2. Verify admissions.id is INT (may be signed or unsigned depending on your setup)
+     * If you encounter "incompatible column type" errors:
+     * 
+     * 1. Ensure the admissions table exists before running this migration
+     * 2. Verify admissions.id is INT (signed) as per the production schema
      * 3. Drop any partially created hostel tables using: 
      *    php artisan migrate:rollback --path=database/migrations/2026_02_17_083400_create_hostel_management_tables.php
-     * 4. Pull the latest code and re-run this migration
+     * 4. Re-run this migration
      */
     public function up(): void
     {

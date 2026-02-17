@@ -72,7 +72,7 @@ return new class extends Migration
 
         // Admissions/Students table
         Schema::create('admissions', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('reg_no')->unique();
             $table->string('student_name');
             $table->string('student_pic')->nullable();
@@ -117,7 +117,8 @@ return new class extends Migration
         // Student Fees table
         Schema::create('student_fees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admission_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('admission_id');
+            $table->foreign('admission_id')->references('id')->on('admissions')->onDelete('cascade');
             $table->foreignId('fee_package_id')->constrained()->onDelete('restrict');
             $table->foreignId('term_id')->nullable()->constrained()->onDelete('set null');
             $table->decimal('amount', 10, 2);
@@ -157,7 +158,8 @@ return new class extends Migration
         // Book Issues table (student_books in legacy)
         Schema::create('book_issues', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admission_id')->constrained()->onDelete('restrict');
+            $table->unsignedInteger('admission_id');
+            $table->foreign('admission_id')->references('id')->on('admissions')->onDelete('restrict');
             $table->foreignId('book_id')->constrained()->onDelete('restrict');
             $table->date('issue_date');
             $table->date('due_date');
@@ -172,7 +174,8 @@ return new class extends Migration
         Schema::create('library_fines', function (Blueprint $table) {
             $table->id();
             $table->foreignId('book_issue_id')->constrained()->onDelete('cascade');
-            $table->foreignId('admission_id')->constrained()->onDelete('restrict');
+            $table->unsignedInteger('admission_id');
+            $table->foreign('admission_id')->references('id')->on('admissions')->onDelete('restrict');
             $table->decimal('amount', 10, 2);
             $table->decimal('paid_amount', 10, 2)->default(0);
             $table->date('fine_date');
@@ -248,7 +251,8 @@ return new class extends Migration
         // Student Transport table
         Schema::create('student_transport', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admission_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('admission_id');
+            $table->foreign('admission_id')->references('id')->on('admissions')->onDelete('cascade');
             $table->foreignId('route_id')->constrained('transport_routes')->onDelete('restrict');
             $table->foreignId('vehicle_id')->nullable()->constrained('transport_vehicles')->onDelete('set null');
             $table->decimal('monthly_fee', 10, 2);
@@ -261,7 +265,8 @@ return new class extends Migration
         // Student Transport Fees table
         Schema::create('student_transport_fees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admission_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('admission_id');
+            $table->foreign('admission_id')->references('id')->on('admissions')->onDelete('cascade');
             $table->foreignId('transport_id')->constrained('student_transport')->onDelete('cascade');
             $table->foreignId('term_id')->nullable()->constrained()->onDelete('set null');
             $table->decimal('amount', 10, 2);
@@ -304,7 +309,8 @@ return new class extends Migration
         // Student Marks table
         Schema::create('student_marks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admission_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('admission_id');
+            $table->foreign('admission_id')->references('id')->on('admissions')->onDelete('cascade');
             $table->foreignId('exam_subject_id')->constrained()->onDelete('cascade');
             $table->decimal('marks_obtained', 5, 2);
             $table->enum('grade', ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D', 'F'])->nullable();
@@ -353,7 +359,8 @@ return new class extends Migration
         // Attendance table
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admission_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('admission_id');
+            $table->foreign('admission_id')->references('id')->on('admissions')->onDelete('cascade');
             $table->foreignId('class_id')->constrained()->onDelete('cascade');
             $table->date('attendance_date');
             $table->enum('status', ['present', 'absent', 'late', 'half-day'])->default('present');

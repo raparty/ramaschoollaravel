@@ -3,15 +3,54 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     /**
      * Run the migrations.
      * Creates all tables for the Hostel Management Module
+     * 
+     * IMPORTANT: This migration requires that the admissions table exists with 
+     * 'id' column created using increments() (unsigned INT, not BIGINT).
+     * 
+     * All foreign keys to admissions.id use unsignedInteger() to match the 
+     * column type. If you encounter "incompatible column type" errors:
+     * 
+     * 1. Ensure the core_tables migration (2026_02_14_072514) has been run first
+     * 2. Verify admissions.id is INT UNSIGNED (not BIGINT)
+     * 3. Drop any partially created hostel tables using: 
+     *    php artisan migrate:rollback --path=database/migrations/2026_02_17_083400_create_hostel_management_tables.php
+     * 4. Pull the latest code and re-run this migration
      */
     public function up(): void
     {
+        // Verify that the admissions table exists before proceeding
+        if (!Schema::hasTable('admissions')) {
+            throw new \RuntimeException(
+                'The admissions table must exist before running this migration. ' .
+                'Please run the core tables migration (2026_02_14_072514_create_core_tables.php) first.'
+            );
+        }
+
+        // Verify admissions.id is INT UNSIGNED (not BIGINT UNSIGNED)
+        $admissionsIdType = DB::selectOne(
+            "SELECT DATA_TYPE, COLUMN_TYPE 
+             FROM INFORMATION_SCHEMA.COLUMNS 
+             WHERE TABLE_SCHEMA = DATABASE() 
+             AND TABLE_NAME = 'admissions' 
+             AND COLUMN_NAME = 'id'"
+        );
+        
+        if ($admissionsIdType && stripos($admissionsIdType->COLUMN_TYPE, 'bigint') !== false) {
+            throw new \RuntimeException(
+                'The admissions.id column must be INT UNSIGNED (not BIGINT UNSIGNED). ' .
+                'The current type is: ' . $admissionsIdType->COLUMN_TYPE . '. ' .
+                'This migration uses unsignedInteger() for foreign keys to match the expected INT type. ' .
+                'Please check the core tables migration and ensure it uses increments(\'id\') for the admissions table.'
+            );
+        }
+
         // 1. Hostels table - Main hostel entity
         if (!Schema::hasTable('hostels')) {
             Schema::create('hostels', function (Blueprint $table) {

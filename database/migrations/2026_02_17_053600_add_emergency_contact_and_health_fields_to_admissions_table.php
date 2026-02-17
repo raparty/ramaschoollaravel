@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('admissions', function (Blueprint $table) {
             $table->string('emergency_contact', 15)->nullable()->after('guardian_phone');
-            $table->text('health_issues')->nullable()->after('address');
+            $table->text('health_issues')->nullable()->after('emergency_contact');
         });
     }
 

@@ -19,7 +19,9 @@ class Admission extends Model {
         'aadhaar_no',
         'guardian_name',
         'guardian_phone',
+        'emergency_contact',
         'address',
+        'health_issues',
         'past_school_info',
     ];
 
@@ -112,5 +114,28 @@ class Admission extends Model {
     public function getRegnoAttribute(): ?string
     {
         return $this->attributes['reg_no'] ?? null;
+    }
+
+    /**
+     * Generate a unique registration number for new admission
+     */
+    public static function generateRegNo(): string
+    {
+        // Get the current year
+        $year = date('Y');
+        
+        // Get the count of admissions for this year
+        $count = static::whereYear('created_at', $year)->count() + 1;
+        
+        // Generate registration number: YEAR + 4-digit sequence
+        $regNo = $year . str_pad($count, 4, '0', STR_PAD_LEFT);
+        
+        // Ensure uniqueness (in case of race conditions)
+        while (static::where('reg_no', $regNo)->exists()) {
+            $count++;
+            $regNo = $year . str_pad($count, 4, '0', STR_PAD_LEFT);
+        }
+        
+        return $regNo;
     }
 }

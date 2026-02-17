@@ -86,8 +86,22 @@ class AdmissionController extends Controller
             // Generate unique registration number
             $validated['reg_no'] = Admission::generateRegNo();
 
+            // Handle camera-captured photo (base64 data)
+            if ($request->filled('student_pic_data') && !$request->hasFile('student_pic')) {
+                $imageData = $request->input('student_pic_data');
+                // Remove data:image/png;base64, prefix if present
+                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $imageData);
+                $imageData = base64_decode($imageData);
+                
+                if ($imageData !== false) {
+                    $filename = 'student_' . time() . '.jpg';
+                    $path = 'students/photos/' . $filename;
+                    Storage::disk('public')->put($path, $imageData);
+                    $validated['student_pic'] = $filename;
+                }
+            }
             // Handle student photo upload
-            if ($request->hasFile('student_pic')) {
+            elseif ($request->hasFile('student_pic')) {
                 $photoPath = $request->file('student_pic')->store('students/photos', 'public');
                 $validated['student_pic'] = basename($photoPath);
             }
@@ -97,6 +111,9 @@ class AdmissionController extends Controller
                 $docPath = $request->file('aadhaar_doc')->store('students/aadhaar', 'public');
                 $validated['aadhaar_doc_path'] = basename($docPath);
             }
+
+            // Remove student_pic_data from validated array as it's not a DB column
+            unset($validated['student_pic_data']);
 
             // Create admission record
             $admission = Admission::create($validated);
@@ -170,8 +187,27 @@ class AdmissionController extends Controller
             // Get validated data
             $validated = $request->validated();
 
+            // Handle camera-captured photo (base64 data)
+            if ($request->filled('student_pic_data') && !$request->hasFile('student_pic')) {
+                $imageData = $request->input('student_pic_data');
+                // Remove data:image/png;base64, prefix if present
+                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $imageData);
+                $imageData = base64_decode($imageData);
+                
+                if ($imageData !== false) {
+                    // Delete old photo
+                    if ($admission->student_pic) {
+                        Storage::disk('public')->delete('students/photos/' . $admission->student_pic);
+                    }
+                    
+                    $filename = 'student_' . time() . '.jpg';
+                    $path = 'students/photos/' . $filename;
+                    Storage::disk('public')->put($path, $imageData);
+                    $validated['student_pic'] = $filename;
+                }
+            }
             // Handle student photo upload
-            if ($request->hasFile('student_pic')) {
+            elseif ($request->hasFile('student_pic')) {
                 // Delete old photo
                 if ($admission->student_pic) {
                     Storage::disk('public')->delete('students/photos/' . $admission->student_pic);
@@ -191,6 +227,9 @@ class AdmissionController extends Controller
                 $docPath = $request->file('aadhaar_doc')->store('students/aadhaar', 'public');
                 $validated['aadhaar_doc_path'] = basename($docPath);
             }
+
+            // Remove student_pic_data from validated array as it's not a DB column
+            unset($validated['student_pic_data']);
 
             // Update admission record
             $admission->update($validated);

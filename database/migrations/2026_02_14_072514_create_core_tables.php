@@ -59,14 +59,16 @@ return new class extends Migration
         });
 
         // Academic terms table
-        Schema::create('terms', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('terms')) {
+            Schema::create('terms', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->date('start_date');
+                $table->date('end_date');
+                $table->boolean('is_active')->default(true);
+                $table->timestamps();
+            });
+        }
 
         // Admissions/Students table
         Schema::create('admissions', function (Blueprint $table) {
@@ -271,25 +273,33 @@ return new class extends Migration
         });
 
         // Exams table
-        Schema::create('exams', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->foreignId('term_id')->constrained()->onDelete('cascade');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('exams')) {
+            Schema::create('exams', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->foreignId('term_id')->constrained()->onDelete('cascade');
+                $table->date('start_date');
+                $table->date('end_date');
+                $table->timestamps();
+            });
+        }
 
         // Exam Subjects (Maximum Marks) table
-        Schema::create('exam_subjects', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('exam_id')->constrained()->onDelete('cascade');
-            $table->foreignId('class_id')->constrained()->onDelete('cascade');
-            $table->foreignId('subject_id')->constrained()->onDelete('cascade');
-            $table->integer('max_marks');
-            $table->integer('pass_marks');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('exam_subjects')) {
+            Schema::create('exam_subjects', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('exam_id')->constrained()->onDelete('cascade');
+                $table->foreignId('class_id')->nullable()->constrained()->onDelete('cascade');
+                $table->foreignId('subject_id')->constrained()->onDelete('cascade');
+                $table->integer('theory_marks')->default(0);
+                $table->integer('practical_marks')->default(0);
+                $table->integer('pass_marks');
+                $table->date('exam_date')->nullable();
+                $table->time('exam_time')->nullable();
+                $table->integer('duration_minutes')->nullable();
+                $table->timestamps();
+            });
+        }
 
         // Student Marks table
         Schema::create('student_marks', function (Blueprint $table) {

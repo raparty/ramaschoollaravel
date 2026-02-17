@@ -667,3 +667,33 @@ For support and questions:
 **PHP Version**: 8.1+
 
 Made with ❤️ for educational institutions
+
+## Migration Management
+
+### Rolling Back Individual Migrations
+
+If you encounter a "Migration not found" error when trying to rollback a specific migration using the `--path` option, this usually means multiple migrations were run in the same batch.
+
+#### The Problem
+```bash
+php artisan migrate:rollback --path=database/migrations/2026_02_17_083400_create_hostel_management_tables.php
+```
+May result in:
+```
+2026_02_17_053600_add_emergency_contact_and_health_fields_to_admissions_table ... Migration not found
+```
+
+#### The Solution
+
+**Option 1: Rollback the entire batch (Recommended)**
+```bash
+php artisan migrate:rollback
+```
+
+**Option 2: Rollback a single migration (Custom Command)**
+```bash
+php artisan migrate:rollback-single 2026_02_17_083400_create_hostel_management_tables.php
+```
+
+For more details, see [database/migrations/README_ROLLBACK.md](database/migrations/README_ROLLBACK.md)
+

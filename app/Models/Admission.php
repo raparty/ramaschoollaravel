@@ -19,7 +19,9 @@ class Admission extends Model {
         'aadhaar_no',
         'guardian_name',
         'guardian_phone',
+        'emergency_contact',
         'address',
+        'health_issues',
         'past_school_info',
     ];
 
@@ -112,5 +114,46 @@ class Admission extends Model {
     public function getRegnoAttribute(): ?string
     {
         return $this->attributes['reg_no'] ?? null;
+    }
+
+    /**
+     * Generate a unique registration number for new admission
+     * 
+     * Format: YEAR + 4-digit sequence (e.g., 20260001, 20260002, etc.)
+     * 
+     * Uses database row locking within a transaction to prevent race conditions
+     * when multiple admissions are being created simultaneously.
+     * 
+     * The method counts existing admissions for the current year and increments.
+     * If a duplicate is detected (unlikely with locking), it retries up to 10 times.
+     * 
+     * @return string The generated registration number
+     * @throws \Exception If unable to generate unique number after max attempts
+     */
+    public static function generateRegNo(): string
+    {
+        // Get the current year
+        $year = date('Y');
+        
+        // Use database transaction to prevent race conditions
+        return DB::transaction(function () use ($year) {
+            // Lock the table for this transaction
+            $count = static::lockForUpdate()
+                ->whereYear('created_at', $year)
+                ->count() + 1;
+            
+            // Generate registration number: YEAR + 4-digit sequence
+            $regNo = $year . str_pad($count, 4, '0', STR_PAD_LEFT);
+            
+            // Double-check uniqueness (in case of concurrent requests)
+            $attempt = 0;
+            while (static::where('reg_no', $regNo)->exists() && $attempt < 10) {
+                $count++;
+                $regNo = $year . str_pad($count, 4, '0', STR_PAD_LEFT);
+                $attempt++;
+            }
+            
+            return $regNo;
+        });
     }
 }

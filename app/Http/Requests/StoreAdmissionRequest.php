@@ -35,8 +35,12 @@ class StoreAdmissionRequest extends FormRequest
             'aadhaar_no' => ['required', 'digits:12', 'unique:admissions,aadhaar_no'],
             'guardian_name' => ['required', 'string', 'max:100'],
             'guardian_phone' => ['required', 'digits:10'],
+            'emergency_contact' => ['nullable', 'digits:10'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'health_issues' => ['nullable', 'string', 'max:1000'],
             'past_school_info' => ['nullable', 'string', 'max:1000'],
-            'student_pic' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'], // 2MB max
+            'student_pic' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'], // 2MB max
+            'student_pic_data' => ['nullable', 'string'], // For camera capture (base64 data)
             'aadhaar_doc' => ['nullable', 'file', 'mimes:pdf', 'max:5120'], // 5MB max
         ];
     }
@@ -53,6 +57,9 @@ class StoreAdmissionRequest extends FormRequest
             'aadhaar_no' => 'Aadhaar number',
             'guardian_name' => 'guardian name',
             'guardian_phone' => 'guardian phone',
+            'emergency_contact' => 'emergency contact',
+            'address' => 'address',
+            'health_issues' => 'health issues',
             'past_school_info' => 'past school information',
             'student_pic' => 'student photo',
             'aadhaar_doc' => 'Aadhaar document',
@@ -70,7 +77,7 @@ class StoreAdmissionRequest extends FormRequest
             'aadhaar_no.digits' => 'Aadhaar number must be exactly 12 digits.',
             'aadhaar_no.unique' => 'This Aadhaar number is already registered.',
             'guardian_phone.digits' => 'Guardian phone must be exactly 10 digits.',
-            'student_pic.required' => 'Student photo is required.',
+            'emergency_contact.digits' => 'Emergency contact must be exactly 10 digits.',
             'student_pic.max' => 'Student photo must not exceed 2MB.',
             'aadhaar_doc.max' => 'Aadhaar document must not exceed 5MB.',
         ];

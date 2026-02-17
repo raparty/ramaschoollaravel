@@ -41,9 +41,16 @@ php artisan migrate:rollback-single 2026_02_17_083400_create_hostel_management_t
 ```
 
 This command will:
-1. Load the specified migration file
-2. Execute its `down()` method
-3. Remove it from the migrations table
+1. Check if the migration exists in the database
+2. Show which batch it belongs to and warn if there are other migrations in the same batch
+3. Ask for confirmation (unless `--force` is used)
+4. Execute the migration's `down()` method
+5. Remove it from the migrations table
+
+**Force mode (skip confirmation):**
+```bash
+php artisan migrate:rollback-single 2026_02_17_083400_create_hostel_management_tables.php --force
+```
 
 ⚠️ **Warning**: This breaks migration batch integrity. Use with caution and only when necessary.
 

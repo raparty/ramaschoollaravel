@@ -13,7 +13,7 @@ class RollbackSingleMigration extends Command
      *
      * @var string
      */
-    protected $signature = 'migrate:rollback-single {migration : The migration file name}';
+    protected $signature = 'migrate:rollback-single {migration : The migration file name} {--force : Force the operation without confirmation}';
 
     /**
      * The console command description.
@@ -33,13 +33,40 @@ class RollbackSingleMigration extends Command
         $migrationName = basename($migrationFile, '.php');
         
         // Check if migration exists in database
-        $migrationRecord = DB::table('migrations')
-            ->where('migration', $migrationName)
-            ->first();
+        try {
+            $migrationRecord = DB::table('migrations')
+                ->where('migration', $migrationName)
+                ->first();
+        } catch (\Exception $e) {
+            $this->error("Could not connect to database: " . $e->getMessage());
+            $this->warn("Make sure your database connection is configured correctly in .env");
+            return 1;
+        }
             
         if (!$migrationRecord) {
             $this->error("Migration '{$migrationName}' not found in database.");
+            $this->info("This migration has either not been run yet or has already been rolled back.");
             return 1;
+        }
+        
+        // Show migration batch info
+        $this->info("Found migration in batch {$migrationRecord->batch}");
+        
+        // Check if there are other migrations in the same batch
+        $batchMigrations = DB::table('migrations')
+            ->where('batch', $migrationRecord->batch)
+            ->pluck('migration')
+            ->toArray();
+            
+        if (count($batchMigrations) > 1) {
+            $this->warn("WARNING: This migration is part of a batch with other migrations:");
+            foreach ($batchMigrations as $batchMig) {
+                $marker = ($batchMig === $migrationName) ? ' (this one)' : '';
+                $this->line("  - {$batchMig}{$marker}");
+            }
+            $this->warn("Rolling back only this migration will break batch integrity.");
+            $this->warn("Consider using 'php artisan migrate:rollback' to rollback the entire batch.");
+            $this->newLine();
         }
         
         // Construct full path to migration file
@@ -53,10 +80,12 @@ class RollbackSingleMigration extends Command
             return 1;
         }
         
-        // Confirm with user
-        if (!$this->confirm("Are you sure you want to rollback '{$migrationName}'?", false)) {
-            $this->info('Rollback cancelled.');
-            return 0;
+        // Confirm with user (skip if --force is used)
+        if (!$this->option('force')) {
+            if (!$this->confirm("Are you sure you want to rollback '{$migrationName}'?", false)) {
+                $this->info('Rollback cancelled.');
+                return 0;
+            }
         }
         
         try {

@@ -301,89 +301,104 @@
         </div>
     `;
 
-    // Add modal to page
-    document.body.insertAdjacentHTML('beforeend', cameraModalHTML);
-
     let cameraStream = null;
     let cameraModal = null;
 
-    // Initialize camera modal
+    // Initialize all camera functionality after DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', cameraModalHTML);
+        
+        // Initialize camera modal
         cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
-    });
 
-    // Capture photo button click
-    document.getElementById('capturePhotoBtn').addEventListener('click', async function() {
-        try {
-            // Request camera access
-            cameraStream = await navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
-                    facingMode: 'user'
-                } 
-            });
-            
+        // Capture photo button click
+        document.getElementById('capturePhotoBtn').addEventListener('click', async function() {
+            try {
+                // Request camera access
+                cameraStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        facingMode: 'user'
+                    } 
+                });
+                
+                const video = document.getElementById('cameraVideo');
+                video.srcObject = cameraStream;
+                
+                // Show modal
+                cameraModal.show();
+                
+                // Hide any previous error
+                document.getElementById('cameraError').style.display = 'none';
+            } catch (error) {
+                const errorDiv = document.getElementById('cameraError');
+                errorDiv.textContent = 'Unable to access camera. Please ensure camera permissions are granted.';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        // Take picture button click
+        document.getElementById('takePictureBtn').addEventListener('click', function() {
             const video = document.getElementById('cameraVideo');
-            video.srcObject = cameraStream;
+            const canvas = document.getElementById('cameraCanvas');
+            const context = canvas.getContext('2d');
             
-            // Show modal
-            cameraModal.show();
+            // Set canvas dimensions to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
             
-            // Hide any previous error
-            document.getElementById('cameraError').style.display = 'none';
-        } catch (error) {
-            console.error('Camera access error:', error);
-            const errorDiv = document.getElementById('cameraError');
-            errorDiv.textContent = 'Unable to access camera. Please ensure camera permissions are granted.';
-            errorDiv.style.display = 'block';
-        }
-    });
+            // Draw video frame to canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Get image data as base64
+            const imageData = canvas.toDataURL('image/jpeg', 0.9);
+            
+            // Store in hidden field
+            document.getElementById('student_pic_data').value = imageData;
+            
+            // Show preview
+            const previewImg = document.getElementById('previewImage');
+            previewImg.src = imageData;
+            document.getElementById('photoPreview').style.display = 'block';
+            
+            // Clear file input
+            document.getElementById('student_pic').value = '';
+            
+            // Stop camera stream
+            stopCamera();
+            
+            // Close modal
+            cameraModal.hide();
+        });
 
-    // Take picture button click
-    document.getElementById('takePictureBtn').addEventListener('click', function() {
-        const video = document.getElementById('cameraVideo');
-        const canvas = document.getElementById('cameraCanvas');
-        const context = canvas.getContext('2d');
-        
-        // Set canvas dimensions to match video
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        
-        // Draw video frame to canvas
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Get image data as base64
-        const imageData = canvas.toDataURL('image/jpeg', 0.9);
-        
-        // Store in hidden field
-        document.getElementById('student_pic_data').value = imageData;
-        
-        // Show preview
-        const previewImg = document.getElementById('previewImage');
-        previewImg.src = imageData;
-        document.getElementById('photoPreview').style.display = 'block';
-        
-        // Clear file input
-        document.getElementById('student_pic').value = '';
-        
-        // Stop camera stream
-        stopCamera();
-        
-        // Close modal
-        cameraModal.hide();
-    });
+        // Remove photo button
+        document.getElementById('removePhotoBtn').addEventListener('click', function() {
+            document.getElementById('student_pic_data').value = '';
+            document.getElementById('student_pic').value = '';
+            document.getElementById('photoPreview').style.display = 'none';
+        });
 
-    // Remove photo button
-    document.getElementById('removePhotoBtn').addEventListener('click', function() {
-        document.getElementById('student_pic_data').value = '';
-        document.getElementById('student_pic').value = '';
-        document.getElementById('photoPreview').style.display = 'none';
-    });
+        // Stop camera when modal is closed
+        document.getElementById('cameraModal').addEventListener('hidden.bs.modal', function() {
+            stopCamera();
+        });
 
-    // Stop camera when modal is closed
-    document.getElementById('cameraModal').addEventListener('hidden.bs.modal', function() {
-        stopCamera();
+        // Preview uploaded file
+        document.getElementById('student_pic').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const previewImg = document.getElementById('previewImage');
+                    previewImg.src = event.target.result;
+                    document.getElementById('photoPreview').style.display = 'block';
+                    // Clear camera capture data
+                    document.getElementById('student_pic_data').value = '';
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
     });
 
     function stopCamera() {
@@ -392,20 +407,5 @@
             cameraStream = null;
         }
     }
-
-    // Preview uploaded file
-    document.getElementById('student_pic').addEventListener('change', function(e) {
-        if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const previewImg = document.getElementById('previewImage');
-                previewImg.src = event.target.result;
-                document.getElementById('photoPreview').style.display = 'block';
-                // Clear camera capture data
-                document.getElementById('student_pic_data').value = '';
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    });
 </script>
 @endpush

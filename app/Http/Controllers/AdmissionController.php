@@ -94,7 +94,7 @@ class AdmissionController extends Controller
                 $imageData = base64_decode($imageData);
                 
                 if ($imageData !== false) {
-                    $filename = 'student_' . time() . '.jpg';
+                    $filename = 'student_' . uniqid() . '_' . time() . '.jpg';
                     $path = 'students/photos/' . $filename;
                     Storage::disk('public')->put($path, $imageData);
                     $validated['student_pic'] = $filename;
@@ -200,7 +200,7 @@ class AdmissionController extends Controller
                         Storage::disk('public')->delete('students/photos/' . $admission->student_pic);
                     }
                     
-                    $filename = 'student_' . time() . '.jpg';
+                    $filename = 'student_' . uniqid() . '_' . time() . '.jpg';
                     $path = 'students/photos/' . $filename;
                     Storage::disk('public')->put($path, $imageData);
                     $validated['student_pic'] = $filename;

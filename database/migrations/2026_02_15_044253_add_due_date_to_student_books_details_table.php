@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('student_books_details', function (Blueprint $table) {
-            // Add due_date column after issue_date
-            $table->date('due_date')->nullable()->after('issue_date');
-        });
+        if (Schema::hasTable('student_books_details')) {
+            Schema::table('student_books_details', function (Blueprint $table) {
+                // Add due_date column after issue_date
+                $table->date('due_date')->nullable()->after('issue_date');
+            });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('student_books_details', function (Blueprint $table) {
-            $table->dropColumn('due_date');
-        });
+        if (Schema::hasTable('student_books_details')) {
+            Schema::table('student_books_details', function (Blueprint $table) {
+                $table->dropColumn('due_date');
+            });
+        }
     }
 };

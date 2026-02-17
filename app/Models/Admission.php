@@ -66,6 +66,30 @@ class Admission extends Model {
     }
 
     /**
+     * Get the hostel allocations for this student.
+     */
+    public function hostelAllocations(): HasMany
+    {
+        return $this->hasMany(HostelStudentAllocation::class, 'student_id');
+    }
+
+    /**
+     * Get the current active hostel allocation.
+     */
+    public function currentHostelAllocation()
+    {
+        return $this->hostelAllocations()->where('status', 'Active')->first();
+    }
+
+    /**
+     * Get the hostel imprest wallet for this student.
+     */
+    public function hostelWallet()
+    {
+        return $this->hasOne(HostelImprestWallet::class, 'student_id');
+    }
+
+    /**
      * Scope: Search by student name, reg_no, or guardian name
      */
     public function scopeSearch($query, $search)

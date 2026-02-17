@@ -162,16 +162,16 @@
                     <a href="{{ route('admissions.edit', $admission) }}" class="btn btn-outline-primary">
                         ✏️ Edit Details
                     </a>
-                    <a href="#" class="btn btn-outline-success">
+                    <a href="{{ route('fees.collect', ['registration_no' => $admission->reg_no]) }}" class="btn btn-outline-success">
                         💰 Collect Fees
                     </a>
-                    <a href="#" class="btn btn-outline-info">
+                    <a href="{{ route('library.issue.create', ['registration_no' => $admission->reg_no]) }}" class="btn btn-outline-info">
                         📚 Issue Book
                     </a>
-                    <a href="#" class="btn btn-outline-warning">
+                    <a href="{{ route('attendance.student', ['student_id' => $admission->id]) }}" class="btn btn-outline-warning">
                         📝 Attendance
                     </a>
-                    <a href="#" class="btn btn-outline-secondary">
+                    <a href="{{ route('students.transfer-certificate.show', $admission->reg_no) }}" class="btn btn-outline-secondary">
                         📄 Generate TC
                     </a>
                 </div>

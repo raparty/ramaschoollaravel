@@ -18,7 +18,20 @@ php artisan migrate
 
 This will create all missing tables including the exam-related tables.
 
-### Option 2: Manual SQL Installation
+### Option 2: Run Migration and Seed Default Term
+To set up the exam module completely with a default academic term:
+
+```bash
+# Run migrations
+php artisan migrate
+
+# Seed a default academic term
+php artisan db:seed --class=TermSeeder
+```
+
+This creates a default academic term for the current school year (e.g., 2024-2025).
+
+### Option 3: Manual SQL Installation
 If you prefer to manually create the tables, run the SQL file:
 
 ```bash
@@ -27,7 +40,7 @@ mysql -u your_username -p your_database < database/schema/exam_tables.sql
 
 Or execute the SQL directly in your database management tool (phpMyAdmin, MySQL Workbench, etc.)
 
-### Option 3: Run Migration Specifically
+### Option 4: Run Migration Specifically
 If you only want to run the core tables migration:
 
 ```bash
@@ -44,16 +57,37 @@ After running the migration or SQL file, the exams module should work. You can v
 
 ## Creating Your First Exam
 
-1. Click "Create Exam" button
-2. However, you'll first need to create at least one Academic Term:
-   - Academic terms are required for exams
-   - The system uses terms like "2023-2024", "Term 1 2024", etc.
-   - **Note:** Currently there's no UI to create terms - this needs to be added
-   - As a workaround, insert a term directly into the database:
+1. Click "Create Exam" button on the Exams page
+2. You'll need at least one Academic Term in the database
+3. If you ran the TermSeeder (Option 2 above), a default term is already created
+4. If not, you can create a term using one of these methods:
 
+### Method A: Using the Seeder (Easiest)
+```bash
+php artisan db:seed --class=TermSeeder
+```
+
+This creates a default term for the current academic year.
+
+### Method B: Manual SQL Insert
 ```sql
 INSERT INTO terms (name, start_date, end_date, is_active, created_at, updated_at) 
 VALUES ('2024-2025', '2024-04-01', '2025-03-31', 1, NOW(), NOW());
+```
+
+### Method C: Using Laravel Tinker
+```bash
+php artisan tinker
+```
+
+Then run:
+```php
+App\Models\Term::create([
+    'name' => '2024-2025',
+    'start_date' => '2024-04-01',
+    'end_date' => '2025-03-31',
+    'is_active' => true
+]);
 ```
 
 ## Legacy Database Compatibility
@@ -87,14 +121,17 @@ You need at least one term in the `terms` table. See "Creating Your First Exam" 
 
 ## Files Modified
 
-- `/database/migrations/2026_02_14_072514_create_core_tables.php` - Added `hasTable()` checks
+- `/database/migrations/2026_02_14_072514_create_core_tables.php` - Added `hasTable()` checks and updated schema
+- `/app/Models/ExamSubject.php` - Updated fillable array and added max_marks accessor
 - `/database/schema/exam_tables.sql` - Manual SQL installation option
-- This README file
+- `/database/seeders/TermSeeder.php` - Seeder to create default academic term
+- `/EXAM_MODULE_SETUP.md` - This documentation file
 
 ## Next Steps
 
 Consider adding:
-1. A Terms management UI (currently missing)
-2. Better error messages in the UI
+1. A Terms management UI (currently requires manual creation or seeder)
+2. Better error messages in the UI when prerequisites are missing
 3. Setup wizard for first-time installation
 4. Data migration script from legacy tables if needed
+5. Bulk operations for managing exam subjects

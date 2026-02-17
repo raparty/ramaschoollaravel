@@ -289,7 +289,7 @@ return new class extends Migration
             Schema::create('exam_subjects', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('exam_id')->constrained()->onDelete('cascade');
-                $table->foreignId('class_id')->constrained()->onDelete('cascade');
+                $table->foreignId('class_id')->nullable()->constrained()->onDelete('cascade');
                 $table->foreignId('subject_id')->constrained()->onDelete('cascade');
                 $table->integer('theory_marks')->default(0);
                 $table->integer('practical_marks')->default(0);

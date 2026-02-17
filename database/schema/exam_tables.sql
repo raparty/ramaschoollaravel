@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `exams` (
 CREATE TABLE IF NOT EXISTS `exam_subjects` (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `exam_id` bigint UNSIGNED NOT NULL,
-  `class_id` bigint UNSIGNED NOT NULL,
+  `class_id` bigint UNSIGNED DEFAULT NULL,
   `subject_id` bigint UNSIGNED NOT NULL,
   `theory_marks` int NOT NULL DEFAULT '0',
   `practical_marks` int NOT NULL DEFAULT '0',

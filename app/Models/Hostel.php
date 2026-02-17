@@ -119,12 +119,11 @@ class Hostel extends Model
      */
     public function getTotalOccupiedAttribute(): int
     {
-        return $this->blocks()
-            ->withCount(['floors.rooms.beds' => function ($query) {
-                $query->where('is_occupied', true);
-            }])
-            ->get()
-            ->sum('floors_rooms_beds_count');
+        return HostelBed::whereHas('room.floor.block', function ($query) {
+            $query->where('hostel_id', $this->id);
+        })
+        ->where('is_occupied', true)
+        ->count();
     }
 
     /**

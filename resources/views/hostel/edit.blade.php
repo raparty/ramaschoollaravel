@@ -105,8 +105,8 @@
                 </div>
             </div>
 
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('hostel.show', $hostel) }}" class="btn btn-secondary">Cancel</a>
+            <div class="d-flex justify-content-end">
+                <a href="{{ route('hostel.show', $hostel) }}" class="btn btn-secondary me-2">Cancel</a>
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-circle"></i> Update Hostel
                 </button>

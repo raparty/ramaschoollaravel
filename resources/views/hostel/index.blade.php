@@ -97,12 +97,12 @@
                                         <a href="{{ route('hostel.show', $hostel) }}" 
                                            class="btn btn-outline-primary" 
                                            title="View">
-                                            👁️
+                                            <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="{{ route('hostel.edit', $hostel) }}" 
                                            class="btn btn-outline-warning" 
                                            title="Edit">
-                                            ✏️
+                                            <i class="bi bi-pencil"></i>
                                         </a>
                                         <form method="POST" 
                                               action="{{ route('hostel.destroy', $hostel) }}"
@@ -113,7 +113,7 @@
                                             <button type="submit" 
                                                     class="btn btn-outline-danger btn-sm" 
                                                     title="Delete">
-                                                🗑️
+                                                <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
                                     </div>

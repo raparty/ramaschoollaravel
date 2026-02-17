@@ -189,6 +189,9 @@
             <a class="nav-link {{ request()->routeIs('transport.*') ? 'active' : '' }}" href="{{ route('transport.index') }}">🚌 Transport</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('hostel.*') ? 'active' : '' }}" href="{{ route('hostel.dashboard') }}">🏠 Hostel</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">⚙️ Settings</a>
         </li>
     </ul>

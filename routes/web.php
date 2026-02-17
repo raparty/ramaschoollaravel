@@ -255,6 +255,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('students', TransportStudentController::class)->except(['show']);
     });
     
+    // Hostel Module
+    require __DIR__.'/hostel.php';
+    
     // Settings Module - RBAC Management
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('index');

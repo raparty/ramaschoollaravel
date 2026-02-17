@@ -14,6 +14,23 @@ use Illuminate\Support\Facades\Auth;
 class HostelController extends Controller
 {
     /**
+     * Display the hostel management dashboard.
+     */
+    public function dashboard()
+    {
+        $stats = [
+            'hostels' => \App\Models\Hostel::count(),
+            'rooms' => \App\Models\HostelRoom::count(),
+            'beds' => \App\Models\HostelBed::count(),
+            'active_students' => \App\Models\HostelStudentAllocation::where('status', 'Active')->count(),
+            'active_wardens' => \App\Models\HostelWarden::where('is_active', true)->count(),
+            'pending_expenses' => \App\Models\HostelExpense::where('status', 'Pending')->count(),
+        ];
+
+        return view('hostel.dashboard', compact('stats'));
+    }
+
+    /**
      * Display a listing of hostels.
      */
     public function index(Request $request)

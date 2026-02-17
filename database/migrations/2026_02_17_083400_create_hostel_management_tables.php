@@ -9,6 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      * Creates all tables for the Hostel Management Module
+     * 
+     * IMPORTANT: This migration requires that the admissions table exists with 
+     * 'id' column created using increments() (unsigned INT, not BIGINT).
+     * 
+     * All foreign keys to admissions.id use unsignedInteger() to match the 
+     * column type. If you encounter "incompatible column type" errors:
+     * 
+     * 1. Ensure the core_tables migration (2026_02_14_072514) has been run first
+     * 2. Verify admissions.id is INT UNSIGNED (not BIGINT)
+     * 3. Drop any partially created hostel tables using: 
+     *    php artisan migrate:rollback --path=database/migrations/2026_02_17_083400_create_hostel_management_tables.php
+     * 4. Pull the latest code and re-run this migration
      */
     public function up(): void
     {

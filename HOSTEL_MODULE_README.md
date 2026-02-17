@@ -314,6 +314,61 @@ Potential additions:
 - Mess menu management
 - Biometric attendance integration
 
+## Troubleshooting
+
+### Migration Error: "Referencing column 'student_id' and referenced column 'id' are incompatible"
+
+**Problem**: When running the hostel management migration, you may encounter an error stating that the `student_id` column is incompatible with the `admissions.id` column.
+
+**Root Cause**: This error occurs when there's a type mismatch between foreign key columns. The `admissions` table must have its `id` column as `INT UNSIGNED` (created with `increments()`), but foreign key migration sometimes uses `BIGINT UNSIGNED` (from `foreignId()`).
+
+**Solution**:
+
+1. **Verify you have the latest code**:
+   ```bash
+   git pull origin main
+   ```
+
+2. **Check if the admissions table exists and has the correct schema**:
+   ```bash
+   php artisan tinker
+   ```
+   Then run:
+   ```php
+   DB::select("SHOW COLUMNS FROM admissions WHERE Field = 'id'");
+   ```
+   The Type should be `int unsigned`, NOT `bigint unsigned`.
+
+3. **If you have partially created hostel tables, roll them back**:
+   ```bash
+   php artisan migrate:rollback --path=database/migrations/2026_02_17_083400_create_hostel_management_tables.php
+   ```
+
+4. **Re-run the migration**:
+   ```bash
+   php artisan migrate --path=database/migrations/2026_02_17_083400_create_hostel_management_tables.php
+   ```
+
+**Prevention**: Always ensure the core tables migration (`2026_02_14_072514_create_core_tables.php`) is run before the hostel management migration. The admissions table must exist with the correct schema.
+
+### Migration Error: "Table already exists"
+
+If you encounter "table already exists" errors, the migration has idempotency guards (`Schema::hasTable()`) that should prevent this. However, if tables exist with incorrect schemas:
+
+1. Manually drop the hostel tables:
+   ```bash
+   php artisan migrate:rollback --path=database/migrations/2026_02_17_083400_create_hostel_management_tables.php
+   ```
+
+2. Or manually drop them via SQL:
+   ```sql
+   DROP TABLE IF EXISTS hostel_expenses;
+   DROP TABLE IF EXISTS hostel_expense_categories;
+   -- ... (drop all hostel tables in reverse order)
+   ```
+
+3. Re-run the migration with the latest code.
+
 ## Support
 
 For issues or questions, please contact the development team.

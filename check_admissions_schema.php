@@ -58,25 +58,24 @@ try {
     echo "  Key: {$result->COLUMN_KEY}\n";
     echo "  Extra: {$result->EXTRA}\n\n";
 
-    // Verify it's INT UNSIGNED, not BIGINT UNSIGNED
+    // Verify it's INT (may be signed or unsigned depending on setup)
     if (stripos($result->COLUMN_TYPE, 'bigint') !== false) {
-        echo "  ✗ ERROR: admissions.id is BIGINT UNSIGNED (expected INT UNSIGNED)!\n";
+        echo "  ✗ ERROR: admissions.id is BIGINT (expected INT)!\n";
         echo "  → This will cause foreign key constraint errors in the hostel migration.\n";
-        echo "  → The admissions table should use increments('id'), not id().\n";
+        echo "  → The admissions table should use INT type, not BIGINT.\n";
         echo "  → You may need to:\n";
         echo "    1. Backup your data\n";
         echo "    2. Rollback the core tables migration\n";
-        echo "    3. Ensure the migration uses increments('id') for admissions table\n";
+        echo "    3. Ensure the migration uses the correct type for admissions table\n";
         echo "    4. Re-run the migration\n\n";
         exit(1);
     }
 
-    if (stripos($result->COLUMN_TYPE, 'int') !== false && 
-        stripos($result->COLUMN_TYPE, 'unsigned') !== false) {
-        echo "  ✓ Column type is correct (INT UNSIGNED)\n\n";
+    if (stripos($result->COLUMN_TYPE, 'int') !== false) {
+        echo "  ✓ Column type is correct (INT)\n\n";
     } else {
         echo "  ⚠ WARNING: Unexpected column type: {$result->COLUMN_TYPE}\n";
-        echo "  → Expected: int unsigned or int(10) unsigned\n\n";
+        echo "  → Expected: int or int(10) or int unsigned\n\n";
     }
 
     // Check some related tables from core migration

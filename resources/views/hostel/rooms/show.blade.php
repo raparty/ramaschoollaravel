@@ -109,10 +109,11 @@
                             <th>Occupancy Rate:</th>
                             <td>
                                 @php
-                                    $occupancyRate = $room->max_strength > 0 ? (($stats['occupied_beds'] ?? 0) / $room->max_strength) * 100 : 0;
+                                    $occupancyRate = $stats['occupancy_rate'] ?? 0;
+                                    $progressBarClass = $occupancyRate >= 90 ? 'bg-danger' : ($occupancyRate >= 70 ? 'bg-warning' : 'bg-success');
                                 @endphp
                                 <div class="progress" style="width: 200px;">
-                                    <div class="progress-bar {{ $occupancyRate >= 90 ? 'bg-danger' : ($occupancyRate >= 70 ? 'bg-warning' : 'bg-success') }}" 
+                                    <div class="progress-bar {{ $progressBarClass }}" 
                                          role="progressbar" 
                                          style="width: {{ $occupancyRate }}%;"
                                          aria-valuenow="{{ $occupancyRate }}" 
@@ -217,7 +218,7 @@
                         </tr>
                         <tr>
                             <th>Available Lockers:</th>
-                            <td><span class="badge bg-success">{{ ($stats['total_lockers'] ?? 0) - ($stats['assigned_lockers'] ?? 0) }}</span></td>
+                            <td><span class="badge bg-success">{{ $stats['available_lockers'] ?? 0 }}</span></td>
                         </tr>
                         <tr>
                             <th>Total Furniture:</th>

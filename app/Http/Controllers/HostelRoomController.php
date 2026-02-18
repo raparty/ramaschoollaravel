@@ -97,7 +97,9 @@ class HostelRoomController extends Controller
             'available_beds' => $room->available_beds,
             'total_lockers' => $room->lockers()->count(),
             'assigned_lockers' => $room->lockers()->where('is_assigned', true)->count(),
+            'available_lockers' => $room->lockers()->count() - $room->lockers()->where('is_assigned', true)->count(),
             'total_furniture' => $room->furniture()->count(),
+            'occupancy_rate' => $room->max_strength > 0 ? ($room->current_occupancy / $room->max_strength) * 100 : 0,
         ];
 
         return view('hostel.rooms.show', compact('room', 'stats'));

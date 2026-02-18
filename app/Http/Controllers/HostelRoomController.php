@@ -91,13 +91,16 @@ class HostelRoomController extends Controller
         $room->load(['floor.block.hostel', 'beds', 'lockers', 'furniture']);
         
         // Calculate statistics
+        $totalLockers = $room->lockers()->count();
+        $assignedLockers = $room->lockers()->where('is_assigned', true)->count();
+        
         $stats = [
             'total_beds' => $room->beds()->count(),
             'occupied_beds' => $room->current_occupancy,
             'available_beds' => $room->available_beds,
-            'total_lockers' => $room->lockers()->count(),
-            'assigned_lockers' => $room->lockers()->where('is_assigned', true)->count(),
-            'available_lockers' => $room->lockers()->count() - $room->lockers()->where('is_assigned', true)->count(),
+            'total_lockers' => $totalLockers,
+            'assigned_lockers' => $assignedLockers,
+            'available_lockers' => $totalLockers - $assignedLockers,
             'total_furniture' => $room->furniture()->count(),
             'occupancy_rate' => $room->max_strength > 0 ? ($room->current_occupancy / $room->max_strength) * 100 : 0,
         ];

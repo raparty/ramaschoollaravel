@@ -15,6 +15,8 @@ class HostelAttendance extends Model
 {
     use HasFactory;
 
+    protected $table = 'hostel_attendance';
+
     protected $fillable = [
         'hostel_id',
         'student_id',

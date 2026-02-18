@@ -114,7 +114,7 @@
             
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $books->links() }}
+                {{ $books->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-5">

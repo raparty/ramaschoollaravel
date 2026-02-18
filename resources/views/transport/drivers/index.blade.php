@@ -116,7 +116,7 @@
 
                 <!-- Pagination -->
                 <div class="mt-3">
-                    {{ $drivers->links() }}
+                    {{ $drivers->appends(request()->query())->links() }}
                 </div>
             @endif
         </div>

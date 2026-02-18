@@ -215,7 +215,7 @@
             
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-3">
-                {{ $marks->links() }}
+                {{ $marks->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center text-muted py-5">

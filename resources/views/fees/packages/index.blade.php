@@ -87,7 +87,7 @@
             
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $packages->links() }}
+                {{ $packages->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-5">

@@ -190,7 +190,7 @@
             
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-3">
-                {{ $results->links() }}
+                {{ $results->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center text-muted py-5">

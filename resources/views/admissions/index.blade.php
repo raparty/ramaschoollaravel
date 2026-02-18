@@ -118,7 +118,7 @@
             
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $admissions->links() }}
+                {{ $admissions->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-5">

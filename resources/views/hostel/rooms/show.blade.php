@@ -263,14 +263,14 @@
                                 @endif
                             </td>
                             <td>
-                                @if($bed->condition === 'Good')
+                                @if($bed->condition_status === 'Good')
                                     <span class="badge bg-success">Good</span>
-                                @elseif($bed->condition === 'Fair')
-                                    <span class="badge bg-warning text-dark">Fair</span>
-                                @elseif($bed->condition === 'Poor')
-                                    <span class="badge bg-danger">Poor</span>
+                                @elseif($bed->condition_status === 'Damaged')
+                                    <span class="badge bg-warning text-dark">Damaged</span>
+                                @elseif($bed->condition_status === 'Under Repair')
+                                    <span class="badge bg-danger">Under Repair</span>
                                 @else
-                                    <span class="badge bg-info">{{ $bed->condition ?? 'N/A' }}</span>
+                                    <span class="badge bg-info">{{ $bed->condition_status ?? 'N/A' }}</span>
                                 @endif
                             </td>
                             <td>{{ $bed->notes ?? '-' }}</td>
@@ -313,14 +313,14 @@
                                 @endif
                             </td>
                             <td>
-                                @if($locker->condition === 'Good')
+                                @if($locker->condition_status === 'Good')
                                     <span class="badge bg-success">Good</span>
-                                @elseif($locker->condition === 'Fair')
-                                    <span class="badge bg-warning text-dark">Fair</span>
-                                @elseif($locker->condition === 'Poor')
-                                    <span class="badge bg-danger">Poor</span>
+                                @elseif($locker->condition_status === 'Damaged')
+                                    <span class="badge bg-warning text-dark">Damaged</span>
+                                @elseif($locker->condition_status === 'Under Repair')
+                                    <span class="badge bg-danger">Under Repair</span>
                                 @else
-                                    <span class="badge bg-info">{{ $locker->condition ?? 'N/A' }}</span>
+                                    <span class="badge bg-info">{{ $locker->condition_status ?? 'N/A' }}</span>
                                 @endif
                             </td>
                             <td>
@@ -363,14 +363,14 @@
                             <td><strong>{{ $item->item_name }}</strong></td>
                             <td>{{ $item->quantity ?? 1 }}</td>
                             <td>
-                                @if($item->condition === 'Good')
+                                @if($item->condition_status === 'Good')
                                     <span class="badge bg-success">Good</span>
-                                @elseif($item->condition === 'Fair')
-                                    <span class="badge bg-warning text-dark">Fair</span>
-                                @elseif($item->condition === 'Poor')
-                                    <span class="badge bg-danger">Poor</span>
+                                @elseif($item->condition_status === 'Damaged')
+                                    <span class="badge bg-warning text-dark">Damaged</span>
+                                @elseif($item->condition_status === 'Under Repair')
+                                    <span class="badge bg-danger">Under Repair</span>
                                 @else
-                                    <span class="badge bg-info">{{ $item->condition ?? 'N/A' }}</span>
+                                    <span class="badge bg-info">{{ $item->condition_status ?? 'N/A' }}</span>
                                 @endif
                             </td>
                             <td>{{ $item->notes ?? '-' }}</td>

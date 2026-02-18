@@ -91,13 +91,24 @@ class HostelRoomController extends Controller
         $room->load(['floor.block.hostel', 'beds', 'lockers', 'furniture']);
         
         // Calculate statistics
+        $totalLockers = $room->lockers()->count();
+        $assignedLockers = $room->lockers()->where('is_assigned', true)->count();
+        $currentOccupancy = $room->current_occupancy ?? 0;
+        $occupancyRate = $room->max_strength > 0 ? ($currentOccupancy / $room->max_strength) * 100 : 0;
+        
+        // Determine progress bar class based on occupancy rate
+        $progressBarClass = $occupancyRate >= 90 ? 'bg-danger' : ($occupancyRate >= 70 ? 'bg-warning' : 'bg-success');
+        
         $stats = [
             'total_beds' => $room->beds()->count(),
-            'occupied_beds' => $room->current_occupancy,
+            'occupied_beds' => $currentOccupancy,
             'available_beds' => $room->available_beds,
-            'total_lockers' => $room->lockers()->count(),
-            'assigned_lockers' => $room->lockers()->where('is_assigned', true)->count(),
+            'total_lockers' => $totalLockers,
+            'assigned_lockers' => $assignedLockers,
+            'available_lockers' => $totalLockers - $assignedLockers,
             'total_furniture' => $room->furniture()->count(),
+            'occupancy_rate' => $occupancyRate,
+            'progress_bar_class' => $progressBarClass,
         ];
 
         return view('hostel.rooms.show', compact('room', 'stats'));

@@ -23,6 +23,7 @@ class Admission extends Model {
         'address',
         'health_issues',
         'past_school_info',
+        'is_active',
     ];
 
     /**
@@ -31,6 +32,7 @@ class Admission extends Model {
     protected $casts = [
         'admission_date' => 'date',
         'dob' => 'date',
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -114,6 +116,14 @@ class Admission extends Model {
         }
         
         return $query->where('class_id', $classId);
+    }
+
+    /**
+     * Scope: Only active students
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 
     /**

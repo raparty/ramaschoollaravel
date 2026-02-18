@@ -71,11 +71,11 @@
                             id="locker_id" 
                             name="locker_id">
                         <option value="">No Locker</option>
-                        <!-- Lockers will be loaded dynamically based on selected bed/room -->
                     </select>
                     @error('locker_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+                    <small class="text-muted">Locker assignment is optional and can be configured after check-in if needed.</small>
                 </div>
                 <div class="col-md-6">
                     <label for="check_in_date" class="form-label">Check-in Date <span class="text-danger">*</span></label>

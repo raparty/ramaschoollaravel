@@ -108,18 +108,14 @@
                         <tr>
                             <th>Occupancy Rate:</th>
                             <td>
-                                @php
-                                    $occupancyRate = $stats['occupancy_rate'] ?? 0;
-                                    $progressBarClass = $occupancyRate >= 90 ? 'bg-danger' : ($occupancyRate >= 70 ? 'bg-warning' : 'bg-success');
-                                @endphp
                                 <div class="progress" style="width: 200px;">
-                                    <div class="progress-bar {{ $progressBarClass }}" 
+                                    <div class="progress-bar {{ $stats['progress_bar_class'] ?? 'bg-success' }}" 
                                          role="progressbar" 
-                                         style="width: {{ $occupancyRate }}%;"
-                                         aria-valuenow="{{ $occupancyRate }}" 
+                                         style="width: {{ $stats['occupancy_rate'] ?? 0 }}%;"
+                                         aria-valuenow="{{ $stats['occupancy_rate'] ?? 0 }}" 
                                          aria-valuemin="0" 
                                          aria-valuemax="100">
-                                        {{ number_format($occupancyRate, 1) }}%
+                                        {{ number_format($stats['occupancy_rate'] ?? 0, 1) }}%
                                     </div>
                                 </div>
                             </td>

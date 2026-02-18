@@ -126,7 +126,7 @@
 
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $hostels->links() }}
+                {{ $hostels->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-5">

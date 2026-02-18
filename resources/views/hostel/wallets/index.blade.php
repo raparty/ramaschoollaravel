@@ -119,7 +119,7 @@
 
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $wallets->links() }}
+                {{ $wallets->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-5">

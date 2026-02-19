@@ -46,7 +46,7 @@
                     </tbody>
                 </table>
             </div>
-            {{ $incomes->links() }}
+            {{ $incomes->appends(request()->query())->links() }}
         </div>
     </div>
 </div>

@@ -147,7 +147,7 @@
 
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $expenses->links() }}
+                {{ $expenses->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-5">

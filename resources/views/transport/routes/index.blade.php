@@ -84,7 +84,7 @@
 
                 <!-- Pagination -->
                 <div class="mt-3">
-                    {{ $routes->links() }}
+                    {{ $routes->appends(request()->query())->links() }}
                 </div>
             @endif
         </div>

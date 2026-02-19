@@ -122,7 +122,7 @@
 
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $wardens->links() }}
+                {{ $wardens->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-5">

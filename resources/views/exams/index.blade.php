@@ -132,7 +132,7 @@
 
         {{-- Pagination --}}
         <div class="d-flex justify-content-center">
-            {{ $exams->links() }}
+            {{ $exams->appends(request()->query())->links() }}
         </div>
     @else
         <div class="card">

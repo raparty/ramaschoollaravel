@@ -144,7 +144,7 @@
     
     <!-- Pagination -->
     <div class="d-flex justify-content-center mt-4">
-        {{ $staff->links() }}
+        {{ $staff->appends(request()->query())->links() }}
     </div>
 @else
     <div class="card">

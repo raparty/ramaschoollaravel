@@ -99,7 +99,7 @@
             
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $overdueIssues->links() }}
+                {{ $overdueIssues->appends(request()->query())->links() }}
             </div>
 
             <!-- Export Options -->

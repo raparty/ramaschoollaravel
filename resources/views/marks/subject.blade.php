@@ -187,7 +187,7 @@
             
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-3">
-                {{ $marks->links() }}
+                {{ $marks->appends(request()->query())->links() }}
             </div>
             
             <!-- Performance Distribution -->

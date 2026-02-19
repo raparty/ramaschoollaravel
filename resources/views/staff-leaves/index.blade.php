@@ -199,7 +199,7 @@
                 </div>
                 
                 <div class="d-flex justify-content-center mt-3">
-                    {{ $leaves->links() }}
+                    {{ $leaves->appends(request()->query())->links() }}
                 </div>
             @else
                 <div class="text-center py-5">

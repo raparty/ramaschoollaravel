@@ -155,7 +155,7 @@
 
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
-                {{ $salaries->links() }}
+                {{ $salaries->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-5">

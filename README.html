@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RamaSchool Laravel — School Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0e0e14;
+    --paper: #f5f3ee;
+    --cream: #ede9e0;
+    --gold: #c9a84c;
+    --gold-light: #e8cc7a;
+    --rust: #c0522a;
+    --teal: #1a6b68;
+    --teal-light: #2a9490;
+    --slate: #3a3a4a;
+    --muted: #7a7a8a;
+    --border: #d8d4c8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 40px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.08) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,107,104,0.35) 0%, transparent 70%);
+    top: -200px;
+    right: -100px;
+    pointer-events: none;
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.2) 0%, transparent 70%);
+    bottom: -100px;
+    left: 5%;
+    pointer-events: none;
+    animation: pulse 8s ease-in-out infinite reverse;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+  }
+
+  .hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(42px, 7vw, 88px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+    color: rgba(245,243,238,0.65);
+    max-width: 620px;
+    margin-top: 24px;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 36px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .badge-red { background: rgba(192,82,42,0.2); border-color: rgba(192,82,42,0.5); color: #e07050; }
+  .badge-blue { background: rgba(42,100,180,0.2); border-color: rgba(42,100,180,0.5); color: #6aa0e0; }
+  .badge-purple { background: rgba(130,60,180,0.2); border-color: rgba(130,60,180,0.5); color: #b080e0; }
+  .badge-green { background: rgba(26,107,104,0.3); border-color: rgba(42,148,144,0.5); color: #5cc0bc; }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px;
+    margin-top: 60px;
+    background: rgba(245,243,238,0.1);
+    border: 1px solid rgba(245,243,238,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .stat {
+    padding: 24px 28px;
+    background: rgba(14,14,20,0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: rgba(245,243,238,0.5);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── MAIN CONTENT ── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section { padding: 72px 0; }
+
+  section + section {
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--teal);
+    opacity: 0.4;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  p { color: var(--slate); margin-bottom: 16px; }
+
+  /* ── MODULE GRID ── */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .module-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .module-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--teal));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+  }
+
+  .module-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(14,14,20,0.1);
+    border-color: transparent;
+  }
+
+  .module-card:hover::before { transform: scaleX(1); }
+
+  .module-icon {
+    font-size: 32px;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  .module-card h3 { font-size: 16px; margin-bottom: 6px; }
+  .module-card p { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* ── INSTALL STEPS ── */
+  .steps {
+    margin-top: 40px;
+    position: relative;
+  }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--teal), transparent);
+  }
+
+  .step {
+    display: flex;
+    gap: 24px;
+    padding: 0 0 40px 0;
+    position: relative;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--gold);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    border: 3px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+
+  .step-content { padding-top: 10px; }
+
+  .step-content h3 { font-size: 18px; margin-bottom: 8px; }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: var(--ink);
+    color: #c8d3e0;
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 12px 0;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+
+  pre .prompt { color: var(--gold); user-select: none; }
+  pre .comment { color: rgba(200,211,224,0.4); }
+
+  .code-label {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(200,211,224,0.3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── TECH STACK ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .stack-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    transition: border-color 0.2s;
+  }
+
+  .stack-item:hover { border-color: var(--teal); }
+
+  .stack-emoji { font-size: 24px; }
+
+  .stack-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .stack-ver {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── FEATURES PILLS ── */
+  .features-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .feature-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: var(--slate);
+    transition: all 0.2s;
+  }
+
+  .feature-pill:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .feature-pill span { font-size: 16px; }
+
+  /* ── DB TABLE ── */
+  .db-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .db-group {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .db-group-header {
+    background: var(--ink);
+    color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .db-group-body {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .db-table-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--slate);
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--cream);
+  }
+
+  /* ── SECURITY ── */
+  .security-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .security-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .security-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .security-text { font-size: 14px; color: var(--slate); }
+
+  /* ── ROADMAP ── */
+  .roadmap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .roadmap-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--slate);
+  }
+
+  .roadmap-icon { font-size: 20px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(245,243,238,0.5);
+    padding: 48px 40px;
+    text-align: center;
+  }
+
+  footer .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--paper);
+    margin-bottom: 12px;
+  }
+
+  footer .footer-logo em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  footer p { font-size: 14px; margin: 0; }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    color: rgba(245,243,238,0.4);
+    text-decoration: none;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 8px 0 36px;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .divider-diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">v1.0.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp; Laravel 10</div>
+    <h1>Rama<em>School</em><br>Laravel</h1>
+    <p class="hero-subtitle">A comprehensive, modern school management system — migrated from 278+ legacy PHP files into a clean, production-ready Laravel 10 MVC architecture.</p>
+
+    <div class="hero-badges">
+      <span class="badge badge-red">⚡ Laravel 10.x</span>
+      <span class="badge badge-blue">🐘 PHP 8.1+</span>
+      <span class="badge badge-purple">🎨 Bootstrap 5</span>
+      <span class="badge badge-green">✅ PSR-12</span>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">25</div><div class="stat-label">Eloquent Models</div></div>
+      <div class="stat"><div class="stat-num">19</div><div class="stat-label">Controllers</div></div>
+      <div class="stat"><div class="stat-num">238+</div><div class="stat-label">Routes</div></div>
+      <div class="stat"><div class="stat-num">67+</div><div class="stat-label">Blade Views</div></div>
+      <div class="stat"><div class="stat-num">12</div><div class="stat-label">Core Modules</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ MODULES ══════════ -->
+<div class="container">
+  <section class="reveal">
+    <div class="section-label">Capabilities</div>
+    <h2>12 Complete<br>Management Modules</h2>
+    <p>Everything a modern school needs — fully integrated in one platform.</p>
+
+    <div class="modules-grid">
+      <div class="module-card" style="--card-accent:#c9a84c">
+        <span class="module-icon">🔐</span>
+        <h3>Auth & Access Control</h3>
+        <p>Secure login, role-based permissions, session & middleware management</p>
+      </div>
+      <div class="module-card" style="--card-accent:#1a6b68">
+        <span class="module-icon">👨‍🎓</span>
+        <h3>Student Admissions</h3>
+        <p>Registration, enrollment, photo uploads, document management & advanced search</p>
+      </div>
+      <div class="module-card" style="--card-accent:#c0522a">
+        <span class="module-icon">💰</span>
+        <h3>Fee Management</h3>
+        <p>Flexible packages, receipt generation, multi-payment methods & pending fee reports</p>
+      </div>
+      <div class="module-card" style="--card-accent:#5b4a8a">
+        <span class="module-icon">📚</span>
+        <h3>Library</h3>
+        <p>Book catalog, issue/return system, overdue fines & borrowing history</p>
+      </div>
+      <div class="module-card" style="--card-accent:#2a7040">
+        <span class="module-icon">👥</span>
+        <h3>Staff Management</h3>
+        <p>Profiles, departments, salary processing, attendance & bulk salary generation</p>
+      </div>
+      <div class="module-card" style="--card-accent:#1a6b68">
+        <span class="module-icon">📝</span>
+        <h3>Examinations</h3>
+        <p>Scheduling, mark entry, grade calculation, printable marksheets & Chart.js analytics</p>
+      </div>
+      <div class="module-card" style="--card-accent:#c9a84c">
+        <span class="module-icon">📊</span>
+        <h3>Attendance</h3>
+        <p>Bulk marking, multiple statuses, monthly summaries & CSV export</p>
+      </div>
+      <div class="module-card" style="--card-accent:#c0522a">
+        <span class="module-icon">💼</span>
+        <h3>Accounts</h3>
+        <p>Income/expense tracking, category management, profit/loss & financial analytics</p>
+      </div>
+      <div class="module-card" style="--card-accent:#3a6090">
+        <span class="module-icon">⚙️</span>
+        <h3>Settings</h3>
+        <p>School branding, academic sessions, logo upload & system configuration</p>
+      </div>
+      <div class="module-card" style="--card-accent:#5b4a8a">
+        <span class="module-icon">🎓</span>
+        <h3>Classes & Subjects</h3>
+        <p>Class/section/subject hierarchy, teacher mapping & timetable generation</p>
+      </div>
+      <div class="module-card" style="--card-accent:#2a7040">
+        <span class="module-icon">🚌</span>
+        <h3>Transport</h3>
+        <p>Fleet management, route planning with stops, transport fee collection & capacity tracking</p>
+      </div>
+      <div class="module-card" style="--card-accent:#1a6b68">
+        <span class="module-icon">🏠</span>
+        <h3>Hostel</h3>
+        <p>Room allocation, student assignments, hostel fee collection & occupancy reports</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ TECH STACK ══════════ -->
+  <section class="reveal">
+    <div class="section-label">Built With</div>
+    <h2>Tech Stack</h2>
+
+    <div class="stack-grid">
+      <div class="stack-item">
+        <span class="stack-emoji">⚡</span>
+        <div><div class="stack-name">Laravel</div><div class="stack-ver">10.x</div></div>
+      </div>
+      <div class="stack-item">
+        <span class="stack-emoji">🐘</span>
+        <div><div class="stack-name">PHP</div><div class="stack-ver">8.1+</div></div>
+      </div>
+      <div class="stack-item">
+        <span class="stack-emoji">🗄️</span>
+        <div><div class="stack-name">MySQL / SQLite</div><div class="stack-ver">5.7+ / 3.8+</div></div>
+      </div>
+      <div class="stack-item">
+        <span class="stack-emoji">🎨</span>
+        <div><div class="stack-name">Bootstrap</div><div class="stack-ver">5.x</div></div>
+      </div>
+      <div class="stack-item">
+        <span class="stack-emoji">📈</span>
+        <div><div class="stack-name">Chart.js</div><div class="stack-ver">Data Viz</div></div>
+      </div>
+      <div class="stack-item">
+        <span class="stack-emoji">⚡</span>
+        <div><div class="stack-name">Vite</div><div class="stack-ver">Asset Build</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ INSTALLATION ══════════ -->
+  <section class="reveal">
+    <div class="section-label">Getting Started</div>
+    <h2>Installation</h2>
+    <p>Get up and running in minutes with these steps.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Clone the Repository</h3>
+          <pre><span class="prompt">$</span> git clone https://github.com/raparty/ramaschoollaravel.git
+<span class="prompt">$</span> cd ramaschoollaravel</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Install Dependencies</h3>
+          <pre><span class="prompt">$</span> composer install
+<span class="prompt">$</span> npm install</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Configure Environment</h3>
+          <pre><span class="prompt">$</span> cp .env.example .env
+<span class="prompt">$</span> php artisan key:generate</pre>
+          <p style="margin-top:10px; font-size:14px;">Then edit <code style="background:var(--cream); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:12px;">.env</code> with your database credentials:</p>
+          <pre><span class="comment"># MySQL</span>
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=school_erp
+DB_USERNAME=your_username
+DB_PASSWORD=your_password</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Run Migrations</h3>
+          <pre><span class="prompt">$</span> php artisan migrate
+<span class="prompt">$</span> php artisan db:seed   <span class="comment"># optional: loads sample data</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>Link Storage &amp; Set Permissions</h3>
+          <pre><span class="prompt">$</span> php artisan storage:link
+<span class="prompt">$</span> chmod -R 775 storage bootstrap/cache</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h3>Build &amp; Serve</h3>
+          <pre><span class="prompt">$</span> npm run build
+<span class="prompt">$</span> php artisan serve</pre>
+          <p style="margin-top:10px; font-size:14px;">Visit <strong>http://localhost:8000</strong> — default login: <code style="background:var(--cream); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:12px;">admin@school.com</code> / <code style="background:var(--cream); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:12px;">password</code></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ DATABASE ══════════ -->
+  <section class="reveal">
+    <div class="section-label">Data Layer</div>
+    <h2>Database Schema</h2>
+    <p>A single comprehensive migration file creates all necessary tables across these logical groups.</p>
+
+    <div class="db-grid">
+      <div class="db-group">
+        <div class="db-group-header">⚙️ School Config</div>
+        <div class="db-group-body">
+          <span class="db-table-name">schools</span>
+          <span class="db-table-name">classes</span>
+          <span class="db-table-name">sections</span>
+          <span class="db-table-name">subjects</span>
+          <span class="db-table-name">terms</span>
+        </div>
+      </div>
+      <div class="db-group">
+        <div class="db-group-header">👨‍🎓 Students</div>
+        <div class="db-group-body">
+          <span class="db-table-name">admissions</span>
+          <span class="db-table-name">attendances</span>
+        </div>
+      </div>
+      <div class="db-group">
+        <div class="db-group-header">💰 Fees</div>
+        <div class="db-group-body">
+          <span class="db-table-name">fee_packages</span>
+          <span class="db-table-name">student_fees</span>
+          <span class="db-table-name">student_transport_fees</span>
+        </div>
+      </div>
+      <div class="db-group">
+        <div class="db-group-header">📚 Library</div>
+        <div class="db-group-body">
+          <span class="db-table-name">books</span>
+          <span class="db-table-name">book_categories</span>
+          <span class="db-table-name">book_issues</span>
+          <span class="db-table-name">library_fines</span>
+        </div>
+      </div>
+      <div class="db-group">
+        <div class="db-group-header">👥 Staff</div>
+        <div class="db-group-body">
+          <span class="db-table-name">staff</span>
+          <span class="db-table-name">departments</span>
+          <span class="db-table-name">positions</span>
+          <span class="db-table-name">salaries</span>
+          <span class="db-table-name">staff_attendances</span>
+        </div>
+      </div>
+      <div class="db-group">
+        <div class="db-group-header">📝 Examinations</div>
+        <div class="db-group-body">
+          <span class="db-table-name">exams</span>
+          <span class="db-table-name">exam_subjects</span>
+          <span class="db-table-name">marks</span>
+          <span class="db-table-name">results</span>
+          <span class="db-table-name">grades</span>
+        </div>
+      </div>
+      <div class="db-group">
+        <div class="db-group-header">💼 Accounts</div>
+        <div class="db-group-body">
+          <span class="db-table-name">account_categories</span>
+          <span class="db-table-name">incomes</span>
+          <span class="db-table-name">expenses</span>
+        </div>
+      </div>
+      <div class="db-group">
+        <div class="db-group-header">🚌 Transport</div>
+        <div class="db-group-body">
+          <span class="db-table-name">transport_routes</span>
+          <span class="db-table-name">transport_vehicles</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ FEATURES ══════════ -->
+  <section class="reveal">
+    <div class="section-label">Code Quality</div>
+    <h2>Technical Features</h2>
+    <p>Built for production with modern PHP best practices throughout.</p>
+
+    <div class="features-list">
+      <div class="feature-pill"><span>✅</span> 100% PHP Type Hints</div>
+      <div class="feature-pill"><span>✅</span> Comprehensive PHPDoc</div>
+      <div class="feature-pill"><span>✅</span> PSR-12 Code Style</div>
+      <div class="feature-pill"><span>✅</span> Eloquent ORM + Relationships</div>
+      <div class="feature-pill"><span>✅</span> Database Transactions</div>
+      <div class="feature-pill"><span>✅</span> Form Request Validation</div>
+      <div class="feature-pill"><span>✅</span> CSRF Protection</div>
+      <div class="feature-pill"><span>✅</span> Mobile-Responsive UI</div>
+      <div class="feature-pill"><span>✅</span> Print-Optimized Views</div>
+      <div class="feature-pill"><span>✅</span> CSV & PDF Export</div>
+      <div class="feature-pill"><span>✅</span> Chart.js Visualizations</div>
+      <div class="feature-pill"><span>✅</span> Role-Based Access Control</div>
+    </div>
+  </section>
+
+  <!-- ══════════ SECURITY ══════════ -->
+  <section class="reveal">
+    <div class="section-label">Security</div>
+    <h2>Security Features</h2>
+
+    <div class="security-list">
+      <div class="security-item">
+        <div class="security-check">✓</div>
+        <div class="security-text"><strong>CSRF Protection</strong> on all forms</div>
+      </div>
+      <div class="security-item">
+        <div class="security-check">✓</div>
+        <div class="security-text"><strong>SQL Injection Prevention</strong> via Eloquent ORM</div>
+      </div>
+      <div class="security-item">
+        <div class="security-check">✓</div>
+        <div class="security-text"><strong>XSS Protection</strong> via Blade templating</div>
+      </div>
+      <div class="security-item">
+        <div class="security-check">✓</div>
+        <div class="security-text"><strong>Bcrypt Password</strong> hashing</div>
+      </div>
+      <div class="security-item">
+        <div class="security-check">✓</div>
+        <div class="security-text"><strong>Input Validation</strong> & sanitization</div>
+      </div>
+      <div class="security-item">
+        <div class="security-check">✓</div>
+        <div class="security-text"><strong>Middleware Auth</strong> & RBAC</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ ROADMAP ══════════ -->
+  <section class="reveal">
+    <div class="section-label">What's Next</div>
+    <h2>Roadmap</h2>
+
+    <div class="roadmap-list">
+      <div class="roadmap-item"><span class="roadmap-icon">📱</span> REST API for mobile applications</div>
+      <div class="roadmap-item"><span class="roadmap-icon">👨‍👩‍👧</span> Parent portal & communication hub</div>
+      <div class="roadmap-item"><span class="roadmap-icon">💬</span> SMS & email notification system</div>
+      <div class="roadmap-item"><span class="roadmap-icon">💳</span> Online payment gateway integration</div>
+      <div class="roadmap-item"><span class="roadmap-icon">🌐</span> Multi-language support</div>
+      <div class="roadmap-item"><span class="roadmap-icon">🏢</span> Multi-school (SaaS) support</div>
+      <div class="roadmap-item"><span class="roadmap-icon">📲</span> Native mobile app (iOS & Android)</div>
+    </div>
+  </section>
+
+  <!-- ══════════ CONTRIBUTING ══════════ -->
+  <section class="reveal">
+    <div class="section-label">Open Source</div>
+    <h2>Contributing</h2>
+    <p>Contributions are welcome! Please follow PSR-12 standards and include tests.</p>
+
+    <pre><span class="prompt">$</span> git checkout -b feature/YourFeature
+<span class="prompt">$</span> git commit -m 'Add YourFeature'
+<span class="prompt">$</span> git push origin feature/YourFeature
+<span class="comment"># Then open a Pull Request on GitHub</span></pre>
+
+    <p>See <code style="background:var(--cream); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:12px;">CONTRIBUTING.md</code> for full guidelines.</p>
+  </section>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="footer-logo">Rama<em>School</em> Laravel</div>
+  <p>Open-source school management built with ❤️ for educational institutions.</p>
+  <div class="footer-links">
+    <a href="https://github.com/raparty/ramaschoollaravel">GitHub</a>
+    <a href="https://github.com/raparty/ramaschoollaravel/blob/main/LICENSE">MIT License</a>
+    <a href="https://github.com/raparty/ramaschoollaravel/blob/main/CONTRIBUTING.md">Contributing</a>
+    <a href="https://github.com/raparty/ramaschoollaravel/issues">Issues</a>
+    <a href="https://github.com/raparty/ramaschoollaravel/blob/main/DB_SCHEMA_REFERENCE.md">DB Schema</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

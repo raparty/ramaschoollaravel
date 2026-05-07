@@ -98,7 +98,7 @@
                 </div>
                 
                 <div class="d-flex justify-content-center mt-3">
-                    {{ $leaveTypes->links() }}
+                    {{ $leaveTypes->appends(request()->query())->links() }}
                 </div>
             @else
                 <div class="text-center py-5">

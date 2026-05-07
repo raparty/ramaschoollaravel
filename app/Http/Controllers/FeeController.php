@@ -235,7 +235,7 @@ class FeeController extends Controller
         $payments = StudentFee::forStudent($regNo)
             ->with('term')
             ->recent()
-            ->paginate(20);
+            ->paginate(20)->withQueryString();
 
         // Calculate totals
         $totalPaid = StudentFee::forStudent($regNo)->sum('fees_amount');

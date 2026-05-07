@@ -26,7 +26,7 @@ class TransportVehicleController extends Controller
             $query->search($request->search);
         }
 
-        $vehicles = $query->ordered()->paginate(20);
+        $vehicles = $query->ordered()->paginate(20)->withQueryString();
 
         return view('transport.vehicles.index', compact('vehicles'));
     }

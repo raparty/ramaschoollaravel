@@ -29,7 +29,7 @@ class TransportDriverController extends Controller
             $query->status($request->status);
         }
 
-        $drivers = $query->ordered()->paginate(20);
+        $drivers = $query->ordered()->paginate(20)->withQueryString();
 
         return view('transport.drivers.index', compact('drivers'));
     }

@@ -50,7 +50,7 @@ class ExamController extends Controller
                 $query->forTerm($request->term_id);
             }
 
-            $exams = $query->paginate(15);
+            $exams = $query->paginate(15)->withQueryString();
             $terms = Term::orderBy('start_date', 'desc')->get();
 
             return view('exams.index', compact('exams', 'terms'));

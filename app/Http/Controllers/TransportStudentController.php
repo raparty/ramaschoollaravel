@@ -53,7 +53,7 @@ class TransportStudentController extends Controller
             });
         }
 
-        $assignments = $query->paginate(20);
+        $assignments = $query->paginate(20)->withQueryString();
         
         // Get filter options
         $routes = TransportRoute::ordered()->get();

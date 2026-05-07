@@ -212,7 +212,7 @@ class StaffAttendanceController extends Controller
             $attendance = StaffAttendance::where('staff_id', $staff->id)
                 ->whereBetween('att_date', [$startDate, $endDate])
                 ->orderBy('att_date', 'desc')
-                ->paginate(30);
+                ->paginate(30)->withQueryString();
             
             // Calculate statistics
             $totalDays = StaffAttendance::where('staff_id', $staff->id)

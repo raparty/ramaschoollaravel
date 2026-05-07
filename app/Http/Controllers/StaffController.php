@@ -46,7 +46,7 @@ class StaffController extends Controller
             }
         }
 
-        $staff = $query->orderBy('created_at', 'desc')->paginate(20);
+        $staff = $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
         $departments = Department::all();
 
         // FIX: Calculate summary counts for the statistics cards in the view

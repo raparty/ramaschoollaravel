@@ -54,7 +54,7 @@ class HostelController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $hostels = $query->ordered()->paginate(20);
+        $hostels = $query->ordered()->paginate(20)->withQueryString();
 
         return view('hostel.index', compact('hostels'));
     }

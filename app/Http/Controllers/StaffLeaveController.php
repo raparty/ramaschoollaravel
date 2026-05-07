@@ -34,7 +34,7 @@ class StaffLeaveController extends Controller
             $query->where('leave_type_id', $request->leave_type_id);
         }
 
-        $leaves = $query->paginate(15);
+        $leaves = $query->paginate(15)->withQueryString();
         $leaveTypes = LeaveType::active()->get();
         $staff = Staff::orderBy('name')->get();
 

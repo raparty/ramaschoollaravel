@@ -25,7 +25,7 @@ class TransportRouteController extends Controller
             $query->search($request->search);
         }
 
-        $routes = $query->ordered()->paginate(20);
+        $routes = $query->ordered()->paginate(20)->withQueryString();
 
         return view('transport.routes.index', compact('routes'));
     }

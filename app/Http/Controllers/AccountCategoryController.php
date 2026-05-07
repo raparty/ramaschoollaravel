@@ -18,7 +18,7 @@ class AccountCategoryController extends Controller
         $categories = AccountCategory::query()
             ->when($type, fn($q) => $q->where('type', $type))
             ->orderBy('name')
-            ->paginate(20);
+            ->paginate(20)->withQueryString();
 
         return view('categories.index', compact('categories'));
     }

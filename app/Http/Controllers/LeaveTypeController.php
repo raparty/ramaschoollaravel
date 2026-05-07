@@ -15,7 +15,7 @@ class LeaveTypeController extends Controller
     {
         $leaveTypes = LeaveType::orderBy('is_active', 'desc')
             ->orderBy('name')
-            ->paginate(15);
+            ->paginate(15)->withQueryString();
 
         return view('leave-types.index', compact('leaveTypes'));
     }

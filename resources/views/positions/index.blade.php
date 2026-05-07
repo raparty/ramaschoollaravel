@@ -74,7 +74,7 @@
                 </div>
                 
                 <div class="d-flex justify-content-center mt-3">
-                    {{ $positions->links() }}
+                    {{ $positions->appends(request()->query())->links() }}
                 </div>
             @else
                 <div class="text-center py-5">

@@ -38,7 +38,7 @@ class HostelWardenController extends Controller
             });
         }
 
-        $wardens = $query->ordered()->paginate(20);
+        $wardens = $query->ordered()->paginate(20)->withQueryString();
 
         return view('hostel.wardens.index', compact('wardens'));
     }

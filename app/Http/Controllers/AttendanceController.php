@@ -189,7 +189,7 @@ class AttendanceController extends Controller
             $attendance = Attendance::where('user_id', $student->reg_no)
                 ->whereBetween('attendance_date', [$startDate, $endDate])
                 ->orderBy('attendance_date', 'desc')
-                ->paginate(30);
+                ->paginate(30)->withQueryString();
             
             // Calculate statistics
             $totalDays = Attendance::where('user_id', $student->reg_no)

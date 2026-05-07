@@ -42,7 +42,7 @@ class SalaryController extends Controller
             }
         }
 
-        $salaries = $query->orderBy('created_at', 'desc')->paginate(20);
+        $salaries = $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
 
         // Calculate totals
         $totals = [
@@ -178,7 +178,7 @@ class SalaryController extends Controller
         $salaries = $staff->salaries()
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
-            ->paginate(12);
+            ->paginate(12)->withQueryString();
 
         // Calculate totals
         $totals = [

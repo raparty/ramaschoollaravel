@@ -37,7 +37,7 @@ class UserManagementController extends Controller
             });
         }
 
-        $users = $query->paginate(20);
+        $users = $query->paginate(20)->withQueryString();
         $roles = Role::active()->orderBy('role_name')->get();
 
         return view('settings.users.index', compact('users', 'roles'));

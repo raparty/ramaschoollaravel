@@ -95,7 +95,7 @@
 
             @if($roles->hasPages())
             <div class="mt-3">
-                {{ $roles->links() }}
+                {{ $roles->appends(request()->query())->links() }}
             </div>
             @endif
         </div>

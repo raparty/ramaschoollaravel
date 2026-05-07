@@ -23,7 +23,7 @@ class ExpenseController extends Controller
             $query->forDateRange($request->start_date, $request->end_date);
         }
         
-        $expenses = $query->paginate(20);
+        $expenses = $query->paginate(20)->withQueryString();
         $categories = AccountCategory::expense()->active()->orderBy('name')->get();
         
         // Statistics

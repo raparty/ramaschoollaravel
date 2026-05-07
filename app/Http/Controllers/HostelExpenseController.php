@@ -49,7 +49,7 @@ class HostelExpenseController extends Controller
             });
         }
 
-        $expenses = $query->ordered()->paginate(20);
+        $expenses = $query->ordered()->paginate(20)->withQueryString();
         $categories = HostelExpenseCategory::active()->ordered()->get();
 
         return view('hostel.expenses.index', compact('expenses', 'categories'));
@@ -253,7 +253,7 @@ class HostelExpenseController extends Controller
         $expenses = HostelExpense::pending()
             ->with(['wallet.student', 'category', 'submitter'])
             ->ordered()
-            ->paginate(20);
+            ->paginate(20)->withQueryString();
 
         return view('hostel.expenses.pending', compact('expenses'));
     }

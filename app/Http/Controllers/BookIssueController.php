@@ -184,7 +184,7 @@ class BookIssueController extends Controller
         $overdueIssues = BookIssue::with(['book.category', 'student.class'])
             ->overdue()
             ->orderBy('due_date', 'asc')
-            ->paginate(30);
+            ->paginate(30)->withQueryString();
 
         return view('library.issue.overdue', compact('overdueIssues'));
     }
@@ -212,7 +212,7 @@ class BookIssueController extends Controller
         $issues = BookIssue::with('book.category')
             ->forStudent($regNo)
             ->orderBy('issue_date', 'desc')
-            ->paginate(20);
+            ->paginate(20)->withQueryString();
 
         // Calculate statistics
         $stats = [

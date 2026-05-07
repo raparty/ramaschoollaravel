@@ -38,7 +38,7 @@ class ResultController extends Controller
             }
         }
 
-        $results = $query->paginate(20);
+        $results = $query->paginate(20)->withQueryString();
         $exams = Exam::latest()->get();
 
         return view('results.index', compact('results', 'exams'));

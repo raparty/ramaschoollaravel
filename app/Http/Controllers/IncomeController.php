@@ -23,7 +23,7 @@ class IncomeController extends Controller
             $query->forDateRange($request->start_date, $request->end_date);
         }
         
-        $incomes = $query->paginate(20);
+        $incomes = $query->paginate(20)->withQueryString();
         $categories = AccountCategory::income()->active()->orderBy('name')->get();
         
         // Statistics

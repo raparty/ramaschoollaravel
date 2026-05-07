@@ -42,7 +42,7 @@ class HostelImprestWalletController extends Controller
             });
         }
 
-        $wallets = $query->ordered()->paginate(20);
+        $wallets = $query->ordered()->paginate(20)->withQueryString();
 
         return view('hostel.wallets.index', compact('wallets'));
     }
@@ -169,7 +169,7 @@ class HostelImprestWalletController extends Controller
             $query->byStatus($request->status);
         }
 
-        $expenses = $query->ordered()->paginate(20);
+        $expenses = $query->ordered()->paginate(20)->withQueryString();
 
         return view('hostel.wallets.statement', compact('wallet', 'expenses'));
     }

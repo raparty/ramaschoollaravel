@@ -43,7 +43,7 @@ class HostelStudentAllocationController extends Controller
             });
         }
 
-        $allocations = $query->ordered()->paginate(20);
+        $allocations = $query->ordered()->paginate(20)->withQueryString();
 
         return view('hostel.allocations.index', compact('allocations'));
     }

@@ -22,7 +22,7 @@ class RoleController extends Controller
     {
         $this->authorize('manage-settings');
 
-        $roles = Role::withCount(['permissions'])->orderBy('role_name')->paginate(15);
+        $roles = Role::withCount(['permissions'])->orderBy('role_name')->paginate(15)->withQueryString();
         
         // Get user counts for each role
         foreach ($roles as $role) {

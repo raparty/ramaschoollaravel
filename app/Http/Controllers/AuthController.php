@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -128,9 +127,9 @@ class AuthController extends Controller
         // Admin gets full statistics
         if ($role === 'Admin') {
             $stats['total_students'] = \App\Models\Admission::count();
-            $stats['total_staff'] = \App\Models\StaffDetail::count() ?? 0;
+            $stats['total_staff'] = \App\Models\Staff::count() ?? 0;
             $stats['pending_fees'] = \App\Models\StudentFee::where('status', 'pending')->sum('amount') ?? 0;
-            $stats['total_books'] = \App\Models\Library\Book::count() ?? 0;
+            $stats['total_books'] = \App\Models\Book::count() ?? 0;
         }
         // Teacher gets limited statistics
         elseif ($role === 'Teacher') {

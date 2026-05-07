@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -82,8 +81,7 @@ class User extends Authenticatable
      */
     public function isAdmin()
     {
-        // Since you are using the 'admin' table, everyone here is an admin
-        return true;
+        return $this->role === 'Admin';
     }
 
     /**
@@ -149,4 +147,4 @@ class User extends Authenticatable
             ->where('module', $module)
             ->exists();
     }
-} // <--- THIS must be the ONLY brace at the end of the file.
+}

@@ -1,0 +1,16 @@
+{
+  "allowedActions": {
+    "git": {
+      "commit": true,
+      "push": true,
+      "pull": true,
+      "fetch": true,
+      "checkout": true,
+      "branch": true
+    },
+    "fileSystem": {
+      "write": true,
+      "read": true
+    }
+  }
+}

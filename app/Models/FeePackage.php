@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $package_name
  * @property float $total_amount
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class FeePackage extends Model
 {
@@ -26,8 +28,9 @@ class FeePackage extends Model
 
     /**
      * Indicates if the model should be timestamped.
+     * Changed to TRUE to track creation and update times.
      */
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * The attributes that are mass assignable.

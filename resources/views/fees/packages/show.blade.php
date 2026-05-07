@@ -94,8 +94,8 @@
             </div>
             <div class="card-body">
                 <small class="text-muted">
-                    <strong>Created:</strong> {{ $feePackage->created_at->format('d M Y, h:i A') }}<br>
-                    <strong>Last Updated:</strong> {{ $feePackage->updated_at->format('d M Y, h:i A') }}
+                    <strong>Created:</strong> {{ $feePackage->created_at ? $feePackage->created_at->format('d M Y, h:i A') : 'N/A' }}<br>
+                    <strong>Last Updated:</strong> {{ $feePackage->updated_at ? $feePackage->updated_at->format('d M Y, h:i A') : 'N/A' }}
                 </small>
             </div>
         </div>

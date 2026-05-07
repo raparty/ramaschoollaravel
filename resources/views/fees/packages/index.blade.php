@@ -52,7 +52,7 @@
                                 <td>
                                     <span class="badge bg-success">₹{{ number_format($package->total_amount, 2) }}</span>
                                 </td>
-                                <td>{{ $package->created_at->format('d M Y') }}</td>
+                                <td>{{ $package->created_at ? $package->created_at->format('d M Y') : 'N/A' }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="{{ route('fee-packages.show', $package) }}" 
